@@ -1,0 +1,76 @@
+name: CI Matrix
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-matrix:
+    name: Test on ${{ matrix.os }} Node ${{ matrix.node }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [18.x]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Install system build deps (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update || true
+          brew install pkg-config python cmake || true
+
+      - name: Install system build deps (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3 pkg-config cmake || true
+
+      - name: Install node deps
+        run: npm ci
+
+      - name: Install sql.js (pure JS SQLite fallback)
+        run: npm install sql.js --no-save || true
+
+      - name: Try building better-sqlite3 (native)
+        run: |
+          echo "Attempting to build better-sqlite3 (may require additional build tools)"
+          npm install better-sqlite3 --build-from-source || true
+
+      - name: Run tests
+        run: npm test --silent
+
+  sqljs-smoke:
+    name: sql.js persistence smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - name: Install deps
+        run: npm ci
+      - name: Install sql.js
+        run: npm install sql.js --no-save
+      - name: Run sql.js smoke
+        run: node scripts/sqljs-smoke.js
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - run: npm ci
+      - run: npm test --silent
