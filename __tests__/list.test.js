@@ -16,20 +16,27 @@ function captureLogs(fn) {
 
 function busyWait(ms) {
   const end = Date.now() + ms;
-  while (Date.now() < end) {}
+  while (Date.now() < end) { }
+}
+
+// Extract snippet names from the table output (skip header + separator lines)
+function extractNames(lines) {
+  return lines
+    .filter(l => l.trim() && !l.includes('NAME') && !l.includes('─') && !l.match(/^\s*\d+ snippet/))
+    .map(l => l.trim().split(/\s{2,}/)[0].trim());
 }
 
 describe('list sorting', () => {
   test('sorts by name', () => {
     const lang = `sort-name-${Date.now()}`;
-    const z = storage.addSnippet({ name: 'zzz-item', content: 'echo z', language: lang, tags: ['sort'] });
-    const a = storage.addSnippet({ name: 'aaa-item', content: 'echo a', language: lang, tags: ['sort'] });
-    const m = storage.addSnippet({ name: 'mmm-item', content: 'echo m', language: lang, tags: ['sort'] });
+    storage.addSnippet({ name: 'zzz-item', content: 'echo z', language: lang, tags: ['sort'] });
+    storage.addSnippet({ name: 'aaa-item', content: 'echo a', language: lang, tags: ['sort'] });
+    storage.addSnippet({ name: 'mmm-item', content: 'echo m', language: lang, tags: ['sort'] });
 
     const lines = captureLogs(() => listCmd({ lang, sort: 'name' }));
-    const ids = lines.map(l => l.split('  ')[0]);
+    const names = extractNames(lines);
 
-    expect(ids).toEqual([a.id, m.id, z.id]);
+    expect(names).toEqual(['aaa-item', 'mmm-item', 'zzz-item']);
   });
 
   test('sorts by usage', () => {
@@ -42,9 +49,9 @@ describe('list sorting', () => {
     storage.touchUsage(mid);
 
     const lines = captureLogs(() => listCmd({ lang, sort: 'usage' }));
-    const ids = lines.map(l => l.split('  ')[0]);
+    const names = extractNames(lines);
 
-    expect(ids).toEqual([high.id, mid.id, low.id]);
+    expect(names).toEqual(['high-use', 'mid-use', 'low-use']);
   });
 
   test('sorts by recent', () => {
@@ -60,8 +67,8 @@ describe('list sorting', () => {
     storage.touchUsage(latest);
 
     const lines = captureLogs(() => listCmd({ lang, sort: 'recent' }));
-    const ids = lines.map(l => l.split('  ')[0]);
+    const names = extractNames(lines);
 
-    expect(ids).toEqual([latest.id, mid.id, old.id]);
+    expect(names).toEqual(['latest-touch', 'mid-touch', 'old-touch']);
   });
 });
