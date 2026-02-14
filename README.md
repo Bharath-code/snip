@@ -11,6 +11,8 @@ Quick start:
     echo 'docker run --rm -it -v "$PWD":/work -w /work ubuntu:24.04 bash' | snip add docker-run --lang sh --tags docker,run
 - List snippets:
     snip list
+  - Sort list:
+    snip list --sort usage
 - Search snippets:
     snip search docker
 - Show snippet:
@@ -33,18 +35,26 @@ Example snippets to save (use `snip add`):
 Implemented MVP commands:
 - snip add <name>
 - snip list
+- snip list --sort <name|usage|recent>
 - snip search <query>
 - snip show <id|name>
 - snip run <id|name>
+- snip run <id|name> (language-aware: sh/js/ts/py/rb/php/pl/ps1)
 - snip edit <id|name>
 - snip rm <id|name>
 - snip export [path]
 - snip import <file>
 - snip config get|set
+- **snip seed** — Clear all snippet data (local JSON + SQLite) and add 10 example snippets.
 - snip sync push <id|name> (push snippet to GitHub Gist)
 - snip sync pull <gistId> (import files from a gist)
+- **snip ui** — Interactive TUI (industry-style): header with filter + count, fuzzy search (**/**), **j/k** for step navigation, **Ctrl+d/Ctrl+u** for fast jumps, **g/G** to jump ends, **Enter** show details, **c** copy selected snippet, **r** run (preview + confirm), **t** tag filter, **?** help overlay, **q** quit. In details view: **c** copies content to clipboard and **p** opens your pager for native select/copy. (Ghostty/WezTerm/Kitty: TERM is set to `xterm-256color` automatically to avoid terminfo issues.)
 
 Config defaults come from $EDITOR and XDG dirs.
+
+GitHub Gist token (for sync push/pull):
+- Prefer setting the **SNIP_GIST_TOKEN** environment variable so the token is not stored on disk (e.g. in your shell profile: `export SNIP_GIST_TOKEN=ghp_...`).
+- Alternatively: `snip config set gist_token <token>`. The token is then stored in `~/.config/snip/config.json`; protect that file if you use this method.
 
 SQLite backend (optional):
 - To enable: `snip config set useSqlite true` or set dbPath to a .db file: `snip config set dbPath ~/.local/share/snip/snips.db`
