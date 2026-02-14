@@ -47,7 +47,15 @@ Implemented MVP commands:
 Config defaults come from $EDITOR and XDG dirs.
 
 SQLite backend (optional):
-- To enable, set config useSqlite to true: `snip config set useSqlite true` or set dbPath to a .db file: `snip config set dbPath ~/.local/share/snip/snips.db`
-- Install native dependency (optional): `npm install better-sqlite3` (may require build tools on some platforms).
-- To migrate existing JSON snippets to SQLite run: `node lib/migrate_to_sqlite.js` after installing better-sqlite3.
-- If better-sqlite3 is not installed and SQLite is requested, snip will fall back to the JSON DB and print a warning.
+- To enable: `snip config set useSqlite true` or set dbPath to a .db file: `snip config set dbPath ~/.local/share/snip/snips.db`
+- Native driver (recommended for performance): `npm install better-sqlite3` — this may require platform build tools on some systems.
+- Portable fallback: `sql.js` (install with `npm install sql.js`). If `better-sqlite3` is not available, snip will attempt to use `sql.js` and persist the database file by exporting the wasm-backed DB; this enables use on CI, macOS/Linux without native build tooling, and lightweight environments.
+- Local smoke test: run `npm run smoke-sqljs` to execute `scripts/sqljs-smoke.js` which validates create/persist/load across the js-wasm path.
+- CI: the included `.github/workflows/ci-matrix.yml` validates both native and sql.js paths (matrix jobs and a dedicated sql.js smoke job).
+
+Packaging & publishing
+- Ensure `package.json` contains a `bin` entry (for example: `"bin": { "snip": "lib/cli.js" }`), update the `version`, and publish with `npm publish` (CI-based publishing requires an `NPM_TOKEN` secret).
+- A sample GitHub Actions publish workflow is included; configure `NPM_TOKEN` in repository secrets to enable automatic releases from CI.
+
+Changelog
+- See `CHANGELOG.md` for recent notable changes including the sql.js fallback, CI matrix, and smoke test.
