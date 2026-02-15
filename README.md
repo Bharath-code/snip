@@ -5,92 +5,72 @@ A lightweight, cross-platform CLI for saving, searching, sharing, and running re
 Built as an opinionated MVP with a TUI for efficient snippet management, optional SQLite persistence, and GitHub Gist sync.
 
 Highlights
-- Fast add/list/search/run workflow for developer CLI snippets
-- Optional SQLite backend with native (better-sqlite3) or WebAssembly (sql.js) fallback
-- Sync snippets to/from GitHub Gists
-- Interactive TUI with fuzzy search and keyboard-first navigation
+- **Fast Workflow**: add/list/search/run directly from your shell
+- **Interactive TUI**: Fuzzy search and keyboard-first navigation (`snip ui`)
+- **Persistence Options**: Choose between JSON or SQLite (with WASM fallback)
+- **Gist Sync**: Share and backup your snippets via GitHub Gists
+- **Safety**: Automated detection of dangerous commands (e.g., `rm -rf`)
 
-Installation
+## Installation
 
-Install locally via npm:
+Install globally via npm:
 
-  npm install -g .
+```bash
+npm install -g snip-cli-manager
+```
 
-(For releases, install from npm when published.)
+*Note: The package is currently named `snip-cli-manager` on npm.*
 
-Quick start
+## Quick start
 
-Configure your editor (optional):
+1. **Configure your editor** (optional, defaults to `$EDITOR` or `vi`):
+   ```bash
+   snip config set editor "vim"
+   ```
 
-  snip config set editor "code --wait"
+2. **Add a snippet** from stdin:
+   ```bash
+   echo 'docker run --rm -it -v "$PWD":/work -w /work ubuntu:24.04 bash' | snip add docker-run --lang sh --tags docker,run
+   ```
 
-Add a snippet from stdin:
+3. **List snippets**:
+   ```bash
+   snip list
+   ```
 
-  echo 'docker run --rm -it -v "$PWD":/work -w /work ubuntu:24.04 bash' | snip add docker-run --lang sh --tags docker,run
+4. **Interactive TUI**:
+   ```bash
+   snip ui
+   ```
 
-List snippets:
+## Commands
+| Command | Description |
+|---------|-------------|
+| `snip add <name>` | Save a new snippet |
+| `snip ui` | Enter the interactive TUI |
+| `snip list` | List all saved snippets |
+| `snip search <q>` | Fuzzy search snippets |
+| `snip run <id\|name>` | Execute a snippet |
+| `snip edit <id\|name>` | Edit snippet content inline |
+| `snip sync push <q>` | Upload to GitHub Gist |
+| `snip sync pull <id>` | Download from GitHub Gist |
+| `snip config` | View or change configuration |
 
-  snip list
+## Features
 
-Search:
+### TUI Experience
+The `snip ui` command provides a rich, split-pane interface inspired by modern terminal aesthetics. Use `j`/`k` to navigate, `e` to edit content, `a` to add new snippets, and `r` to run.
 
-  snip search docker
+### SQLite Backend
+For larger snippet libraries, enable SQLite:
+```bash
+snip config set useSqlite true
+```
+Requires `better-sqlite3` for native performance, or falls back to `sql.js` (WebAssembly).
 
-Show a snippet:
+## Contributing
+Contributions are welcome! Please open an issue or submit a pull request.
 
-  snip show docker-run
-
-Run (dry-run preview):
-
-  snip run docker-run --dry-run
-
-Commands (MVP)
-- snip add <name>
-- snip list [--sort name|usage|recent]
-- snip search <query>
-- snip show <id|name>
-- snip run <id|name>
-- snip edit <id|name>
-- snip rm <id|name>
-- snip export [path]
-- snip import <file>
-- snip config get|set
-- snip seed — reset local store and install example snippets
-- snip sync push <id|name> — push to GitHub Gist
-- snip sync pull <gistId> — import from a Gist
-- snip ui — interactive TUI
-
-Configuration
-
-- Defaults follow $EDITOR and XDG directory conventions.
-- Store a GitHub Gist token in SNIP_GIST_TOKEN for ephemeral usage (recommended):
-
-  export SNIP_GIST_TOKEN=ghp_...
-
-- Or persist with:
-
-  snip config set gist_token <token>
-
-Database
-
-- Optional SQLite backend: enable with `snip config set useSqlite true` and set `dbPath` if desired.
-- Recommended native driver: `npm install better-sqlite3` (requires platform build tools).
-- Fallback: `sql.js` (WASM) for environments without native builds.
-- A smoke test script validates sql.js create/persist/load behavior (`npm run smoke-sqljs`).
-
-Packaging & Publishing
-
-Ensure `package.json` includes a `bin` entry (e.g. `"bin": { "snip": "lib/cli.js" }`), bump the version, and publish with `npm publish`.
-
-Contributing
-
-Contributions are welcome. Please open issues for bugs and feature requests, and send pull requests with clear descriptions and tests where applicable. Follow the repository's contribution guidelines and code style.
-
-License
-
-This project is open source. See LICENSE for details.
-
-Changelog
-
-See CHANGELOG.md for notable changes.
+## License
+MIT © 2026 Bharath. See the [LICENSE](./LICENSE) file for details.
 
