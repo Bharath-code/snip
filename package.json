@@ -1,5 +1,5 @@
 {
-  "name": "snip-cli-manager",
+  "name": "snip-manager",
   "version": "0.1.0",
   "description": "Fast, terminal-native CLI snippet manager with TUI and SQLite/Gist sync.",
   "bin": {
@@ -24,9 +24,14 @@
   "bugs": {
     "url": "https://github.com/bharath/snip/issues"
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "preferGlobal": true,
   "scripts": {
     "test": "jest",
-    "smoke-sqljs": "node scripts/sqljs-smoke.js"
+    "smoke-sqljs": "node scripts/sqljs-smoke.js",
+    "prepublishOnly": "npm test"
   },
   "dependencies": {
     "blessed": "^0.1.81",

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>snip — Your Terminal Memory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0c0c0c;
+      --paper: #faf9f7;
+      --paper-dark: #e8e6e3;
+      --accent: #ff4d00;
+      --accent-light: #ff7a33;
+      --accent-glow: rgba(255, 77, 0, 0.15);
+      --muted: #6b6b6b;
+      --subtle: #a3a3a3;
+      --border: #d4d4d4;
+      --success: #16a34a;
+      --warning: #ca8a04;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grain texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(250, 249, 247, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 600;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--ink);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--paper);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    .nav-cta {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.65rem 1.4rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent);
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 3rem 4rem;
+      gap: 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      padding: 0.4rem 0.9rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.75rem;
+      animation: fadeSlideUp 0.7s ease-out;
+    }
+
+    .hero h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(3.2rem, 6vw, 5rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      animation: fadeSlideUp 0.7s ease-out 0.1s both;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 440px;
+      margin-bottom: 2.25rem;
+      font-weight: 400;
+      line-height: 1.7;
+      animation: fadeSlideUp 0.7s ease-out 0.2s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeSlideUp 0.7s ease-out 0.3s both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.25s;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 77, 0, 0.25);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--ink);
+      background: var(--paper-dark);
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Terminal - Hero Visual */
+    .hero-visual {
+      position: relative;
+      animation: fadeSlideUp 0.7s ease-out 0.15s both;
+    }
+
+    .terminal-large {
+      background: var(--ink);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 
+        0 40px 80px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      transform: rotate(-2deg);
+      transition: transform 0.4s ease;
+    }
+
+    .terminal-large:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.25rem;
+      background: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .terminal-btn {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .terminal-btn.red { background: #ff5f56; }
+    .terminal-btn.yellow { background: #ffbd2e; }
+    .terminal-btn.green { background: #27c93f; }
+
+    .terminal-title {
+      margin-left: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--subtle);
+    }
+
+    .terminal-body {
+      padding: 1.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 2;
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .prompt { color: var(--accent); }
+    .cmd { color: #f5f5f5; }
+    .comment { color: var(--subtle); }
+    .tag { 
+      color: var(--ink); 
+      background: var(--paper-dark); 
+      padding: 0.1rem 0.35rem; 
+      border-radius: 3px; 
+      font-size: 0.65rem; 
+      margin-left: 0.25rem;
+    }
+    .success { color: var(--success); }
+    .warning { color: var(--warning); }
+
+    /* Decorative elements */
+    .deco-blob {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: var(--accent-glow);
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+    }
+
+    .deco-blob-1 {
+      top: -100px;
+      right: -100px;
+    }
+
+    .deco-blob-2 {
+      bottom: -150px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Features */
+    .features {
+      padding: 8rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      margin-bottom: 5rem;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2.5rem, 4vw, 3.5rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      max-width: 600px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .feature-card:hover {
+      border-color: var(--ink);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .feature-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* How it works */
+    .how-it-works {
+      padding: 8rem 3rem;
+      background: var(--ink);
+      color: var(--paper);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .how-it-works::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 60%);
+      opacity: 0.5;
+    }
+
+    .hiw-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .hiw-left h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2.5rem, 4vw, 3.5rem);
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+    }
+
+    .hiw-left h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hiw-left p {
+      color: var(--subtle);
+      font-size: 1.1rem;
+      max-width: 400px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .step-content p {
+      color: var(--subtle);
+      font-size: 0.95rem;
+    }
+
+    .step-cmd {
+      margin-top: 0.6rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.5rem 0.85rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-light);
+      display: inline-block;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* CTA */
+    .cta-section {
+      padding: 10rem 3rem;
+      text-align: center;
+      background: var(--paper);
+      position: relative;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: var(--accent-glow);
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+    }
+
+    .cta-section h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 400;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .cta-section h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .cta-section p {
+      color: var(--muted);
+      font-size: 1.15rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .install-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      background: var(--ink);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .install-box .dollar {
+      padding: 1rem 1rem 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: var(--success);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .install-box .cmd {
+      padding: 1rem 1.25rem 1rem 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: var(--paper);
+    }
+
+    /* Footer */
+    footer {
+      padding: 3rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.875rem;
+      background: var(--paper);
+    }
+
+    footer a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 7rem 1.5rem 4rem;
+      }
+
+      .hero-subtitle {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-cta {
+        justify-content: center;
+      }
+
+      .hero-visual {
+        max-width: 500px;
+        margin: 3rem auto 0;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hiw-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      nav {
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 2.75rem;
+      }
+
+      .terminal-body {
+        font-size: 0.7rem;
+      }
+    }
+
+    /* Animations on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="deco-blob deco-blob-1"></div>
+  <div class="deco-blob deco-blob-2"></div>
+
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">$</div>
+      <span>snip</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How it Works</a>
+      <a href="#install">Install</a>
+      <a href="#" class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">CLI Snippet Manager</div>
+      <h1>Your terminal's<br><em>memory</em></h1>
+      <p class="hero-subtitle">
+        Save, search, and run code snippets in milliseconds. 
+        No context switching. No digging through history. 
+        Just code, instantly.
+      </p>
+      <div class="hero-cta">
+        <a href="#install" class="btn btn-primary">Install Now</a>
+        <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="terminal-large">
+        <div class="terminal-header">
+          <div class="terminal-btn red"></div>
+          <div class="terminal-btn yellow"></div>
+          <div class="terminal-btn green"></div>
+          <span class="terminal-title">snip — Terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line">
+            <span class="prompt">$</span>
+            <span class="cmd">snip add docker-run</span>
+          </div>
+          <div class="terminal-line">
+            <span class="comment"># Opens editor, saves your snippet</span>
+          </div>
+          <div class="terminal-line" style="margin-top: 1rem;">
+            <span class="prompt">$</span>
+            <span class="cmd">snip search docker</span>
+          </div>
+          <div class="terminal-line">
+            <span class="cmd">docker-run</span><span class="tag">docker</span><span class="tag">run</span>
+          </div>
+          <div class="terminal-line">
+            <span class="cmd">docker-build</span><span class="tag">docker</span><span class="tag">build</span>
+          </div>
+          <div class="terminal-line" style="margin-top: 1rem;">
+            <span class="prompt">$</span>
+            <span class="cmd">snip run docker-run</span>
+          </div>
+          <div class="terminal-line">
+            <span class="warning">⚠ Preview:</span> <span class="cmd">docker run --rm -it -v "$PWD":/work ...</span>
+          </div>
+          <div class="terminal-line">
+            <span class="success">✓ Running safely...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-label">Features</div>
+      <h2>Everything you need to manage snippets</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <span class="feature-num">01</span>
+        <h3>Lightning Fast</h3>
+        <p>Add, search, and run snippets in milliseconds. Instant access—no waiting, no lag.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-num">02</span>
+        <h3>Fuzzy Search</h3>
+        <p>Find anything instantly. Searches names, tags, and content with smart ranking.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-num">03</span>
+        <h3>Safety First</h3>
+        <p>Preview before execution. Automatic dangerous command detection keeps you safe.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-num">04</span>
+        <h3>Interactive TUI</h3>
+        <p>Keyboard-first terminal UI. Browse, filter, and run without leaving your terminal.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-num">05</span>
+        <h3>Flexible Storage</h3>
+        <p>JSON for simplicity, SQLite for scale. Your snippets, your storage choice.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-num">06</span>
+        <h3>Gist Sync</h3>
+        <p>Backup and share via GitHub Gists. Access your library anywhere, anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how-it-works">
+    <div class="hiw-content">
+      <div class="hiw-left">
+        <h2>From zero to<br><em>muscle memory</em></h2>
+        <p>Three steps to building your personal snippet library that lives in your terminal.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Capture</h3>
+            <p>Save snippets from stdin or your editor. Add tags and language metadata.</p>
+            <div class="step-cmd">echo 'npm run dev' | snip add dev</div>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Find</h3>
+            <p>Fuzzy search across all snippets. Or use the TUI with keyboard shortcuts.</p>
+            <div class="step-cmd">snip search deploy</div>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Run</h3>
+            <p>Execute any snippet safely. Preview first, confirm, then run.</p>
+            <div class="step-cmd">snip run deploy-prod</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" id="install">
+    <h2>Ready to <em>snip?</em></h2>
+    <p>Install globally via npm and start building your library in seconds.</p>
+    <div class="install-box">
+      <span class="dollar">$</span>
+      <span class="cmd">npm install -g snip-cli-manager</span>
+    </div>
+  </section>
+
+  <footer>
+    <p>Built for developers who live in the terminal.</p>
+    <p style="margin-top: 0.5rem;">MIT License • <a href="#">Documentation</a> • <a href="#">GitHub</a></p>
+  </footer>
+
+  <script>
+    // Scroll reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

@@ -19,13 +19,13 @@ describe('edit and rm', () => {
     expect(after).toBeNull();
   });
 
-  test('edit updates content when file changes', () => {
+  test('edit updates content when file changes', async () => {
     const s = storage.addSnippet({ name: 'editchange', content: 'original', language: 'txt', tags: [] });
-    // Directly update the content via storage to simulate an edit
+    const originalUpdatedAt = s.updatedAt;
+    await new Promise(r => setTimeout(r, 10));
     storage.updateSnippetContent(s.id, 'modified');
     const updated = storage.getSnippetByIdOrName(s.id);
-    expect(updated.updatedAt).not.toBe(s.updatedAt);
-    // Cleanup
+    expect(new Date(updated.updatedAt).getTime()).toBeGreaterThan(new Date(originalUpdatedAt).getTime());
     rmCmd(s.id);
   });
 });
