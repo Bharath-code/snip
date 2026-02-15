@@ -1,71 +1,96 @@
-# snip — CLI Snippet Manager (MVP)
+# snip — CLI Snippet Manager
 
-Install locally:
+A lightweight, cross-platform CLI for saving, searching, sharing, and running reusable code and shell snippets.
+
+Built as an opinionated MVP with a TUI for efficient snippet management, optional SQLite persistence, and GitHub Gist sync.
+
+Highlights
+- Fast add/list/search/run workflow for developer CLI snippets
+- Optional SQLite backend with native (better-sqlite3) or WebAssembly (sql.js) fallback
+- Sync snippets to/from GitHub Gists
+- Interactive TUI with fuzzy search and keyboard-first navigation
+
+Installation
+
+Install locally via npm:
 
   npm install -g .
 
-Quick start:
-- Set editor (optional):
-    snip config set editor "code --wait"
-- Add a snippet from stdin (example):
-    echo 'docker run --rm -it -v "$PWD":/work -w /work ubuntu:24.04 bash' | snip add docker-run --lang sh --tags docker,run
-- List snippets:
-    snip list
-  - Sort list:
-    snip list --sort usage
-- Search snippets:
-    snip search docker
-- Show snippet:
-    snip show docker-run
-- Preview run (dry-run):
-    snip run docker-run --dry-run
-- Run snippet:
-    snip run docker-run
+(For releases, install from npm when published.)
 
-Example snippets to save (use `snip add`):
-1) git-clean-merged — tags: git,cleanup — sh
-   git branch --merged main | egrep -v "(^\\*|main|master)" | xargs -r git branch -d
+Quick start
 
-2) docker-run-shell — tags: docker,run — sh
-   docker run --rm -it --network host -v "$PWD":/work -w /work ubuntu:24.04 bash
+Configure your editor (optional):
 
-3) serve-dir-http — tags: http,dev — sh
-   python3 -m http.server 8000
+  snip config set editor "code --wait"
 
-Implemented MVP commands:
+Add a snippet from stdin:
+
+  echo 'docker run --rm -it -v "$PWD":/work -w /work ubuntu:24.04 bash' | snip add docker-run --lang sh --tags docker,run
+
+List snippets:
+
+  snip list
+
+Search:
+
+  snip search docker
+
+Show a snippet:
+
+  snip show docker-run
+
+Run (dry-run preview):
+
+  snip run docker-run --dry-run
+
+Commands (MVP)
 - snip add <name>
-- snip list
-- snip list --sort <name|usage|recent>
+- snip list [--sort name|usage|recent]
 - snip search <query>
 - snip show <id|name>
 - snip run <id|name>
-- snip run <id|name> (language-aware: sh/js/ts/py/rb/php/pl/ps1)
 - snip edit <id|name>
 - snip rm <id|name>
 - snip export [path]
 - snip import <file>
 - snip config get|set
-- **snip seed** — Clear all snippet data (local JSON + SQLite) and add 10 example snippets.
-- snip sync push <id|name> (push snippet to GitHub Gist)
-- snip sync pull <gistId> (import files from a gist)
-- **snip ui** — Interactive TUI (industry-style): header with filter + count, fuzzy search (**/**), **j/k** for step navigation, **Ctrl+d/Ctrl+u** for fast jumps, **g/G** to jump ends, **Enter** show details, **c** copy selected snippet, **r** run (preview + confirm), **t** tag filter, **?** help overlay, **q** quit. In details view: **c** copies content to clipboard and **p** opens your pager for native select/copy. (Ghostty/WezTerm/Kitty: TERM is set to `xterm-256color` automatically to avoid terminfo issues.)
+- snip seed — reset local store and install example snippets
+- snip sync push <id|name> — push to GitHub Gist
+- snip sync pull <gistId> — import from a Gist
+- snip ui — interactive TUI
 
-Config defaults come from $EDITOR and XDG dirs.
+Configuration
 
-GitHub Gist token (for sync push/pull):
-- Prefer setting the **SNIP_GIST_TOKEN** environment variable so the token is not stored on disk (e.g. in your shell profile: `export SNIP_GIST_TOKEN=ghp_...`).
-- Alternatively: `snip config set gist_token <token>`. The token is then stored in `~/.config/snip/config.json`; protect that file if you use this method.
+- Defaults follow $EDITOR and XDG directory conventions.
+- Store a GitHub Gist token in SNIP_GIST_TOKEN for ephemeral usage (recommended):
 
-SQLite backend (optional):
-- To enable: `snip config set useSqlite true` or set dbPath to a .db file: `snip config set dbPath ~/.local/share/snip/snips.db`
-- Native driver (recommended for performance): `npm install better-sqlite3` — this may require platform build tools on some systems.
-- Portable fallback: `sql.js` (install with `npm install sql.js`). If `better-sqlite3` is not available, snip will attempt to use `sql.js` and persist the database file by exporting the wasm-backed DB; this enables use on CI, macOS/Linux without native build tooling, and lightweight environments.
-- Local smoke test: run `npm run smoke-sqljs` to execute `scripts/sqljs-smoke.js` which validates create/persist/load across the js-wasm path.
-- CI: the included `.github/workflows/ci-matrix.yml` validates both native and sql.js paths (matrix jobs and a dedicated sql.js smoke job).
+  export SNIP_GIST_TOKEN=ghp_...
 
-Packaging & publishing
-- Ensure `package.json` contains a `bin` entry (for example: `"bin": { "snip": "lib/cli.js" }`), update the `version`, and publish with `npm publish` (CI-based publishing requires an `NPM_TOKEN` secret).
-- A sample GitHub Actions publish workflow is included; configure `NPM_TOKEN` in repository secrets to enable automatic releases from CI.
+- Or persist with:
+
+  snip config set gist_token <token>
+
+Database
+
+- Optional SQLite backend: enable with `snip config set useSqlite true` and set `dbPath` if desired.
+- Recommended native driver: `npm install better-sqlite3` (requires platform build tools).
+- Fallback: `sql.js` (WASM) for environments without native builds.
+- A smoke test script validates sql.js create/persist/load behavior (`npm run smoke-sqljs`).
+
+Packaging & Publishing
+
+Ensure `package.json` includes a `bin` entry (e.g. `"bin": { "snip": "lib/cli.js" }`), bump the version, and publish with `npm publish`.
+
+Contributing
+
+Contributions are welcome. Please open issues for bugs and feature requests, and send pull requests with clear descriptions and tests where applicable. Follow the repository's contribution guidelines and code style.
+
+License
+
+This project is open source. See LICENSE for details.
 
 Changelog
-- See `CHANGELOG.md` for recent notable changes including the sql.js fallback, CI matrix, and smoke test.
+
+See CHANGELOG.md for notable changes.
+
