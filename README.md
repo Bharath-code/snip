@@ -16,10 +16,8 @@ Highlights
 Install globally via npm:
 
 ```bash
-npm install -g snip-cli-manager
+npm install -g snip-manager
 ```
-
-*Note: The package is currently named `snip-cli-manager` on npm.*
 
 ## Quick start
 
