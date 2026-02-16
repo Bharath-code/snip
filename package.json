@@ -1,6 +1,6 @@
 {
   "name": "snip-manager",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fast, terminal-native CLI snippet manager with TUI and SQLite/Gist sync.",
   "bin": {
     "snip": "./bin/snip"
