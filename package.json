@@ -45,6 +45,7 @@
     "write-file-atomic": "^7.0.0"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "puppeteer": "^24.37.3"
   }
 }
