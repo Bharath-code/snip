@@ -41,6 +41,7 @@
   "preferGlobal": true,
   "scripts": {
     "test": "jest",
+    "lint": "eslint lib/",
     "smoke-sqljs": "node scripts/sqljs-smoke.js",
     "prepublishOnly": "npm test"
   },
@@ -56,6 +57,8 @@
     "write-file-atomic": "^7.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
     "jest": "^29.7.0",
     "puppeteer": "^24.37.3"
   }
