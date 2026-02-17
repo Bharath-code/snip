@@ -27,6 +27,23 @@ Stop hunting through your shell history for that one command. **snip** is your t
 - 🎨 **Interactive TUI** — Keyboard-first terminal UI with split-pane interface
 - 💾 **Flexible Storage** — JSON for simplicity, SQLite for scale
 - 🔄 **Gist Sync** — Backup and share via GitHub Gists
+- 🔗 **fzf Integration** — Pipe snippets through fzf with live preview
+
+### Why snip over X?
+
+| Feature | snip | [pet](https://github.com/knqyf263/pet) | [navi](https://github.com/denisidoro/navi) | [tldr](https://github.com/tldr-pages/tldr) | dotfiles / aliases |
+|---------|------|-----|------|------|-----|
+| **Run snippets directly** | ✅ Any language | ✅ Shell only | ✅ Shell only | ❌ Reference only | ✅ Shell only |
+| **Multi-language** (JS, Python, Ruby…) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Interactive TUI** | ✅ Split-pane | ❌ | ✅ Basic | ❌ | ❌ |
+| **Dangerous command detection** | ✅ Auto-detect | ❌ | ❌ | ❌ | ❌ |
+| **fzf integration** | ✅ Native | ✅ | ✅ Core | ❌ | Manual |
+| **SQLite backend** | ✅ Optional | ❌ | ❌ | ❌ | ❌ |
+| **Gist sync** | ✅ Push/pull | ✅ | ❌ | ❌ | Manual |
+| **Cross-platform** | ✅ Node.js | Go binary | Rust binary | Multi | Varies |
+| **Zero config** | ✅ Works out of box | ✅ | Needs cheats | ✅ | Heavy setup |
+
+**TL;DR:** Other tools are great for shell commands. snip is for developers who save **code** — deploy scripts, API calls, Docker commands, JS utilities — across any language, with safety rails and a real TUI.
 
 ## Quick Start
 
@@ -85,7 +102,9 @@ snip --version
 | `snip search <query>` | Fuzzy search across all snippets |
 | `snip run <id\|name>` | Execute a snippet safely |
 | `snip edit <id\|name>` | Edit snippet content inline |
-| `snip delete <id\|name>` | Remove a snippet |
+| `snip update <id\|name> --tags <t> --lang <l>` | Update snippet tags or language |
+| `snip delete <id\|name>` | Remove a snippet (alias: `snip rm`) |
+| `snip fzf` | Search snippets via fzf with live preview |
 | `snip sync push [query]` | Upload matching snippets to GitHub Gist |
 | `snip sync pull <gist-id>` | Download snippets from GitHub Gist |
 | `snip config` | View or modify configuration |
@@ -157,6 +176,36 @@ snip sync push docker
 
 # Pull from existing Gist
 snip sync pull <gist-id>
+```
+
+### Shell Completions
+
+Tab completions ship with snip for bash, zsh, and fish:
+
+```bash
+# Bash — add to ~/.bashrc
+eval "$(snip completion bash)"
+
+# Zsh — add to ~/.zshrc
+eval "$(snip completion zsh)"
+
+# Fish — add to ~/.config/fish/config.fish
+snip completion fish | source
+```
+
+### fzf Integration
+
+If you have [fzf](https://github.com/junegunn/fzf) installed, use `snip fzf` for a searchable list with a live preview pane:
+
+```bash
+# Search and preview snippets
+snip fzf
+
+# Pipe selected snippet to clipboard
+snip fzf | pbcopy
+
+# Bind to a shell shortcut (add to ~/.zshrc)
+bindkey -s '^S' 'snip fzf\n'
 ```
 
 ## Troubleshooting

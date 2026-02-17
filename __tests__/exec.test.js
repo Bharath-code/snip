@@ -13,7 +13,7 @@ describe('exec', () => {
   });
 
   test('returns 127 when interpreter is missing', () => {
-    const fakeRunner = () => ({ error: { code: 'ENOENT' } });
+    const fakeRunner = () => ({ error: { code: 'ENOENT' }, status: null });
     const status = exec.runSnippetContent('print("hi")', {
       language: 'python',
       runner: fakeRunner
