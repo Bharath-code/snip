@@ -2,6 +2,7 @@
   "name": "snip-manager",
   "version": "0.1.2",
   "description": "Fast, terminal-native CLI snippet manager with TUI and SQLite/Gist sync.",
+  "homepage": "https://bharath-code.github.io/snip/",
   "bin": {
     "snip": "./bin/snip"
   },
@@ -10,10 +11,20 @@
     "cli",
     "snippet",
     "tui",
+    "terminal",
+    "manager",
+    "command-line",
     "developer-tools",
     "productivity",
     "shell",
-    "gist"
+    "bash",
+    "zsh",
+    "fish",
+    "gist",
+    "github",
+    "fuzzy-search",
+    "sqlite",
+    "json"
   ],
   "author": "Bharath",
   "license": "MIT",
