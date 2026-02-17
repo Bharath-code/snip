@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Bharath">
+  <meta name="theme-color" content="#0c0c0c">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="favicon.svg">
   <title>snip — Your Terminal Memory</title>
@@ -10,12 +12,18 @@
   <link rel="canonical" href="https://bharath-code.github.io/snip/">
   <meta name="robots" content="index, follow">
   
+  <!-- AI / LLM Discovery -->
+  <meta name="ai-optimized" content="true">
+  <meta name="llm-ready" content="true">
+  
   <!-- Open Graph -->
   <meta property="og:title" content="snip — Your Terminal Memory">
   <meta property="og:description" content="Save, search, and run code snippets in milliseconds. No context switching.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://bharath-code.github.io/snip/">
   <meta property="og:image" content="https://bharath-code.github.io/snip/og-image-snip.png">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="snip">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -69,6 +77,64 @@
         "@type": "HowToStep",
         "name": "Run",
         "text": "Execute any snippet safely. Preview first, confirm, then run."
+      }
+    ]
+  }
+  </script>
+  
+  <!-- FAQ Schema for AI -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is snip?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "snip is a CLI snippet manager that helps developers save, search, and run code snippets directly from the terminal. It provides instant access to your most-used commands without context switching."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install snip?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Run: npm install -g snip-manager. Requires Node.js 18+."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I add a snippet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "echo 'your command' | snip add name --lang sh --tags docker,run or snip add name --lang bash --tags deploy"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does snip support SQLite?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, enable with: snip config set useSqlite true. Uses sql.js (WASM) by default or better-sqlite3 for native performance."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I sync snippets to GitHub Gists?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, use snip sync push to upload and snip sync pull <gist-id> to download."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is snip safe to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, snip previews commands before execution and automatically detects dangerous commands like rm -rf."
+        }
       }
     ]
   }

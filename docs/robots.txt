@@ -1,0 +1,5 @@
+# https://robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+Sitemap: https://bharath-code.github.io/snip/sitemap.xml
