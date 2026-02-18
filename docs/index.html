@@ -8,7 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="favicon.svg">
   <title>snip — Your Terminal Memory</title>
-  <meta name="description" content="snip is a CLI snippet manager that saves, searches, and runs code snippets in milliseconds. No context switching. Just code, instantly.">
+  <meta name="description" content="snip is a CLI snippet manager that saves, searches, and runs code snippets in milliseconds. Parameterized templates, fzf integration, and dangerous command detection built in.">
   <link rel="canonical" href="https://bharath-code.github.io/snip/">
   <meta name="robots" content="index, follow">
   <meta name="google-site-verification" content="TpPfXeUVDiIUimzkBojIiZ6zm1iBBE2gxDkOt8G4Hjo" />
@@ -19,7 +19,7 @@
   
   <!-- Open Graph -->
   <meta property="og:title" content="snip — Your Terminal Memory">
-  <meta property="og:description" content="Save, search, and run code snippets in milliseconds. No context switching.">
+  <meta property="og:description" content="Save, search, and run code snippets in milliseconds. Parameterized templates, Ctrl+G shell widget, fzf integration.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://bharath-code.github.io/snip/">
   <meta property="og:image" content="https://bharath-code.github.io/snip/og-image-snip.png">
@@ -39,7 +39,7 @@
     "@type": "SoftwareApplication",
     "name": "snip",
     "alternateName": "snip-manager",
-    "description": "CLI snippet manager that saves, searches, and runs code snippets in milliseconds",
+    "description": "CLI snippet manager that saves, searches, and runs code snippets in milliseconds. Supports parameterized templates, fzf integration, Ctrl+G shell widget, and dangerous command detection.",
     "url": "https://bharath-code.github.io/snip/",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "macOS, Linux, Windows",
@@ -52,7 +52,7 @@
       "@type": "Person",
       "name": "Bharath"
     },
-    "codeRepository": "https://github.com/bharath/snip"
+    "codeRepository": "https://github.com/Bharath-code/snip"
   }
   </script>
   
@@ -66,24 +66,24 @@
       {
         "@type": "HowToStep",
         "name": "Capture",
-        "text": "Save snippets from stdin or your editor. Add tags and language metadata.",
-        "howToTip": "Use: echo 'npm run dev' | snip add dev"
+        "text": "Save snippets from stdin or your editor. Add tags, language, and template variables.",
+        "howToTip": "Use: echo 'docker run {{image:ubuntu:24.04}} {{cmd:bash}}' | snip add docker-dev --lang sh"
       },
       {
         "@type": "HowToStep", 
         "name": "Find",
-        "text": "Fuzzy search across all snippets. Or use the TUI with keyboard shortcuts."
+        "text": "Fuzzy search across all snippets with fzf integration or the built-in TUI."
       },
       {
         "@type": "HowToStep",
         "name": "Run",
-        "text": "Execute any snippet safely. Preview first, confirm, then run."
+        "text": "Execute any snippet safely with parameterized variable prompts. Preview first, confirm, then run."
       }
     ]
   }
   </script>
   
-  <!-- FAQ Schema for AI -->
+  <!-- FAQ Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -94,7 +94,15 @@
         "name": "What is snip?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "snip is a CLI snippet manager that helps developers save, search, and run code snippets directly from the terminal. It provides instant access to your most-used commands without context switching."
+          "text": "snip is a CLI snippet manager that helps developers save, search, and run code snippets directly from the terminal. Unlike shell aliases, snip supports any language (JS, Python, Ruby, etc.), parameterized templates, and dangerous command detection."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is snip different from pet or navi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "pet and navi are great for shell commands. snip is for developers who save code — deploy scripts, API calls, Docker commands — across any language. It adds safety rails (dangerous command detection), a full TUI, parameterized templates, and URL import that others don't have."
         }
       },
       {
@@ -107,34 +115,18 @@
       },
       {
         "@type": "Question",
-        "name": "How do I add a snippet?",
+        "name": "Does snip support parameterized snippets?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "echo 'your command' | snip add name --lang sh --tags docker,run or snip add name --lang bash --tags deploy"
+          "text": "Yes. Use {{variable}} or {{variable:default}} syntax. When you run the snippet, snip prompts for each variable. Example: echo 'docker run {{image:ubuntu:24.04}}' | snip add docker"
         }
       },
       {
         "@type": "Question",
-        "name": "Does snip support SQLite?",
+        "name": "Can I use snip with fzf?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, enable with: snip config set useSqlite true. Uses sql.js (WASM) by default or better-sqlite3 for native performance."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I sync snippets to GitHub Gists?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, use snip sync push to upload and snip sync pull <gist-id> to download."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is snip safe to use?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, snip previews commands before execution and automatically detects dangerous commands like rm -rf."
+          "text": "Yes. Run 'snip fzf' for a searchable list with live preview. You can also bind Ctrl+G to snip using 'eval $(snip widget zsh)' for inline snippet insertion."
         }
       }
     ]
@@ -145,7 +137,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* Improve font loading */
     :root {
       --ink: #0c0c0c;
       --paper: #faf9f7;
@@ -160,15 +151,8 @@
       --warning: #ca8a04;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'DM Sans', sans-serif;
@@ -178,7 +162,6 @@
       overflow-x: hidden;
     }
 
-    /* Subtle grain texture */
     body::before {
       content: '';
       position: fixed;
@@ -189,14 +172,12 @@
       z-index: 1000;
     }
 
-    /* Navigation */
+    /* ═══ Navigation ═══ */
     nav {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       z-index: 100;
-      padding: 1.5rem 3rem;
+      padding: 1.25rem 3rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -215,8 +196,7 @@
     }
 
     .logo-icon {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       background: var(--ink);
       border-radius: 6px;
       display: flex;
@@ -234,6 +214,28 @@
       align-items: center;
     }
 
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--ink); }
+
+    .nav-cta {
+      background: var(--ink) !important;
+      color: var(--paper) !important;
+      padding: 0.65rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .nav-cta:hover { background: var(--accent) !important; }
+
     .nav-toggle {
       display: none;
       flex-direction: column;
@@ -245,30 +247,19 @@
     }
 
     .nav-toggle span {
-      width: 24px;
-      height: 2px;
+      width: 24px; height: 2px;
       background: var(--ink);
       transition: all 0.3s;
     }
 
-    .nav-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-
-    .nav-toggle.active span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .nav-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
-    }
+    .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
     .nav-mobile {
       display: none;
       position: fixed;
-      top: 60px;
-      left: 0;
-      right: 0;
+      top: 60px; left: 0; right: 0;
       background: var(--paper);
       border-bottom: 1px solid var(--border);
       padding: 1.5rem;
@@ -277,10 +268,7 @@
       z-index: 99;
     }
 
-    .nav-mobile.active {
-      display: flex;
-    }
-
+    .nav-mobile.active { display: flex; }
     .nav-mobile a {
       color: var(--ink);
       text-decoration: none;
@@ -289,34 +277,7 @@
       padding: 0.5rem 0;
     }
 
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: var(--ink);
-    }
-
-    .nav-cta {
-      background: var(--ink);
-      color: var(--paper);
-      padding: 0.65rem 1.4rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.875rem;
-      transition: all 0.2s;
-    }
-
-    .nav-cta:hover {
-      background: var(--accent);
-    }
-
-    /* Hero */
+    /* ═══ Hero ═══ */
     .hero {
       min-height: 100vh;
       display: grid;
@@ -329,27 +290,24 @@
       position: relative;
     }
 
-    .hero-content {
-      position: relative;
-      z-index: 2;
-    }
+    .hero-content { position: relative; z-index: 2; }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
+    /* Social proof badges */
+    .hero-badges {
+      display: flex;
       gap: 0.5rem;
-      background: var(--accent-glow);
-      border: 1px solid var(--accent);
-      padding: 0.4rem 0.9rem;
-      border-radius: 100px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      flex-wrap: wrap;
       margin-bottom: 1.75rem;
       animation: fadeSlideUp 0.7s ease-out;
     }
+
+    .hero-badges a {
+      display: inline-block;
+      height: 22px;
+      transition: transform 0.2s;
+    }
+
+    .hero-badges a:hover { transform: translateY(-2px); }
 
     .hero h1 {
       font-family: 'Instrument Serif', serif;
@@ -398,11 +356,7 @@
       font-family: inherit;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-    }
-
+    .btn-primary { background: var(--accent); color: white; }
     .btn-primary:hover {
       background: var(--accent-light);
       transform: translateY(-2px);
@@ -420,18 +374,28 @@
       background: var(--paper-dark);
     }
 
-    @keyframes fadeSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(24px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .btn-github {
+      background: #24292e;
+      color: white;
     }
 
-    /* Terminal - Hero Visual */
+    .btn-github:hover {
+      background: #1b1f23;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-github svg {
+      width: 18px; height: 18px;
+      fill: currentColor;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══ Terminal Visual ═══ */
     .hero-visual {
       position: relative;
       animation: fadeSlideUp 0.7s ease-out 0.15s both;
@@ -448,9 +412,7 @@
       transition: transform 0.4s ease;
     }
 
-    .terminal-large:hover {
-      transform: rotate(0deg) scale(1.02);
-    }
+    .terminal-large:hover { transform: rotate(0deg) scale(1.02); }
 
     .terminal-header {
       display: flex;
@@ -461,12 +423,7 @@
       border-bottom: 1px solid #2a2a2a;
     }
 
-    .terminal-btn {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-    }
-
+    .terminal-btn { width: 11px; height: 11px; border-radius: 50%; }
     .terminal-btn.red { background: #ff5f56; }
     .terminal-btn.yellow { background: #ffbd2e; }
     .terminal-btn.green { background: #27c93f; }
@@ -504,40 +461,71 @@
     }
     .success { color: var(--success); }
     .warning { color: var(--warning); }
+    .var-highlight { color: #a78bfa; }
 
-    /* Decorative elements */
     .deco-blob {
       position: absolute;
-      width: 400px;
-      height: 400px;
+      width: 400px; height: 400px;
       background: var(--accent-glow);
       border-radius: 50%;
       filter: blur(80px);
       z-index: -1;
     }
 
-    .deco-blob-1 {
-      top: -100px;
-      right: -100px;
+    .deco-blob-1 { top: -100px; right: -100px; }
+    .deco-blob-2 { bottom: -150px; left: -100px; width: 300px; height: 300px; }
+
+    /* ═══ Social Proof Bar ═══ */
+    .proof-bar {
+      padding: 2.5rem 3rem;
+      background: var(--ink);
+      text-align: center;
     }
 
-    .deco-blob-2 {
-      bottom: -150px;
-      left: -100px;
-      width: 300px;
-      height: 300px;
+    .proof-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3rem;
+      flex-wrap: wrap;
     }
 
-    /* Features */
+    .proof-stat {
+      text-align: center;
+    }
+
+    .proof-stat .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--paper);
+      display: block;
+    }
+
+    .proof-stat .label {
+      font-size: 0.75rem;
+      color: var(--subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.25rem;
+    }
+
+    .proof-divider {
+      width: 1px;
+      height: 40px;
+      background: #333;
+    }
+
+    /* ═══ Features ═══ */
     .features {
       padding: 8rem 3rem;
       max-width: 1200px;
       margin: 0 auto;
     }
 
-    .section-header {
-      margin-bottom: 5rem;
-    }
+    .section-header { margin-bottom: 5rem; }
 
     .section-label {
       font-size: 0.75rem;
@@ -577,28 +565,99 @@
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     }
 
-    .feature-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--subtle);
+    .feature-icon {
+      font-size: 1.5rem;
       margin-bottom: 1rem;
       display: block;
     }
 
     .feature-card h3 {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 600;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
       letter-spacing: -0.01em;
     }
 
     .feature-card p {
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.925rem;
       line-height: 1.6;
     }
 
-    /* How it works */
+    .feature-cmd {
+      margin-top: 0.75rem;
+      background: var(--ink);
+      color: var(--accent-light);
+      padding: 0.4rem 0.65rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      display: inline-block;
+    }
+
+    /* ═══ Comparison ═══ */
+    .comparison {
+      padding: 6rem 3rem;
+      background: #fafafa;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .comparison table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 3rem;
+    }
+
+    .comparison th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .comparison th:first-child { width: 30%; }
+
+    .comparison th.snip-col {
+      color: var(--accent);
+      background: var(--accent-glow);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .comparison td {
+      padding: 0.65rem 1rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid #eee;
+      color: var(--muted);
+    }
+
+    .comparison td:first-child {
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .comparison td.snip-col {
+      background: var(--accent-glow);
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .comparison tr:last-child td { border-bottom: none; }
+    .comparison tr:last-child td.snip-col { border-radius: 0 0 8px 8px; }
+
+    .check { color: var(--success); font-weight: 700; }
+    .cross { color: #d4d4d4; }
+
+    /* ═══ How it works ═══ */
     .how-it-works {
       padding: 8rem 3rem;
       background: var(--ink);
@@ -610,10 +669,8 @@
     .how-it-works::before {
       content: '';
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 50%;
-      height: 100%;
+      top: 0; right: 0;
+      width: 50%; height: 100%;
       background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 60%);
       opacity: 0.5;
     }
@@ -634,32 +691,15 @@
       margin-bottom: 1.5rem;
     }
 
-    .hiw-left h2 em {
-      font-style: italic;
-      color: var(--accent);
-    }
+    .hiw-left h2 em { font-style: italic; color: var(--accent); }
+    .hiw-left p { color: var(--subtle); font-size: 1.1rem; max-width: 400px; }
 
-    .hiw-left p {
-      color: var(--subtle);
-      font-size: 1.1rem;
-      max-width: 400px;
-    }
+    .steps { display: flex; flex-direction: column; gap: 2rem; }
 
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .step {
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-start;
-    }
+    .step { display: flex; gap: 1.5rem; align-items: flex-start; }
 
     .step-num {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       background: var(--accent);
       border-radius: 50%;
       display: flex;
@@ -672,16 +712,8 @@
       flex-shrink: 0;
     }
 
-    .step-content h3 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-
-    .step-content p {
-      color: var(--subtle);
-      font-size: 0.95rem;
-    }
+    .step-content h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .step-content p { color: var(--subtle); font-size: 0.95rem; }
 
     .step-cmd {
       margin-top: 0.6rem;
@@ -695,7 +727,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* CTA */
+    /* ═══ CTA ═══ */
     .cta-section {
       padding: 10rem 3rem;
       text-align: center;
@@ -706,11 +738,9 @@
     .cta-section::before {
       content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 500px;
-      height: 500px;
+      width: 500px; height: 500px;
       background: var(--accent-glow);
       border-radius: 50%;
       filter: blur(100px);
@@ -725,12 +755,9 @@
       position: relative;
     }
 
-    .cta-section h2 em {
-      font-style: italic;
-      color: var(--accent);
-    }
+    .cta-section h2 em { font-style: italic; color: var(--accent); }
 
-    .cta-section p {
+    .cta-section .cta-sub {
       color: var(--muted);
       font-size: 1.15rem;
       margin-bottom: 2.5rem;
@@ -740,12 +767,12 @@
     .install-box {
       display: inline-flex;
       align-items: center;
-      gap: 0;
       background: var(--ink);
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
       position: relative;
+      margin-bottom: 1.5rem;
     }
 
     .install-box .dollar {
@@ -774,21 +801,28 @@
       transition: all 0.2s;
     }
 
-    .copy-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+    .copy-btn:hover { background: rgba(255, 255, 255, 0.2); }
+    .copy-btn svg { width: 18px; height: 18px; fill: var(--paper); }
+    .copy-btn.copied svg { fill: var(--success); }
+
+    .cta-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      position: relative;
     }
 
-    .copy-btn svg {
-      width: 18px;
-      height: 18px;
-      fill: var(--paper);
+    .cta-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
     }
 
-    .copy-btn.copied svg {
-      fill: var(--success);
-    }
+    .cta-links a:hover { color: var(--accent); }
 
-    /* Footer */
+    /* ═══ Footer ═══ */
     footer {
       padding: 3rem;
       border-top: 1px solid var(--border);
@@ -804,203 +838,69 @@
       font-weight: 500;
     }
 
-    footer a:hover {
-      color: var(--accent);
-    }
+    footer a:hover { color: var(--accent); }
 
-    /* Responsive */
+    /* ═══ Responsive ═══ */
     @media (max-width: 1024px) {
       .hero {
         grid-template-columns: 1fr;
         text-align: center;
         padding: 7rem 1.5rem 4rem;
-        max-width: 100%;
       }
 
-      .hero-subtitle {
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-cta {
-        justify-content: center;
-      }
-
-      .hero-visual {
-        max-width: 100%;
-        margin: 3rem auto 0;
-        padding: 0 1rem;
-      }
-
-      .terminal-large {
-        max-width: 100%;
-      }
-
-      .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .hiw-content {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-        padding: 0 1.5rem;
-      }
+      .hero-badges { justify-content: center; }
+      .hero-subtitle { margin-left: auto; margin-right: auto; }
+      .hero-cta { justify-content: center; }
+      .hero-visual { max-width: 100%; margin: 3rem auto 0; padding: 0 1rem; }
+      .terminal-large { max-width: 100%; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .hiw-content { grid-template-columns: 1fr; gap: 3rem; padding: 0 1.5rem; }
+      .proof-inner { gap: 2rem; }
     }
 
     @media (max-width: 768px) {
-      .features {
-        padding: 4rem 1.25rem;
-      }
-
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section-header {
-        margin-bottom: 3rem;
-      }
-
-      .section-header h2 {
-        font-size: 2rem;
-      }
+      .features { padding: 4rem 1.25rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .section-header { margin-bottom: 3rem; }
+      .section-header h2 { font-size: 2rem; }
+      .comparison { padding: 4rem 1rem; overflow-x: auto; }
+      .comparison table { min-width: 600px; }
     }
 
     @media (max-width: 640px) {
-      * {
-        overflow-x: hidden;
-      }
-
-      body {
-        overflow-x: hidden;
-      }
-
-      nav {
-        padding: 1rem 1.25rem;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .nav-toggle {
-        display: flex;
-      }
-
-      .hero {
-        padding: 6rem 1rem 3rem;
-        gap: 2rem;
-      }
-
-      .hero-badge {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.7rem;
-      }
-
-      .hero h1 {
-        font-size: 2.25rem;
-      }
-
-      .hero-subtitle {
-        font-size: 1rem;
-      }
-
-      .hero-cta {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .hero-cta .btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .hero-visual {
-        padding: 0 0.5rem;
-      }
-
-      .terminal-large {
-        transform: rotate(0deg);
-      }
-
-      .terminal-body {
-        font-size: 0.65rem;
-        padding: 1rem;
-      }
-
-      .features-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-
-      .feature-card {
-        padding: 1.5rem;
-      }
-
-      .how-it-works {
-        padding: 4rem 1rem;
-      }
-
-      .hiw-left h2 {
-        font-size: 2rem;
-      }
-
-      .hiw-left p {
-        font-size: 1rem;
-      }
-
-      .step {
-        gap: 1rem;
-      }
-
-      .step-num {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
-      }
-
-      .step-content h3 {
-        font-size: 1rem;
-      }
-
-      .step-content p {
-        font-size: 0.85rem;
-      }
-
-      .cta-section {
-        padding: 5rem 1rem;
-      }
-
-      .cta-section h2 {
-        font-size: 2rem;
-      }
-
-      .install-box {
-        flex-direction: column;
-        width: 100%;
-        max-width: 280px;
-      }
-
-      .install-box .dollar,
-      .install-box .cmd {
-        width: 100%;
-        text-align: center;
-        padding: 0.75rem;
-      }
-
-      footer {
-        padding: 2rem 1rem;
-      }
+      *, body { overflow-x: hidden; }
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .hero { padding: 6rem 1rem 3rem; gap: 2rem; }
+      .hero-badges { gap: 0.35rem; }
+      .hero h1 { font-size: 2.25rem; }
+      .hero-subtitle { font-size: 1rem; }
+      .hero-cta { flex-direction: column; width: 100%; }
+      .hero-cta .btn { width: 100%; justify-content: center; }
+      .hero-visual { padding: 0 0.5rem; }
+      .terminal-large { transform: rotate(0deg); }
+      .terminal-body { font-size: 0.65rem; padding: 1rem; }
+      .features-grid { gap: 1rem; }
+      .feature-card { padding: 1.5rem; }
+      .how-it-works { padding: 4rem 1rem; }
+      .step-num { width: 36px; height: 36px; font-size: 0.9rem; }
+      .cta-section { padding: 5rem 1rem; }
+      .cta-section h2 { font-size: 2rem; }
+      .install-box { flex-direction: column; width: 100%; max-width: 280px; }
+      .install-box .dollar, .install-box .cmd { width: 100%; text-align: center; padding: 0.75rem; }
+      .proof-divider { display: none; }
+      .proof-inner { flex-direction: column; gap: 1.5rem; }
+      footer { padding: 2rem 1rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
       }
     }
 
-    /* Animations on scroll */
     .reveal {
       opacity: 0;
       transform: translateY(40px);
@@ -1024,36 +924,45 @@
     </div>
     <div class="nav-links">
       <a href="#features">Features</a>
+      <a href="#compare">Compare</a>
       <a href="#how-it-works">How it Works</a>
-      <a href="#install">Install</a>
-      <a href="#" class="nav-cta">Get Started</a>
+      <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener">GitHub</a>
+      <a href="#install" class="nav-cta">Install</a>
     </div>
     <button class="nav-toggle" aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </button>
   </nav>
 
   <div class="nav-mobile">
     <a href="#features">Features</a>
+    <a href="#compare">Compare</a>
     <a href="#how-it-works">How it Works</a>
-    <a href="#install">Install</a>
-    <a href="#" class="nav-cta">Get Started</a>
+    <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener">GitHub</a>
+    <a href="#install" class="nav-cta">Install</a>
   </div>
 
+  <!-- ═══ Hero ═══ -->
   <section class="hero">
     <div class="hero-content">
-      <div class="hero-badge">CLI Snippet Manager</div>
-      <h1>Your terminal's<br><em>memory</em></h1>
+      <div class="hero-badges">
+        <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/v/snip-manager.svg?style=flat-square&color=ff4d00" alt="npm version" height="22"></a>
+        <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/dm/snip-manager.svg?style=flat-square&label=downloads&color=0c0c0c" alt="npm downloads" height="22"></a>
+        <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/Bharath-code/snip?style=flat-square&label=stars&color=0c0c0c" alt="GitHub stars" height="22"></a>
+        <a href="https://github.com/Bharath-code/snip/blob/main/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/l/snip-manager.svg?style=flat-square&color=16a34a" alt="MIT License" height="22"></a>
+      </div>
+      <h1>Stop digging<br>through <em>history</em></h1>
       <p class="hero-subtitle">
-        Save, search, and run code snippets in milliseconds. 
-        No context switching. No digging through history. 
-        Just code, instantly.
+        Your terminal commands disappear. Your snippets don't.
+        Save once, find instantly, run anywhere — with safety rails 
+        and parameterized templates built in.
       </p>
       <div class="hero-cta">
-        <a href="#install" class="btn btn-primary">Install Now</a>
-        <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
+        <a href="#install" class="btn btn-primary">npm install -g snip-manager</a>
+        <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener" class="btn btn-github">
+          <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          Star on GitHub
+        </a>
       </div>
     </div>
     <div class="hero-visual">
@@ -1066,28 +975,27 @@
         </div>
         <div class="terminal-body">
           <div class="terminal-line">
+            <span class="comment"># Save a parameterized snippet</span>
+          </div>
+          <div class="terminal-line">
             <span class="prompt">$</span>
-            <span class="cmd">snip add docker-run</span>
+            <span class="cmd">echo 'docker run <span class="var-highlight">{{image:ubuntu}}</span> <span class="var-highlight">{{cmd:bash}}</span>' | snip add dock</span>
+          </div>
+          <div class="terminal-line" style="margin-top: 1rem">
+            <span class="comment"># Run it — snip asks for each variable</span>
           </div>
           <div class="terminal-line">
-            <span class="comment"># Opens editor, saves your snippet</span>
-          </div>
-          <div class="terminal-line" style="margin-top: 1rem;">
             <span class="prompt">$</span>
-            <span class="cmd">snip search docker</span>
+            <span class="cmd">snip run dock</span>
           </div>
           <div class="terminal-line">
-            <span class="cmd">docker-run</span><span class="tag">docker</span><span class="tag">run</span>
+            <span class="cmd">  image <span class="comment">[ubuntu]</span>: <span class="var-highlight">node:20</span></span>
           </div>
           <div class="terminal-line">
-            <span class="cmd">docker-build</span><span class="tag">docker</span><span class="tag">build</span>
-          </div>
-          <div class="terminal-line" style="margin-top: 1rem;">
-            <span class="prompt">$</span>
-            <span class="cmd">snip run docker-run</span>
+            <span class="cmd">  cmd <span class="comment">[bash]</span>: <span class="var-highlight">sh</span></span>
           </div>
           <div class="terminal-line">
-            <span class="warning">⚠ Preview:</span> <span class="cmd">docker run --rm -it -v "$PWD":/work ...</span>
+            <span class="warning">⚠ Preview:</span> <span class="cmd">docker run node:20 sh</span>
           </div>
           <div class="terminal-line">
             <span class="success">✓ Running safely...</span>
@@ -1097,83 +1005,217 @@
     </div>
   </section>
 
-  <section class="features" id="features">
-    <div class="section-header">
-      <div class="section-label">Features</div>
-      <h2>Everything you need to manage snippets</h2>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card reveal">
-        <span class="feature-num">01</span>
-        <h3>Lightning Fast</h3>
-        <p>Add, search, and run snippets in milliseconds. Instant access—no waiting, no lag.</p>
+  <!-- ═══ Social Proof Bar ═══ -->
+  <section class="proof-bar" id="stats">
+    <div class="proof-inner">
+      <div class="proof-stat">
+        <span class="num" id="npmDownloads">—</span>
+        <span class="label">npm downloads</span>
       </div>
-      <div class="feature-card reveal">
-        <span class="feature-num">02</span>
-        <h3>Fuzzy Search</h3>
-        <p>Find anything instantly. Searches names, tags, and content with smart ranking.</p>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <span class="num" id="ghStars">—</span>
+        <span class="label">GitHub stars</span>
       </div>
-      <div class="feature-card reveal">
-        <span class="feature-num">03</span>
-        <h3>Safety First</h3>
-        <p>Preview before execution. Automatic dangerous command detection keeps you safe.</p>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <span class="num">15+</span>
+        <span class="label">CLI commands</span>
       </div>
-      <div class="feature-card reveal">
-        <span class="feature-num">04</span>
-        <h3>Interactive TUI</h3>
-        <p>Keyboard-first terminal UI. Browse, filter, and run without leaving your terminal.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-num">05</span>
-        <h3>Flexible Storage</h3>
-        <p>JSON for simplicity, SQLite for scale. Your snippets, your storage choice.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-num">06</span>
-        <h3>Gist Sync</h3>
-        <p>Backup and share via GitHub Gists. Access your library anywhere, anytime.</p>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <span class="num">0ms</span>
+        <span class="label">Config required</span>
       </div>
     </div>
   </section>
 
+  <!-- ═══ Features ═══ -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-label">Why developers switch</div>
+      <h2>Not another snippet tool. A better one.</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <span class="feature-icon">🧩</span>
+        <h3>Parameterized Templates</h3>
+        <p>Variables with defaults. Prompt at runtime. No more copy-paste-edit.</p>
+        <span class="feature-cmd">snip run deploy-prod</span>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⌨️</span>
+        <h3>Ctrl+G Shell Widget</h3>
+        <p>Search and paste snippets inline without leaving your prompt. Works in zsh, bash, and fish.</p>
+        <span class="feature-cmd">eval "$(snip widget zsh)"</span>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🔍</span>
+        <h3>fzf + Fuzzy Search</h3>
+        <p>Native fzf integration with live preview pane. Or use the built-in fuzzy engine.</p>
+        <span class="feature-cmd">snip fzf</span>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🛡️</span>
+        <h3>Dangerous Command Detection</h3>
+        <p>Auto-detects rm -rf, sudo, and destructive ops. Preview before every run.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🌐</span>
+        <h3>Grab from Any URL</h3>
+        <p>Import snippets from GitHub, Gists, or any raw URL. Language auto-detected.</p>
+        <span class="feature-cmd">snip grab github:user/repo/deploy.sh</span>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🎨</span>
+        <h3>Interactive TUI</h3>
+        <p>Full keyboard-driven interface. Browse, search, run — without leaving your terminal.</p>
+        <span class="feature-cmd">snip ui</span>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">💾</span>
+        <h3>JSON or SQLite</h3>
+        <p>Start simple with JSON. Scale to SQLite when your library grows. Zero migration effort.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🔄</span>
+        <h3>GitHub Gist Sync</h3>
+        <p>Push your library to a Gist. Pull on another machine. Your snippets, everywhere.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🚀</span>
+        <h3>Multi-Language Execution</h3>
+        <p>Run Python, Ruby, JS, Bash — any language. Not limited to shell commands.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Comparison ═══ -->
+  <section class="comparison" id="compare">
+    <div class="comparison-inner">
+      <div class="section-header">
+        <div class="section-label">Honest comparison</div>
+        <h2>Why not pet, navi, or aliases?</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="snip-col">snip</th>
+            <th>pet</th>
+            <th>navi</th>
+            <th>aliases</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Multi-language execution</td>
+            <td class="snip-col"><span class="check">✓</span> Any</td>
+            <td><span class="cross">—</span> Shell</td>
+            <td><span class="cross">—</span> Shell</td>
+            <td><span class="cross">—</span> Shell</td>
+          </tr>
+          <tr>
+            <td>Parameterized templates</td>
+            <td class="snip-col"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Dangerous command detection</td>
+            <td class="snip-col"><span class="check">✓</span> Auto</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Interactive TUI</td>
+            <td class="snip-col"><span class="check">✓</span> Split-pane</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">✓</span> Basic</td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>fzf integration</td>
+            <td class="snip-col"><span class="check">✓</span> + preview</td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td>Manual</td>
+          </tr>
+          <tr>
+            <td>Import from URL</td>
+            <td class="snip-col"><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>SQLite backend</td>
+            <td class="snip-col"><span class="check">✓</span> Optional</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Shell widget (Ctrl+G)</td>
+            <td class="snip-col"><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Zero config install</td>
+            <td class="snip-col"><span class="check">✓</span> npm</td>
+            <td><span class="check">✓</span> Go</td>
+            <td>Needs cheats</td>
+            <td>Heavy setup</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══ How it works ═══ -->
   <section class="how-it-works" id="how-it-works">
     <div class="hiw-content">
       <div class="hiw-left">
         <h2>From zero to<br><em>muscle memory</em></h2>
-        <p>Three steps to building your personal snippet library that lives in your terminal.</p>
+        <p>Three keystrokes between you and the command you used last Tuesday.</p>
       </div>
       <div class="steps">
         <div class="step reveal">
           <div class="step-num">1</div>
           <div class="step-content">
             <h3>Capture</h3>
-            <p>Save snippets from stdin or your editor. Add tags and language metadata.</p>
-            <div class="step-cmd">echo 'npm run dev' | snip add dev</div>
+            <p>Pipe from stdin. Grab from a URL. Or open your editor. Add tags and template variables.</p>
+            <div class="step-cmd">echo 'npm run build' | snip add build --tags deploy</div>
           </div>
         </div>
         <div class="step reveal">
           <div class="step-num">2</div>
           <div class="step-content">
             <h3>Find</h3>
-            <p>Fuzzy search across all snippets. Or use the TUI with keyboard shortcuts.</p>
-            <div class="step-cmd">snip search deploy</div>
+            <p>Fuzzy search. fzf with live preview. Or press Ctrl+G inline in your shell.</p>
+            <div class="step-cmd">snip fzf</div>
           </div>
         </div>
         <div class="step reveal">
           <div class="step-num">3</div>
           <div class="step-content">
             <h3>Run</h3>
-            <p>Execute any snippet safely. Preview first, confirm, then run.</p>
-            <div class="step-cmd">snip run deploy-prod</div>
+            <p>Variables are prompted. Dangerous commands are flagged. Preview, confirm, execute.</p>
+            <div class="step-cmd">snip run deploy-prod --confirm</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- ═══ CTA ═══ -->
   <section class="cta-section" id="install">
     <h2>Ready to <em>snip?</em></h2>
-    <p>Install globally via npm and start building your library in seconds.</p>
+    <p class="cta-sub">One command. Zero config. Your first snippet in 10 seconds.</p>
     <div class="install-box">
       <span class="dollar">$</span>
       <span class="cmd">npm install -g snip-manager</span>
@@ -1181,24 +1223,26 @@
         <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
       </button>
     </div>
+    <div class="cta-links">
+      <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener">GitHub →</a>
+      <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener">npm →</a>
+      <a href="https://github.com/Bharath-code/snip#readme" target="_blank" rel="noopener">Documentation →</a>
+    </div>
   </section>
 
   <footer>
     <p>Built for developers who live in the terminal.</p>
-    <p style="margin-top: 0.5rem;">MIT License • <a href="#">Documentation</a> • <a href="#">GitHub</a></p>
+    <p style="margin-top: 0.5rem;">MIT License • <a href="https://github.com/Bharath-code/snip#readme" target="_blank" rel="noopener">Docs</a> • <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener">GitHub</a> • <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener">npm</a></p>
   </footer>
 
   <script>
-    // Mobile menu toggle
+    // Mobile menu
     const navToggle = document.querySelector('.nav-toggle');
     const navMobile = document.querySelector('.nav-mobile');
-    
     navToggle.addEventListener('click', () => {
       navToggle.classList.toggle('active');
       navMobile.classList.toggle('active');
     });
-
-    // Close menu when clicking a link
     document.querySelectorAll('.nav-mobile a').forEach(link => {
       link.addEventListener('click', () => {
         navToggle.classList.remove('active');
@@ -1206,11 +1250,10 @@
       });
     });
 
-    // Copy button functionality
+    // Copy button
     const copyBtn = document.querySelector('.copy-btn');
     copyBtn.addEventListener('click', async () => {
-      const cmd = 'npm install -g snip-manager';
-      await navigator.clipboard.writeText(cmd);
+      await navigator.clipboard.writeText('npm install -g snip-manager');
       copyBtn.classList.add('copied');
       copyBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
       setTimeout(() => {
@@ -1219,16 +1262,39 @@
       }, 2000);
     });
 
-    // Scroll reveal animations
+    // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('visible');
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Live npm download count + GitHub stars
+    async function fetchStats() {
+      try {
+        const npmRes = await fetch('https://api.npmjs.org/downloads/point/last-month/snip-manager');
+        const npmData = await npmRes.json();
+        if (npmData.downloads !== undefined) {
+          const count = npmData.downloads;
+          document.getElementById('npmDownloads').textContent = count >= 1000 
+            ? (count / 1000).toFixed(1) + 'k' 
+            : count.toLocaleString();
+        }
+      } catch (_) {}
+
+      try {
+        const ghRes = await fetch('https://api.github.com/repos/Bharath-code/snip');
+        const ghData = await ghRes.json();
+        if (ghData.stargazers_count !== undefined) {
+          const stars = ghData.stargazers_count;
+          document.getElementById('ghStars').textContent = stars >= 1000 
+            ? (stars / 1000).toFixed(1) + 'k' 
+            : stars.toLocaleString();
+        }
+      } catch (_) {}
+    }
+    fetchStats();
   </script>
 </body>
 </html>
