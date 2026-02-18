@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Bharath">
   <meta name="theme-color" content="#0c0c0c">
+  <!-- S2: Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://img.shields.io https://avatars.githubusercontent.com data:; connect-src https://api.npmjs.org https://api.github.com;">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="favicon.svg">
   <title>snip — Your Terminal Memory</title>
-  <meta name="description" content="snip is a CLI snippet manager that saves, searches, and runs code snippets in milliseconds. Parameterized templates, fzf integration, and dangerous command detection built in.">
+  <meta name="description"
+    content="snip is a CLI snippet manager that saves, searches, and runs code snippets in milliseconds. Parameterized templates, fzf integration, and dangerous command detection built in.">
   <link rel="canonical" href="https://bharath-code.github.io/snip/">
   <meta name="robots" content="index, follow">
   <meta name="google-site-verification" content="TpPfXeUVDiIUimzkBojIiZ6zm1iBBE2gxDkOt8G4Hjo" />
-  
+
   <!-- AI / LLM Discovery -->
   <meta name="ai-optimized" content="true">
   <meta name="llm-ready" content="true">
-  
+
   <!-- Open Graph -->
   <meta property="og:title" content="snip — Your Terminal Memory">
-  <meta property="og:description" content="Save, search, and run code snippets in milliseconds. Parameterized templates, Ctrl+G shell widget, fzf integration.">
+  <meta property="og:description"
+    content="Save, search, and run code snippets in milliseconds. Parameterized templates, Ctrl+G shell widget, fzf integration.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://bharath-code.github.io/snip/">
   <meta property="og:image" content="https://bharath-code.github.io/snip/og-image-snip.png">
   <meta property="og:locale" content="en_US">
   <meta property="og:site_name" content="snip">
-  
+
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="snip — Your Terminal Memory">
   <meta name="twitter:description" content="Save, search, and run code snippets in milliseconds.">
   <meta name="twitter:image" content="https://bharath-code.github.io/snip/og-image-snip.png">
-  
+
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
@@ -55,7 +61,7 @@
     "codeRepository": "https://github.com/Bharath-code/snip"
   }
   </script>
-  
+
   <!-- HowTo Schema -->
   <script type="application/ld+json">
   {
@@ -82,7 +88,7 @@
     ]
   }
   </script>
-  
+
   <!-- FAQ Schema -->
   <script type="application/ld+json">
   {
@@ -132,10 +138,18 @@
     ]
   }
   </script>
-  
+
+  <!-- P1: Non-blocking font loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    as="style" onload="this.rel='stylesheet'">
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet">
+  </noscript>
   <style>
     :root {
       --ink: #0c0c0c;
@@ -151,8 +165,63 @@
       --warning: #ca8a04;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* X2: Skip to content */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--accent);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+      z-index: 9999;
+      transition: top 0.2s;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    /* U4: Focus-visible rings for keyboard nav */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    /* X1: Skeleton shimmer for stats */
+    @keyframes shimmer {
+      0% {
+        background-position: -400px 0;
+      }
+
+      100% {
+        background-position: 400px 0;
+      }
+    }
+
+    .stat-skeleton {
+      display: inline-block;
+      width: 60px;
+      height: 1.6rem;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+      background-size: 400px 100%;
+      animation: shimmer 1.4s infinite;
+    }
 
     body {
       font-family: 'DM Sans', sans-serif;
@@ -160,6 +229,7 @@
       color: var(--ink);
       line-height: 1.5;
       overflow-x: hidden;
+      /* U5: scoped to body only, not * */
     }
 
     body::before {
@@ -175,7 +245,9 @@
     /* ═══ Navigation ═══ */
     nav {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 100;
       padding: 1.25rem 3rem;
       display: flex;
@@ -196,7 +268,8 @@
     }
 
     .logo-icon {
-      width: 32px; height: 32px;
+      width: 32px;
+      height: 32px;
       background: var(--ink);
       border-radius: 6px;
       display: flex;
@@ -222,11 +295,14 @@
       transition: color 0.2s;
     }
 
-    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover {
+      color: var(--ink);
+    }
 
-    .nav-cta {
-      background: var(--ink) !important;
-      color: var(--paper) !important;
+    /* U1: removed !important — specificity fixed via .nav-links .nav-cta */
+    .nav-links .nav-cta {
+      background: var(--ink);
+      color: var(--paper);
       padding: 0.65rem 1.4rem;
       border-radius: 6px;
       font-weight: 600;
@@ -234,7 +310,9 @@
       transition: all 0.2s;
     }
 
-    .nav-cta:hover { background: var(--accent) !important; }
+    .nav-links .nav-cta:hover {
+      background: var(--accent);
+    }
 
     .nav-toggle {
       display: none;
@@ -247,19 +325,30 @@
     }
 
     .nav-toggle span {
-      width: 24px; height: 2px;
+      width: 24px;
+      height: 2px;
       background: var(--ink);
       transition: all 0.3s;
     }
 
-    .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-    .nav-toggle.active span:nth-child(2) { opacity: 0; }
-    .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    .nav-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .nav-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
 
     .nav-mobile {
       display: none;
       position: fixed;
-      top: 60px; left: 0; right: 0;
+      top: 60px;
+      left: 0;
+      right: 0;
       background: var(--paper);
       border-bottom: 1px solid var(--border);
       padding: 1.5rem;
@@ -268,7 +357,10 @@
       z-index: 99;
     }
 
-    .nav-mobile.active { display: flex; }
+    .nav-mobile.active {
+      display: flex;
+    }
+
     .nav-mobile a {
       color: var(--ink);
       text-decoration: none;
@@ -290,7 +382,10 @@
       position: relative;
     }
 
-    .hero-content { position: relative; z-index: 2; }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
 
     /* Social proof badges */
     .hero-badges {
@@ -307,7 +402,9 @@
       transition: transform 0.2s;
     }
 
-    .hero-badges a:hover { transform: translateY(-2px); }
+    .hero-badges a:hover {
+      transform: translateY(-2px);
+    }
 
     .hero h1 {
       font-family: 'Instrument Serif', serif;
@@ -356,7 +453,11 @@
       font-family: inherit;
     }
 
-    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
     .btn-primary:hover {
       background: var(--accent-light);
       transform: translateY(-2px);
@@ -386,13 +487,21 @@
     }
 
     .btn-github svg {
-      width: 18px; height: 18px;
+      width: 18px;
+      height: 18px;
       fill: currentColor;
     }
 
     @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* ═══ Terminal Visual ═══ */
@@ -405,14 +514,16 @@
       background: var(--ink);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 
+      box-shadow:
         0 40px 80px rgba(0, 0, 0, 0.25),
         0 0 0 1px rgba(255, 255, 255, 0.05);
       transform: rotate(-2deg);
       transition: transform 0.4s ease;
     }
 
-    .terminal-large:hover { transform: rotate(0deg) scale(1.02); }
+    .terminal-large:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
 
     .terminal-header {
       display: flex;
@@ -423,10 +534,23 @@
       border-bottom: 1px solid #2a2a2a;
     }
 
-    .terminal-btn { width: 11px; height: 11px; border-radius: 50%; }
-    .terminal-btn.red { background: #ff5f56; }
-    .terminal-btn.yellow { background: #ffbd2e; }
-    .terminal-btn.green { background: #27c93f; }
+    .terminal-btn {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .terminal-btn.red {
+      background: #ff5f56;
+    }
+
+    .terminal-btn.yellow {
+      background: #ffbd2e;
+    }
+
+    .terminal-btn.green {
+      background: #27c93f;
+    }
 
     .terminal-title {
       margin-left: 1rem;
@@ -448,32 +572,64 @@
       margin-bottom: 0.25rem;
     }
 
-    .prompt { color: var(--accent); }
-    .cmd { color: #f5f5f5; }
-    .comment { color: var(--subtle); }
-    .tag { 
-      color: var(--ink); 
-      background: var(--paper-dark); 
-      padding: 0.1rem 0.35rem; 
-      border-radius: 3px; 
-      font-size: 0.65rem; 
+    .prompt {
+      color: var(--accent);
+    }
+
+    .cmd {
+      color: #f5f5f5;
+    }
+
+    .comment {
+      color: var(--subtle);
+    }
+
+    .tag {
+      color: var(--ink);
+      background: var(--paper-dark);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.65rem;
       margin-left: 0.25rem;
     }
-    .success { color: var(--success); }
-    .warning { color: var(--warning); }
-    .var-highlight { color: #a78bfa; }
+
+    .success {
+      color: var(--success);
+    }
+
+    .warning {
+      color: var(--warning);
+    }
+
+    .var-highlight {
+      color: #a78bfa;
+    }
 
     .deco-blob {
       position: absolute;
-      width: 400px; height: 400px;
+      width: 400px;
+      height: 400px;
       background: var(--accent-glow);
       border-radius: 50%;
       filter: blur(80px);
       z-index: -1;
+      will-change: transform;
+      /* P4: GPU hint */
+      contain: layout paint;
+      /* P4: reduce repaint scope */
     }
 
-    .deco-blob-1 { top: -100px; right: -100px; }
-    .deco-blob-2 { bottom: -150px; left: -100px; width: 300px; height: 300px; }
+    .deco-blob-1 {
+      top: -100px;
+      right: -100px;
+    }
+
+    .deco-blob-2 {
+      bottom: -150px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+    }
 
     /* ═══ Social Proof Bar ═══ */
     .proof-bar {
@@ -525,7 +681,9 @@
       margin: 0 auto;
     }
 
-    .section-header { margin-bottom: 5rem; }
+    .section-header {
+      margin-bottom: 5rem;
+    }
 
     .section-label {
       font-size: 0.75rem;
@@ -625,7 +783,9 @@
       border-bottom: 2px solid var(--border);
     }
 
-    .comparison th:first-child { width: 30%; }
+    .comparison th:first-child {
+      width: 30%;
+    }
 
     .comparison th.snip-col {
       color: var(--accent);
@@ -651,11 +811,24 @@
       font-weight: 500;
     }
 
-    .comparison tr:last-child td { border-bottom: none; }
-    .comparison tr:last-child td.snip-col { border-radius: 0 0 8px 8px; }
+    .comparison tr:last-child td {
+      border-bottom: none;
+    }
 
-    .check { color: var(--success); font-weight: 700; }
-    .cross { color: #d4d4d4; }
+    .comparison tr:last-child td.snip-col {
+      border-radius: 0 0 8px 8px;
+    }
+
+    .check {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .cross {
+      color: #9ca3af;
+    }
+
+    /* U3: was #d4d4d4, fails WCAG AA — now passes 3:1 */
 
     /* ═══ How it works ═══ */
     .how-it-works {
@@ -669,8 +842,10 @@
     .how-it-works::before {
       content: '';
       position: absolute;
-      top: 0; right: 0;
-      width: 50%; height: 100%;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
       background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 60%);
       opacity: 0.5;
     }
@@ -691,15 +866,32 @@
       margin-bottom: 1.5rem;
     }
 
-    .hiw-left h2 em { font-style: italic; color: var(--accent); }
-    .hiw-left p { color: var(--subtle); font-size: 1.1rem; max-width: 400px; }
+    .hiw-left h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
 
-    .steps { display: flex; flex-direction: column; gap: 2rem; }
+    .hiw-left p {
+      color: var(--subtle);
+      font-size: 1.1rem;
+      max-width: 400px;
+    }
 
-    .step { display: flex; gap: 1.5rem; align-items: flex-start; }
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
 
     .step-num {
-      width: 48px; height: 48px;
+      width: 48px;
+      height: 48px;
       background: var(--accent);
       border-radius: 50%;
       display: flex;
@@ -712,8 +904,16 @@
       flex-shrink: 0;
     }
 
-    .step-content h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.4rem; }
-    .step-content p { color: var(--subtle); font-size: 0.95rem; }
+    .step-content h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .step-content p {
+      color: var(--subtle);
+      font-size: 0.95rem;
+    }
 
     .step-cmd {
       margin-top: 0.6rem;
@@ -738,9 +938,11 @@
     .cta-section::before {
       content: '';
       position: absolute;
-      top: 50%; left: 50%;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
-      width: 500px; height: 500px;
+      width: 500px;
+      height: 500px;
       background: var(--accent-glow);
       border-radius: 50%;
       filter: blur(100px);
@@ -755,7 +957,10 @@
       position: relative;
     }
 
-    .cta-section h2 em { font-style: italic; color: var(--accent); }
+    .cta-section h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
 
     .cta-section .cta-sub {
       color: var(--muted);
@@ -793,17 +998,42 @@
     .copy-btn {
       background: rgba(255, 255, 255, 0.1);
       border: none;
-      padding: 1rem;
+      padding: 1rem 1.25rem;
       cursor: pointer;
       display: flex;
       align-items: center;
+      gap: 0.4rem;
       justify-content: center;
       transition: all 0.2s;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--paper);
     }
 
-    .copy-btn:hover { background: rgba(255, 255, 255, 0.2); }
-    .copy-btn svg { width: 18px; height: 18px; fill: var(--paper); }
-    .copy-btn.copied svg { fill: var(--success); }
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .copy-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--paper);
+      flex-shrink: 0;
+    }
+
+    .copy-btn.copied svg {
+      fill: var(--success);
+    }
+
+    .copy-btn.copied {
+      color: var(--success);
+    }
+
+    .copy-label {
+      font-size: 0.7rem;
+    }
+
+    /* X3: visible Copied! label */
 
     .cta-links {
       display: flex;
@@ -820,7 +1050,9 @@
       transition: color 0.2s;
     }
 
-    .cta-links a:hover { color: var(--accent); }
+    .cta-links a:hover {
+      color: var(--accent);
+    }
 
     /* ═══ Footer ═══ */
     footer {
@@ -838,7 +1070,9 @@
       font-weight: 500;
     }
 
-    footer a:hover { color: var(--accent); }
+    footer a:hover {
+      color: var(--accent);
+    }
 
     /* ═══ Responsive ═══ */
     @media (max-width: 1024px) {
@@ -848,54 +1082,187 @@
         padding: 7rem 1.5rem 4rem;
       }
 
-      .hero-badges { justify-content: center; }
-      .hero-subtitle { margin-left: auto; margin-right: auto; }
-      .hero-cta { justify-content: center; }
-      .hero-visual { max-width: 100%; margin: 3rem auto 0; padding: 0 1rem; }
-      .terminal-large { max-width: 100%; }
-      .features-grid { grid-template-columns: repeat(2, 1fr); }
-      .hiw-content { grid-template-columns: 1fr; gap: 3rem; padding: 0 1.5rem; }
-      .proof-inner { gap: 2rem; }
+      .hero-badges {
+        justify-content: center;
+      }
+
+      .hero-subtitle {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-cta {
+        justify-content: center;
+      }
+
+      .hero-visual {
+        max-width: 100%;
+        margin: 3rem auto 0;
+        padding: 0 1rem;
+      }
+
+      .terminal-large {
+        max-width: 100%;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hiw-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding: 0 1.5rem;
+      }
+
+      .proof-inner {
+        gap: 2rem;
+      }
     }
 
     @media (max-width: 768px) {
-      .features { padding: 4rem 1.25rem; }
-      .features-grid { grid-template-columns: 1fr; }
-      .section-header { margin-bottom: 3rem; }
-      .section-header h2 { font-size: 2rem; }
-      .comparison { padding: 4rem 1rem; overflow-x: auto; }
-      .comparison table { min-width: 600px; }
+      .features {
+        padding: 4rem 1.25rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        margin-bottom: 3rem;
+      }
+
+      .section-header h2 {
+        font-size: 2rem;
+      }
+
+      .comparison {
+        padding: 4rem 1rem;
+        overflow-x: auto;
+      }
+
+      .comparison table {
+        min-width: 600px;
+      }
     }
 
     @media (max-width: 640px) {
-      *, body { overflow-x: hidden; }
-      nav { padding: 1rem 1.25rem; }
-      .nav-links { display: none; }
-      .nav-toggle { display: flex; }
-      .hero { padding: 6rem 1rem 3rem; gap: 2rem; }
-      .hero-badges { gap: 0.35rem; }
-      .hero h1 { font-size: 2.25rem; }
-      .hero-subtitle { font-size: 1rem; }
-      .hero-cta { flex-direction: column; width: 100%; }
-      .hero-cta .btn { width: 100%; justify-content: center; }
-      .hero-visual { padding: 0 0.5rem; }
-      .terminal-large { transform: rotate(0deg); }
-      .terminal-body { font-size: 0.65rem; padding: 1rem; }
-      .features-grid { gap: 1rem; }
-      .feature-card { padding: 1.5rem; }
-      .how-it-works { padding: 4rem 1rem; }
-      .step-num { width: 36px; height: 36px; font-size: 0.9rem; }
-      .cta-section { padding: 5rem 1rem; }
-      .cta-section h2 { font-size: 2rem; }
-      .install-box { flex-direction: column; width: 100%; max-width: 280px; }
-      .install-box .dollar, .install-box .cmd { width: 100%; text-align: center; padding: 0.75rem; }
-      .proof-divider { display: none; }
-      .proof-inner { flex-direction: column; gap: 1.5rem; }
-      footer { padding: 2rem 1rem; }
+      body {
+        overflow-x: hidden;
+      }
+
+      /* U5: was *, body — * breaks position:sticky */
+      nav {
+        padding: 1rem 1.25rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-toggle {
+        display: flex;
+      }
+
+      .hero {
+        padding: 6rem 1rem 3rem;
+        gap: 2rem;
+      }
+
+      .hero-badges {
+        gap: 0.35rem;
+      }
+
+      .hero h1 {
+        font-size: 2.25rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .hero-cta .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero-visual {
+        padding: 0 0.5rem;
+      }
+
+      .terminal-large {
+        transform: rotate(0deg);
+      }
+
+      .terminal-body {
+        font-size: 0.65rem;
+        padding: 1rem;
+      }
+
+      .features-grid {
+        gap: 1rem;
+      }
+
+      .feature-card {
+        padding: 1.5rem;
+      }
+
+      .how-it-works {
+        padding: 4rem 1rem;
+      }
+
+      .step-num {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+
+      .cta-section {
+        padding: 5rem 1rem;
+      }
+
+      .cta-section h2 {
+        font-size: 2rem;
+      }
+
+      .install-box {
+        flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .install-box .dollar,
+      .install-box .cmd {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+      }
+
+      .proof-divider {
+        display: none;
+      }
+
+      .proof-inner {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      footer {
+        padding: 2rem 1rem;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
+
+      *,
+      *::before,
+      *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
       }
@@ -913,7 +1280,11 @@
     }
   </style>
 </head>
+
 <body>
+  <!-- X2: Skip to content for keyboard users -->
+  <a href="#features" class="skip-link">Skip to content</a>
+
   <div class="deco-blob deco-blob-1"></div>
   <div class="deco-blob deco-blob-2"></div>
 
@@ -946,21 +1317,33 @@
   <section class="hero">
     <div class="hero-content">
       <div class="hero-badges">
-        <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/v/snip-manager.svg?style=flat-square&color=ff4d00" alt="npm version" height="22"></a>
-        <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/dm/snip-manager.svg?style=flat-square&label=downloads&color=0c0c0c" alt="npm downloads" height="22"></a>
-        <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/Bharath-code/snip?style=flat-square&label=stars&color=0c0c0c" alt="GitHub stars" height="22"></a>
-        <a href="https://github.com/Bharath-code/snip/blob/main/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/l/snip-manager.svg?style=flat-square&color=16a34a" alt="MIT License" height="22"></a>
+        <!-- P5: lazy loading + explicit dimensions prevent layout shift -->
+        <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener"><img
+            src="https://img.shields.io/npm/v/snip-manager.svg?style=flat-square&color=ff4d00" alt="npm version"
+            width="90" height="22" loading="lazy"></a>
+        <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener"><img
+            src="https://img.shields.io/npm/dm/snip-manager.svg?style=flat-square&label=downloads&color=0c0c0c"
+            alt="npm downloads" width="110" height="22" loading="lazy"></a>
+        <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener"><img
+            src="https://img.shields.io/github/stars/Bharath-code/snip?style=flat-square&label=stars&color=0c0c0c"
+            alt="GitHub stars" width="80" height="22" loading="lazy"></a>
+        <a href="https://github.com/Bharath-code/snip/blob/main/LICENSE" target="_blank" rel="noopener"><img
+            src="https://img.shields.io/npm/l/snip-manager.svg?style=flat-square&color=16a34a" alt="MIT License"
+            width="70" height="22" loading="lazy"></a>
       </div>
       <h1>Stop digging<br>through <em>history</em></h1>
       <p class="hero-subtitle">
         Your terminal commands disappear. Your snippets don't.
-        Save once, find instantly, run anywhere — with safety rails 
+        Save once, find instantly, run anywhere — with safety rails
         and parameterized templates built in.
       </p>
       <div class="hero-cta">
         <a href="#install" class="btn btn-primary">npm install -g snip-manager</a>
         <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener" class="btn btn-github">
-          <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+          </svg>
           Star on GitHub
         </a>
       </div>
@@ -979,7 +1362,8 @@
           </div>
           <div class="terminal-line">
             <span class="prompt">$</span>
-            <span class="cmd">echo 'docker run <span class="var-highlight">{{image:ubuntu}}</span> <span class="var-highlight">{{cmd:bash}}</span>' | snip add dock</span>
+            <span class="cmd">echo 'docker run <span class="var-highlight">{{image:ubuntu}}</span> <span
+                class="var-highlight">{{cmd:bash}}</span>' | snip add dock</span>
           </div>
           <div class="terminal-line" style="margin-top: 1rem">
             <span class="comment"># Run it — snip asks for each variable</span>
@@ -989,10 +1373,11 @@
             <span class="cmd">snip run dock</span>
           </div>
           <div class="terminal-line">
-            <span class="cmd">  image <span class="comment">[ubuntu]</span>: <span class="var-highlight">node:20</span></span>
+            <span class="cmd"> image <span class="comment">[ubuntu]</span>: <span
+                class="var-highlight">node:20</span></span>
           </div>
           <div class="terminal-line">
-            <span class="cmd">  cmd <span class="comment">[bash]</span>: <span class="var-highlight">sh</span></span>
+            <span class="cmd"> cmd <span class="comment">[bash]</span>: <span class="var-highlight">sh</span></span>
           </div>
           <div class="terminal-line">
             <span class="warning">⚠ Preview:</span> <span class="cmd">docker run node:20 sh</span>
@@ -1009,12 +1394,13 @@
   <section class="proof-bar" id="stats">
     <div class="proof-inner">
       <div class="proof-stat">
-        <span class="num" id="npmDownloads">—</span>
+        <!-- X1: skeleton shimmer while API loads -->
+        <span class="num" id="npmDownloads"><span class="stat-skeleton" aria-hidden="true"></span></span>
         <span class="label">npm downloads</span>
       </div>
       <div class="proof-divider"></div>
       <div class="proof-stat">
-        <span class="num" id="ghStars">—</span>
+        <span class="num" id="ghStars"><span class="stat-skeleton" aria-hidden="true"></span></span>
         <span class="label">GitHub stars</span>
       </div>
       <div class="proof-divider"></div>
@@ -1100,11 +1486,12 @@
       <table>
         <thead>
           <tr>
-            <th>Feature</th>
-            <th class="snip-col">snip</th>
-            <th>pet</th>
-            <th>navi</th>
-            <th>aliases</th>
+            <!-- U2: scope attributes for screen reader association -->
+            <th scope="col">Feature</th>
+            <th scope="col" class="snip-col">snip</th>
+            <th scope="col">pet</th>
+            <th scope="col">navi</th>
+            <th scope="col">aliases</th>
           </tr>
         </thead>
         <tbody>
@@ -1219,8 +1606,13 @@
     <div class="install-box">
       <span class="dollar">$</span>
       <span class="cmd">npm install -g snip-manager</span>
-      <button class="copy-btn" aria-label="Copy to clipboard">
-        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+      <!-- X3: visible Copied! label + S1: DOM-safe (no innerHTML) -->
+      <button class="copy-btn" id="copyBtn" aria-label="Copy install command to clipboard">
+        <svg id="copyIcon" viewBox="0 0 24 24">
+          <path
+            d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+        </svg>
+        <span class="copy-label" id="copyLabel">Copy</span>
       </button>
     </div>
     <div class="cta-links">
@@ -1232,7 +1624,10 @@
 
   <footer>
     <p>Built for developers who live in the terminal.</p>
-    <p style="margin-top: 0.5rem;">MIT License • <a href="https://github.com/Bharath-code/snip#readme" target="_blank" rel="noopener">Docs</a> • <a href="https://github.com/Bharath-code/snip" target="_blank" rel="noopener">GitHub</a> • <a href="https://www.npmjs.com/package/snip-manager" target="_blank" rel="noopener">npm</a></p>
+    <p style="margin-top: 0.5rem;">MIT License • <a href="https://github.com/Bharath-code/snip#readme" target="_blank"
+        rel="noopener">Docs</a> • <a href="https://github.com/Bharath-code/snip" target="_blank"
+        rel="noopener">GitHub</a> • <a href="https://www.npmjs.com/package/snip-manager" target="_blank"
+        rel="noopener">npm</a></p>
   </footer>
 
   <script>
@@ -1250,16 +1645,38 @@
       });
     });
 
-    // Copy button
-    const copyBtn = document.querySelector('.copy-btn');
+    // S1 + X3: DOM-safe copy button with visible Copied! label
+    const copyBtn = document.getElementById('copyBtn');
+    const copyIcon = document.getElementById('copyIcon');
+    const copyLabel = document.getElementById('copyLabel');
+    const COPY_SVG = 'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z';
+    const CHECK_SVG = 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z';
+
     copyBtn.addEventListener('click', async () => {
-      await navigator.clipboard.writeText('npm install -g snip-manager');
-      copyBtn.classList.add('copied');
-      copyBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
-      setTimeout(() => {
-        copyBtn.classList.remove('copied');
-        copyBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
-      }, 2000);
+      const cmd = 'npm install -g snip-manager';
+      // S4: clipboard fallback for non-HTTPS contexts
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(cmd);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = cmd;
+          ta.style.cssText = 'position:fixed;opacity:0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        // S1: DOM API, no innerHTML
+        copyIcon.querySelector('path').setAttribute('d', CHECK_SVG);
+        copyLabel.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyIcon.querySelector('path').setAttribute('d', COPY_SVG);
+          copyLabel.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      } catch (_) { }
     });
 
     // Scroll reveal
@@ -1270,31 +1687,67 @@
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Live npm download count + GitHub stars
-    async function fetchStats() {
-      try {
-        const npmRes = await fetch('https://api.npmjs.org/downloads/point/last-month/snip-manager');
-        const npmData = await npmRes.json();
-        if (npmData.downloads !== undefined) {
-          const count = npmData.downloads;
-          document.getElementById('npmDownloads').textContent = count >= 1000 
-            ? (count / 1000).toFixed(1) + 'k' 
-            : count.toLocaleString();
-        }
-      } catch (_) {}
+    // P3 + S3: Live stats with localStorage cache (1hr TTL) + AbortController timeout
+    const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
-      try {
-        const ghRes = await fetch('https://api.github.com/repos/Bharath-code/snip');
-        const ghData = await ghRes.json();
-        if (ghData.stargazers_count !== undefined) {
-          const stars = ghData.stargazers_count;
-          document.getElementById('ghStars').textContent = stars >= 1000 
-            ? (stars / 1000).toFixed(1) + 'k' 
-            : stars.toLocaleString();
-        }
-      } catch (_) {}
+    function formatNum(n) {
+      return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n.toLocaleString();
     }
+
+    function setStatText(id, text) {
+      const el = document.getElementById(id);
+      el.textContent = text; // replaces skeleton
+    }
+
+    async function fetchWithTimeout(url, ms = 5000) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      try {
+        const res = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(timer);
+        return res;
+      } catch (e) {
+        clearTimeout(timer);
+        throw e;
+      }
+    }
+
+    async function fetchStats() {
+      const now = Date.now();
+
+      // npm downloads
+      try {
+        const cached = JSON.parse(localStorage.getItem('snip_npm') || 'null');
+        if (cached && now - cached.ts < CACHE_TTL) {
+          setStatText('npmDownloads', formatNum(cached.v));
+        } else {
+          const res = await fetchWithTimeout('https://api.npmjs.org/downloads/point/last-month/snip-manager');
+          const data = await res.json();
+          if (data.downloads !== undefined) {
+            localStorage.setItem('snip_npm', JSON.stringify({ v: data.downloads, ts: now }));
+            setStatText('npmDownloads', formatNum(data.downloads));
+          }
+        }
+      } catch (_) { setStatText('npmDownloads', '—'); }
+
+      // GitHub stars
+      try {
+        const cached = JSON.parse(localStorage.getItem('snip_gh') || 'null');
+        if (cached && now - cached.ts < CACHE_TTL) {
+          setStatText('ghStars', formatNum(cached.v));
+        } else {
+          const res = await fetchWithTimeout('https://api.github.com/repos/Bharath-code/snip');
+          const data = await res.json();
+          if (data.stargazers_count !== undefined) {
+            localStorage.setItem('snip_gh', JSON.stringify({ v: data.stargazers_count, ts: now }));
+            setStatText('ghStars', formatNum(data.stargazers_count));
+          }
+        }
+      } catch (_) { setStatText('ghStars', '—'); }
+    }
+
     fetchStats();
   </script>
 </body>
+
 </html>
