@@ -98,13 +98,16 @@ snip --version
 |---------|-------------|
 | `snip add <name> --lang <lang> --tags <tag1,tag2>` | Save a new snippet from stdin or editor |
 | `snip ui` | Launch interactive TUI with fuzzy search |
-| `snip list` | List all saved snippets |
+| `snip list [--json]` | List all saved snippets (JSON for scripting) |
 | `snip search <query>` | Fuzzy search across all snippets |
-| `snip run <id\|name>` | Execute a snippet safely |
+| `snip run <id\|name>` | Execute a snippet safely (with template prompts) |
 | `snip edit <id\|name>` | Edit snippet content inline |
 | `snip update <id\|name> --tags <t> --lang <l>` | Update snippet tags or language |
 | `snip delete <id\|name>` | Remove a snippet (alias: `snip rm`) |
 | `snip fzf` | Search snippets via fzf with live preview |
+| `snip grab <url>` | Import a snippet from a URL or `github:user/repo/path` |
+| `snip stats` | Show snippet library statistics |
+| `snip widget [shell]` | Output Ctrl+G shell widget for zsh/bash/fish |
 | `snip sync push [query]` | Upload matching snippets to GitHub Gist |
 | `snip sync pull <gist-id>` | Download snippets from GitHub Gist |
 | `snip config` | View or modify configuration |
@@ -162,6 +165,55 @@ snip automatically detects potentially dangerous commands:
 - Commands that could modify system state
 
 Preview is shown before execution — you confirm before running.
+
+### Parameterized Snippets
+
+Use `{{variable}}` and `{{variable:default}}` syntax for reusable templates:
+
+```bash
+# Save a parameterized snippet
+echo 'docker run --rm -it -v "{{dir:$PWD}}":/work {{image:ubuntu:24.04}} {{cmd:bash}}' \
+  | snip add docker-dev --lang sh --tags docker
+
+# Run it — snip prompts for each variable
+snip run docker-dev
+#   dir [/Users/me/project]: _
+#   image [ubuntu:24.04]: node:20
+#   cmd [bash]: sh
+```
+
+Variables support environment variable defaults with `{{name:$ENV_VAR}}`.
+
+### Grab from URL
+
+Import snippets directly from any URL:
+
+```bash
+# Grab from a raw URL
+snip grab https://gist.githubusercontent.com/.../deploy.sh --tags deploy
+
+# Shorthand for GitHub files
+snip grab github:user/repo/scripts/backup.sh
+```
+
+Language is auto-detected from file extension and shebang.
+
+### Shell Widget (Ctrl+G)
+
+Bind snip to a hotkey — search and paste snippets inline without leaving your prompt:
+
+```bash
+# Zsh — add to ~/.zshrc
+eval "$(snip widget zsh)"
+
+# Bash — add to ~/.bashrc
+eval "$(snip widget bash)"
+
+# Fish — add to ~/.config/fish/config.fish
+snip widget fish | source
+
+# Now press Ctrl+G anywhere to search and insert a snippet
+```
 
 ### GitHub Gist Sync
 
