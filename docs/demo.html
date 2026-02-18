@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>snip — Product Demo</title>
+    <meta name="description"
+        content="A comprehensive tour of snip's features, from basic shell commands to advanced parameterized templates and TUI.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --ink: #0c0c0c;
+            --paper: #faf9f7;
+            --paper-dark: #e8e6e3;
+            --accent: #ff4d00;
+            --accent-light: #ff7a33;
+            --accent-glow: rgba(255, 77, 0, 0.15);
+            --muted: #6b6b6b;
+            --subtle: #a3a3a3;
+            --border: #d4d4d4;
+            --success: #16a34a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.6;
+            padding-top: 5rem;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.25rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(250, 249, 247, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 600;
+            font-size: 1.4rem;
+            text-decoration: none;
+            color: var(--ink);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--ink);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--paper);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-top: 3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--muted);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--paper-dark);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--ink);
+            color: #faf9f7;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .tip {
+            background: var(--accent-glow);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 2rem 0;
+        }
+
+        .tip-title {
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--subtle);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">S</div>
+            <span>snip</span>
+        </a>
+        <a href="https://github.com/Bharath-code/snip" class="logo"
+            style="font-size: 0.9rem; font-weight: 500; color: var(--muted)">GitHub</a>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">← Back to home</a>
+
+        <h1>🚀 Full Product Demo</h1>
+        <p>Welcome to the ultimate guide for <code>snip</code>. This document will walk you through everything from your
+            first snippet to advanced shell integration.</p>
+
+        <h2>1. Installation & Setup</h2>
+        <p>Get <code>snip</code> running on your machine in seconds.</p>
+        <pre># Install globally
+npm install -g snip-manager
+
+# Set up the shell widget (for Ctrl+G magic)
+eval "$(snip widget)"</pre>
+
+        <h2>2. Core Workflow: Capture, Find, Run</h2>
+
+        <h3>📥 Capture: Saving snippets</h3>
+        <pre># Interactive add (opens $EDITOR)
+snip add my_script --lang js --tags node,util
+
+# Pipe directly
+echo "curl -X POST http://api.local/dev" | snip add quick_post</pre>
+
+        <h3>🔍 Find: Listing your collection</h3>
+        <pre># List all snippets
+snip list
+
+# Filter by tag or sort by most used
+snip list --tag node --sort usage</pre>
+
+        <h3>🏃 Run: Instant execution</h3>
+        <pre>snip run quick_post</pre>
+
+        <h2>3. Advanced Features</h2>
+
+        <h3>🎚️ Parameters (Templates)</h3>
+        <p>Use <code>{{name}}</code> or <code>{{name:default}}</code> in your snippets. <code>snip</code> will
+            interactively prompt you for values when running.</p>
+        <pre>docker run --rm -it {{image:ubuntu:24.04}} {{cmd:bash}}</pre>
+
+        <h3>🔗 Grab: Import from the Web</h3>
+        <pre>snip grab github:user/repo/scripts/backup.sh --name backup</pre>
+
+        <h3>⚡ Smart Search (fzf)</h3>
+        <pre>snip fzf</pre>
+
+        <h2>4. UI/UX & Safety</h2>
+
+        <div class="tip">
+            <div class="tip-title">⚠ Safety First</div>
+            <p>snip automatically detects dangerous commands like <code>rm -rf</code>. If a snippet is risky, it will
+                demand an explicit "yes" confirmation.</p>
+        </div>
+
+        <h3>🎨 Beautiful Terminal UI</h3>
+        <p>Launch a full-screen interactive view of your library with <code>snip ui</code>.</p>
+
+        <h3>⌨️ Shell Widget (Ctrl+G)</h3>
+        <p>Press <code>Ctrl+G</code> anytime in your terminal to fuzzy-search and insert snippets directly into your
+            prompt.</p>
+
+        <h2>5. Maintenance</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>snip config</code></td>
+                    <td>View and edit settings</td>
+                </tr>
+                <tr>
+                    <td><code>snip export</code></td>
+                    <td>Backup library to JSON</td>
+                </tr>
+                <tr>
+                    <td><code>snip show --edit</code></td>
+                    <td>Quickly edit an existing snippet</td>
+                </tr>
+                <tr>
+                    <td><code>snip stats</code></td>
+                    <td>See your productivity data</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="tip">
+            <div class="tip-title">Pro Tip: SQLite</div>
+            <p>For large libraries, enable SQLite in your config for blazing-fast performance:</p>
+            <pre>snip config set useSqlite true</pre>
+        </div>
+    </main>
+
+    <footer>
+        Built for developers who live in the terminal. ⚡
+    </footer>
+
+</body>
+
+</html>
