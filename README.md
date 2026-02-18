@@ -1,5 +1,7 @@
 # snip — CLI Snippet Manager
 
+🌐 **[Website](https://bharath-code.github.io/snip/)** · 📦 **[npm](https://www.npmjs.com/package/snip-manager)** · 📖 **[Docs](https://github.com/Bharath-code/snip#readme)**
+
 <p align="center">
   <a href="https://www.npmjs.com/package/snip-manager">
     <img src="https://img.shields.io/npm/v/snip-manager.svg" alt="npm version">
