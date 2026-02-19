@@ -1,6 +1,6 @@
 {
   "name": "snip-manager",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Fast, terminal-native CLI snippet manager with TUI and SQLite/Gist sync.",
   "homepage": "https://bharath-code.github.io/snip/",
   "bin": {
