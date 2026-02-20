@@ -152,15 +152,15 @@
   </noscript>
   <style>
     :root {
-      --ink: #0c0c0c;
-      --paper: #faf9f7;
-      --paper-dark: #e8e6e3;
+      --ink: #faf9f7;
+      --paper: #0c0c0c;
+      --paper-dark: #1a1a1a;
       --accent: #ff4d00;
       --accent-light: #ff7a33;
       --accent-glow: rgba(255, 77, 0, 0.15);
-      --muted: #6b6b6b;
-      --subtle: #a3a3a3;
-      --border: #d4d4d4;
+      --muted: #a3a3a3;
+      --subtle: #6b6b6b;
+      --border: #333333;
       --success: #16a34a;
       --warning: #ca8a04;
     }
@@ -253,7 +253,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(250, 249, 247, 0.85);
+      background: rgba(12, 12, 12, 0.85);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
@@ -511,12 +511,12 @@
     }
 
     .terminal-large {
-      background: var(--ink);
+      background: #000;
       border-radius: 16px;
       overflow: hidden;
       box-shadow:
-        0 40px 80px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
+        0 40px 80px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
       transform: rotate(-2deg);
       transition: transform 0.4s ease;
     }
@@ -634,7 +634,7 @@
     /* ═══ Social Proof Bar ═══ */
     .proof-bar {
       padding: 2.5rem 3rem;
-      background: var(--ink);
+      background: var(--paper-dark);
       text-align: center;
     }
 
@@ -656,7 +656,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 1.6rem;
       font-weight: 600;
-      color: var(--paper);
+      color: var(--ink);
       display: block;
     }
 
@@ -709,18 +709,19 @@
     }
 
     .feature-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: transparent;
+      border: none;
+      border-top: 1px solid var(--border);
+      border-radius: 0;
+      padding: 2rem 0;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
     }
 
     .feature-card:hover {
-      border-color: var(--ink);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      transform: translateY(-4px);
+      box-shadow: none;
+      border-top-color: var(--accent);
     }
 
     .feature-icon {
@@ -744,7 +745,7 @@
 
     .feature-cmd {
       margin-top: 0.75rem;
-      background: var(--ink);
+      background: #000;
       color: var(--accent-light);
       padding: 0.4rem 0.65rem;
       border-radius: 4px;
@@ -756,7 +757,7 @@
     /* ═══ Comparison ═══ */
     .comparison {
       padding: 6rem 3rem;
-      background: #fafafa;
+      background: var(--paper-dark);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
     }
@@ -796,7 +797,7 @@
     .comparison td {
       padding: 0.65rem 1rem;
       font-size: 0.875rem;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border);
       color: var(--muted);
     }
 
@@ -833,8 +834,8 @@
     /* ═══ How it works ═══ */
     .how-it-works {
       padding: 8rem 3rem;
-      background: var(--ink);
-      color: var(--paper);
+      background: var(--paper-dark);
+      color: var(--ink);
       position: relative;
       overflow: hidden;
     }
@@ -972,10 +973,10 @@
     .install-box {
       display: inline-flex;
       align-items: center;
-      background: var(--ink);
+      background: #000;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
       position: relative;
       margin-bottom: 1.5rem;
     }
@@ -992,7 +993,7 @@
       padding: 1rem 1.25rem 1rem 0.75rem;
       font-family: 'JetBrains Mono', monospace;
       font-size: 1rem;
-      color: var(--paper);
+      color: var(--ink);
     }
 
     .copy-btn {
@@ -1007,7 +1008,7 @@
       transition: all 0.2s;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
-      color: var(--paper);
+      color: var(--ink);
     }
 
     .copy-btn:hover {
@@ -1109,6 +1110,11 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
+      .feature-card:nth-child(n) {
+        grid-column: span 1;
+        margin-top: 0;
+      }
+
       .hiw-content {
         grid-template-columns: 1fr;
         gap: 3rem;
@@ -1127,6 +1133,11 @@
 
       .features-grid {
         grid-template-columns: 1fr;
+      }
+
+      .feature-card:nth-child(n) {
+        grid-column: span 1;
+        margin-top: 0;
       }
 
       .section-header {
@@ -1769,6 +1780,15 @@
     }
 
     fetchStats();
+
+    /* Dynamic Terminal Perspective */
+    const terminal = document.querySelector('.terminal-large');
+    document.addEventListener('mousemove', (e) => {
+      if (!terminal) return;
+      const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+      const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+      terminal.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+    });
   </script>
 </body>
 

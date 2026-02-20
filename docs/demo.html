@@ -17,15 +17,15 @@
 
     <style>
         :root {
-            --ink: #0c0c0c;
-            --paper: #faf9f7;
-            --paper-dark: #e8e6e3;
+            --ink: #faf9f7;
+            --paper: #0c0c0c;
+            --paper-dark: #1a1a1a;
             --accent: #ff4d00;
             --accent-light: #ff7a33;
             --accent-glow: rgba(255, 77, 0, 0.15);
-            --muted: #6b6b6b;
-            --subtle: #a3a3a3;
-            --border: #d4d4d4;
+            --muted: #a3a3a3;
+            --subtle: #6b6b6b;
+            --border: #333333;
             --success: #16a34a;
         }
 
@@ -43,6 +43,16 @@
             padding-top: 5rem;
         }
 
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
         header {
             position: fixed;
             top: 0;
@@ -53,7 +63,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(250, 249, 247, 0.85);
+            background: rgba(12, 12, 12, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
         }
@@ -127,22 +137,49 @@
         }
 
         pre {
-            background: var(--ink);
-            color: #faf9f7;
-            padding: 1.5rem;
+            position: relative;
+            background: var(--paper-dark);
+            color: var(--ink);
+            padding: 3rem 1.5rem 1.5rem;
             border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow-x: auto;
             margin-bottom: 2rem;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
         }
 
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff5f56;
+            box-shadow: 18px 0 0 #ffbd2e, 36px 0 0 #27c93f;
+        }
+
         .tip {
-            background: var(--accent-glow);
-            border-left: 4px solid var(--accent);
+            background: transparent;
+            border: 1px solid var(--border);
+            border-left: 2px solid var(--accent);
             padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0;
+            position: relative;
+            overflow: hidden;
             margin: 2rem 0;
+        }
+
+        .tip::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            opacity: 0.05;
+            pointer-events: none;
         }
 
         .tip-title {
