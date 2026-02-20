@@ -48,6 +48,7 @@
   "dependencies": {
     "blessed": "^0.1.81",
     "chalk": "^5.6.2",
+    "cli-highlight": "^2.1.11",
     "commander": "^14.0.3",
     "fs-extra": "^11.3.3",
     "fuse.js": "^7.1.0",
