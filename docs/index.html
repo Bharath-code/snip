@@ -1427,6 +1427,12 @@
     </div>
     <div class="features-grid">
       <div class="feature-card reveal">
+        <span class="feature-icon">⚡</span>
+        <h3>Zero-Friction Exec</h3>
+        <p>Run any snippet immediately — no preview modal. Dry-run, force mode, and template prompts built in.</p>
+        <span class="feature-cmd">snip exec deploy-api</span>
+      </div>
+      <div class="feature-card reveal">
         <span class="feature-icon">🧩</span>
         <h3>Parameterized Templates</h3>
         <p>Variables with defaults. Prompt at runtime. No more copy-paste-edit.</p>
@@ -1437,6 +1443,12 @@
         <h3>Ctrl+G Shell Widget</h3>
         <p>Search and paste snippets inline without leaving your prompt. Works in zsh, bash, and fish.</p>
         <span class="feature-cmd">eval "$(snip widget zsh)"</span>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🏷️</span>
+        <h3>Shell Aliases</h3>
+        <p>Turn every snippet into a native shell command. Tab-completable, zero friction.</p>
+        <span class="feature-cmd">eval "$(snip alias)"</span>
       </div>
       <div class="feature-card reveal">
         <span class="feature-icon">🔍</span>
@@ -1450,6 +1462,12 @@
         <p>Auto-detects rm -rf, sudo, and destructive ops. Preview before every run.</p>
       </div>
       <div class="feature-card reveal">
+        <span class="feature-icon">🩺</span>
+        <h3>Health Check</h3>
+        <p>One command to verify your entire setup — storage, editor, fzf, gist sync, completions.</p>
+        <span class="feature-cmd">snip doctor</span>
+      </div>
+      <div class="feature-card reveal">
         <span class="feature-icon">🌐</span>
         <h3>Grab from Any URL</h3>
         <p>Import snippets from GitHub, Gists, or any raw URL. Language auto-detected.</p>
@@ -1458,7 +1476,7 @@
       <div class="feature-card reveal">
         <span class="feature-icon">🎨</span>
         <h3>Interactive TUI</h3>
-        <p>Full keyboard-driven interface. Browse, search, run — without leaving your terminal.</p>
+        <p>Syntax highlighting, line numbers, incremental search, undo delete. A real IDE for snippets.</p>
         <span class="feature-cmd">snip ui</span>
       </div>
       <div class="feature-card reveal">
@@ -1473,8 +1491,9 @@
       </div>
       <div class="feature-card reveal">
         <span class="feature-icon">🚀</span>
-        <h3>Multi-Language Execution</h3>
-        <p>Run Python, Ruby, JS, Bash — any language. Not limited to shell commands.</p>
+        <h3>Pipe-Friendly Output</h3>
+        <p>--json, --raw, and cat for scripting. cp, mv, recent for daily management.</p>
+        <span class="feature-cmd">snip cat deploy | sh</span>
       </div>
     </div>
   </section>

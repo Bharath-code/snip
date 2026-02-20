@@ -256,7 +256,36 @@ snip list --tag node --sort usage</pre>
         <h3>⚡ Smart Search (fzf)</h3>
         <pre>snip fzf</pre>
 
-        <h2>4. UI/UX & Safety</h2>
+        <h3>⚡ Zero-Friction Exec</h3>
+        <p>Skip the preview modal when you know what you're running:</p>
+        <pre># Run immediately
+snip exec deploy-api
+
+# Dry run — just print what would execute
+snip exec deploy-api --dry-run
+
+# Skip dangerous-command warning
+snip exec deploy-api --force</pre>
+
+        <h3>🏷️ Shell Aliases</h3>
+        <p>Turn every snippet into a native shell command:</p>
+        <pre># Generate aliases for bash/zsh
+eval "$(snip alias)"
+
+# Now every snippet is a command:
+deploy-api           # → snip exec deploy-api
+docker-cleanup       # → snip exec docker-cleanup</pre>
+
+        <h3>🩺 Health Check</h3>
+        <p>Verify your setup in one command:</p>
+        <pre>snip doctor
+  ✓ Storage: JSON (42 snippets)
+  ✓ Editor: code --wait
+  ✓ Shell: /bin/zsh
+  ✓ fzf: installed
+  ✗ Gist sync: not configured</pre>
+
+        <h2>4. UI/UX &amp; Safety</h2>
 
         <div class="tip">
             <div class="tip-title">⚠ Safety First</div>
@@ -265,13 +294,37 @@ snip list --tag node --sort usage</pre>
         </div>
 
         <h3>🎨 Beautiful Terminal UI</h3>
-        <p>Launch a full-screen interactive view of your library with <code>snip ui</code>.</p>
+        <p>Launch a full-screen interactive view of your library with <code>snip ui</code>. Features syntax
+            highlighting, line numbers, incremental search, and undo delete.</p>
 
         <h3>⌨️ Shell Widget (Ctrl+G)</h3>
         <p>Press <code>Ctrl+G</code> anytime in your terminal to fuzzy-search and insert snippets directly into your
             prompt.</p>
 
-        <h2>5. Maintenance</h2>
+        <h2>5. Snippet Management</h2>
+        <pre># Duplicate a snippet
+snip cp deploy deploy-staging
+
+# Rename a snippet
+snip mv old-name new-name
+
+# Print raw content for piping
+snip cat deploy | sh
+
+# Show recently used snippets
+snip recent
+snip recent 10</pre>
+
+        <h2>6. Pipe-Friendly Output</h2>
+        <pre># JSON output for scripting
+snip show deploy --json | jq .tags
+snip search docker --json | jq '.[].name'
+snip list --json | jq length
+
+# Raw output (no headers)
+snip show deploy --raw | pbcopy</pre>
+
+        <h2>7. Maintenance</h2>
         <table>
             <thead>
                 <tr>
@@ -295,6 +348,18 @@ snip list --tag node --sort usage</pre>
                 <tr>
                     <td><code>snip stats</code></td>
                     <td>See your productivity data</td>
+                </tr>
+                <tr>
+                    <td><code>snip doctor</code></td>
+                    <td>Verify your setup — storage, editor, fzf, gist</td>
+                </tr>
+                <tr>
+                    <td><code>snip cp / mv</code></td>
+                    <td>Duplicate or rename snippets</td>
+                </tr>
+                <tr>
+                    <td><code>snip alias</code></td>
+                    <td>Generate shell aliases for every snippet</td>
                 </tr>
             </tbody>
         </table>

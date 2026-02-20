@@ -8,7 +8,7 @@ _snip_completions() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  commands="add list search show run edit update rm delete export import sync ui config seed"
+  commands="add list search show run edit update rm delete export import sync ui config seed exec alias doctor cp mv cat recent fzf grab widget completion stats"
 
   case "${prev}" in
     snip)

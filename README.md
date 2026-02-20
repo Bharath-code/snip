@@ -26,10 +26,13 @@ Stop hunting through your shell history for that one command. **snip** is your t
 - ⚡ **Lightning Fast** — Add, search, and run snippets in milliseconds
 - 🔍 **Fuzzy Search** — Find anything instantly across names, tags, and content
 - 🛡️ **Safety First** — Preview commands before execution, auto-detect dangerous operations
-- 🎨 **Interactive TUI** — Keyboard-first terminal UI with split-pane interface
+- 🎨 **Interactive TUI** — Keyboard-first terminal UI with syntax highlighting, line numbers, and split-pane
 - 💾 **Flexible Storage** — JSON for simplicity, SQLite for scale
 - 🔄 **Gist Sync** — Backup and share via GitHub Gists
 - 🔗 **fzf Integration** — Pipe snippets through fzf with live preview
+- 🚀 **Zero-friction exec** — `snip exec` runs immediately, no confirmation modal
+- 🩺 **Health check** — `snip doctor` validates your setup in one command
+- 🏷️ **Shell aliases** — `eval "$(snip alias)"` turns every snippet into a command
 
 ### Why snip over X?
 
@@ -101,13 +104,21 @@ snip --version
 | `snip add <name> --lang <lang> --tags <tag1,tag2>` | Save a new snippet from stdin or editor |
 | `snip ui` | Launch interactive TUI with fuzzy search |
 | `snip list [--json]` | List all saved snippets (JSON for scripting) |
-| `snip search <query>` | Fuzzy search across all snippets |
+| `snip search <query> [--json]` | Fuzzy search across all snippets |
 | `snip run <id\|name>` | Execute a snippet safely (with template prompts) |
-| `snip edit <id\|name>` | Edit snippet content inline |
+| `snip exec <id\|name> [--dry-run] [--force]` | Run immediately — no preview modal |
+| `snip show <id\|name> [--json] [--raw]` | Show snippet content |
+| `snip edit <id\|name>` | Edit snippet content in $EDITOR |
 | `snip update <id\|name> --tags <t> --lang <l>` | Update snippet tags or language |
+| `snip cp <source> <dest>` | Duplicate a snippet |
+| `snip mv <source> <newName>` | Rename a snippet |
+| `snip cat <id\|name>` | Print raw content to stdout (for piping) |
 | `snip delete <id\|name>` | Remove a snippet (alias: `snip rm`) |
+| `snip recent [count]` | Show recently used snippets |
 | `snip fzf` | Search snippets via fzf with live preview |
 | `snip grab <url>` | Import a snippet from a URL or `github:user/repo/path` |
+| `snip alias [shell]` | Generate shell aliases for all snippets |
+| `snip doctor` | Health check — verify storage, editor, fzf, gist |
 | `snip stats` | Show snippet library statistics |
 | `snip widget [shell]` | Output Ctrl+G shell widget for zsh/bash/fish |
 | `snip sync push [query]` | Upload matching snippets to GitHub Gist |
@@ -151,11 +162,75 @@ Requires `better-sqlite3` for native performance, or falls back to `sql.js` (Web
 Launch `snip ui` for a rich, split-pane interface:
 
 - **Navigation**: `j`/`k` or arrow keys to move up/down
-- **Search**: Type to fuzzy filter in real-time
+- **Search**: `/` to search — list filters live as you type
+- **Preview**: Syntax highlighting and line numbers
 - **Add**: Press `a` to create a new snippet
 - **Edit**: Press `e` to edit selected snippet
 - **Run**: Press `r` to execute (shows preview first)
+- **Delete**: Press `d` — type snippet name to confirm, then `z` to undo within 5s
+- **Sort**: Press `s` to cycle sort mode (persists across sessions)
 - **Quit**: `q` or `Ctrl+C`
+
+### Zero-Friction Execution
+
+Skip the preview modal when you know what you're running:
+
+```bash
+# Run immediately
+snip exec deploy-api
+
+# Dry run — just print the content
+snip exec deploy-api --dry-run
+
+# Skip dangerous-command warning
+snip exec deploy-api --force
+```
+
+### Shell Aliases
+
+Turn every snippet into a native shell command:
+
+```bash
+# Generate aliases for bash/zsh
+eval "$(snip alias)"
+
+# Now every snippet is a command:
+deploy-api           # → snip exec deploy-api
+docker-cleanup       # → snip exec docker-cleanup
+```
+
+### Health Check
+
+```bash
+snip doctor
+  ✓ Storage: JSON (42 snippets)
+  ✓ Editor: code --wait
+  ✓ Shell: /bin/zsh
+  ✓ fzf: installed
+  ✗ Gist sync: not configured
+```
+
+### Pipe-Friendly Output
+
+```bash
+# Raw content for piping
+snip cat deploy | sh
+snip show deploy --raw | clipboard
+
+# JSON for scripting
+snip show deploy --json | jq .tags
+snip search docker --json | jq '.[].name'
+snip list --json | jq length
+```
+
+### Snippet Management
+
+```bash
+snip cp deploy deploy-staging   # Duplicate
+snip mv old-name new-name       # Rename
+snip recent                     # Last 5 used
+snip recent 10                  # Last 10 used
+```
 
 ### Safety Features
 
