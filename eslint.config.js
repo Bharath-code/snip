@@ -12,14 +12,21 @@ module.exports = [
         __dirname: 'readonly',
         Buffer: 'readonly',
         setTimeout: 'readonly',
-        clearTimeout: 'readonly'
+        clearTimeout: 'readonly',
+        fetch: 'readonly',
+        URL: 'readonly',
+        AbortController: 'readonly',
+        Uint8Array: 'readonly'
       }
     },
     rules: {
-      'no-unused-vars': 'off',
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-console': 'off',
       'prefer-const': 'warn',
-      'no-var': 'error'
+      'no-var': 'error',
+      'eqeqeq': ['error', 'always', { null: 'ignore' }],
+      'no-throw-literal': 'error',
+      'no-shadow': 'warn'
     }
   }
 ];

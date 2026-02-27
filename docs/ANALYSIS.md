@@ -37,9 +37,9 @@
 
 ## 2. What’s Remaining (vs plan/mvp)
 
-- **List:** MVP mentions `--sort`; not implemented (e.g. by date, name, usage).
-- **Run:** Language-aware execution: everything is run as `snippet.sh` with `sh`; no `python`/`node` etc. by extension.
-- **Roadmap:** TUI (`snip ui`), encrypted sync, team/marketplace (out of current scope).
+- ~~**List:** MVP mentions `--sort`; not implemented~~ **DONE** — `--sort name|usage|recent` with 3 tests.
+- ~~**Run:** Language-aware execution~~ **DONE** — `resolveRunner()` in exec.js maps 10+ languages to interpreters.
+- **Roadmap:** TUI (`snip ui`) ✅ done, encrypted sync, team/marketplace (out of current scope).
 - **Tests:** Test isolation is in place (temp XDG dirs); no dedicated tests for sync, config, or SQLite path; safety tests are minimal.
 
 ---
@@ -99,7 +99,7 @@ New storage helpers: `updateSnippetContent`, `updateSnippetUpdatedAt`, `deleteSn
 
 | Area | Verdict |
 |------|--------|
-| **Features** | MVP + post-MVP done; remaining: `--sort`, language-aware run. |
+| **Features** | MVP + post-MVP + Phase 2 done; `--sort` and language-aware run complete. |
 | **Performance** | OK for small/medium snippet sets; search re-indexes every time. Optional: cache index, `--limit`. |
 | **Security** | `SNIP_GIST_TOKEN` and `--confirm` implemented; token storage documented in README. |
 | **UI/UX** | Good first-run and run flow; SQLite edit/rm/show/sync fixed. Optional: first-run DB check, stderr/colors. |
