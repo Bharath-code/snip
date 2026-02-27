@@ -1,0 +1,140 @@
+{
+    "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+    "version": "v1.1.0",
+    "entity": {
+        "type": "individual",
+        "role": "maintainer",
+        "name": "Bharathkumar",
+        "email": "kumarbharath63@gmail.com",
+        "phone": "",
+        "description": "Open-source maintainer building developer tools focused on terminal productivity, CLI snippet management, and sustainable developer experience. Creator and long-term maintainer of snip.",
+        "webpageUrl": {
+            "url": "https://github.com/Bharath-code",
+            "wellKnown": ""
+        }
+    },
+    "projects": [
+        {
+            "guid": "snip",
+            "name": "snip",
+            "description": "snip is a fast, cross-platform CLI snippet manager for developers who live in the terminal. It saves, searches, and executes reusable code and shell snippets across any language — with safety rails, a split-pane TUI, fuzzy search, parameterized templates, and GitHub Gist sync.\n\nUnlike shell-only snippet tools, snip handles multi-language execution (JS, Python, Ruby, Bash, etc.), auto-detects dangerous commands, and integrates into unix pipelines. It supports dual storage backends (JSON for simplicity, SQLite for scale) and requires zero configuration to start.\n\nActively maintained with community contributions and stability-focused releases.",
+            "webpageUrl": {
+                "url": "https://bharath-code.github.io/snip/",
+                "wellKnown": ""
+            },
+            "repositoryUrl": {
+                "url": "https://github.com/Bharath-code/snip",
+                "wellKnown": ""
+            },
+            "licenses": [
+                "spdx:MIT"
+            ],
+            "tags": [
+                "cli",
+                "snippet",
+                "tui",
+                "terminal",
+                "developer-tools",
+                "open-source",
+                "productivity",
+                "shell",
+                "node",
+                "sqlite"
+            ]
+        }
+    ],
+    "funding": {
+        "channels": [
+            {
+                "guid": "github-sponsors",
+                "type": "payment-provider",
+                "address": "https://github.com/sponsors/Bharath-code",
+                "description": "Sponsor via GitHub Sponsors — supports recurring and one-time contributions."
+            },
+            {
+                "guid": "buymeacoffee",
+                "type": "payment-provider",
+                "address": "https://buymeacoffee.com/iam_pbk",
+                "description": "Quick one-time contributions via Buy Me A Coffee."
+            }
+        ],
+        "plans": [
+            {
+                "guid": "friend",
+                "status": "active",
+                "name": "Friend of snip",
+                "description": "Support ongoing maintenance and sustainability of snip.",
+                "amount": 5,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "github-sponsors",
+                    "buymeacoffee"
+                ]
+            },
+            {
+                "guid": "backer",
+                "status": "active",
+                "name": "Backer",
+                "description": "Helps support maintenance, documentation, and long-term stability improvements.",
+                "amount": 20,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "github-sponsors",
+                    "buymeacoffee"
+                ]
+            },
+            {
+                "guid": "supporter",
+                "status": "active",
+                "name": "Supporter",
+                "description": "Helps accelerate development, testing infrastructure, and sustainability efforts.",
+                "amount": 100,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "github-sponsors"
+                ]
+            },
+            {
+                "guid": "sponsor",
+                "status": "active",
+                "name": "Sponsor",
+                "description": "Significant contribution supporting long-term project sustainability. Recognition included in project documentation.",
+                "amount": 250,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "github-sponsors"
+                ]
+            },
+            {
+                "guid": "platinum",
+                "status": "active",
+                "name": "Platinum Sponsor",
+                "description": "Premium sponsorship supporting major sustainability efforts and infrastructure. Includes logo recognition.",
+                "amount": 500,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "github-sponsors"
+                ]
+            },
+            {
+                "guid": "one-time",
+                "status": "active",
+                "name": "One-Time Contribution",
+                "description": "Any amount to support the project.",
+                "amount": 0,
+                "currency": "USD",
+                "frequency": "one-time",
+                "channels": [
+                    "github-sponsors",
+                    "buymeacoffee"
+                ]
+            }
+        ],
+        "history": []
+    }
+}

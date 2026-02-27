@@ -8,23 +8,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial release
-- Interactive TUI with fuzzy search
-- JSON and SQLite storage backends
-- GitHub Gist sync
-- Safety preview for command execution
+- Snippet versioning / history (planned)
+- `snip pipe` — stdin pipeline integration (planned)
+- Snippet groups / namespaces (planned)
+
+## [0.2.0] - 2026-02-27
+
+### Added
+- `snip exec` — zero-friction snippet execution (no preview modal)
+- `snip alias` — shell alias generator for bash, zsh, and fish
+- `snip doctor` — health check (storage, editor, fzf, gist, completions)
+- `snip cp` / `snip mv` / `snip cat` / `snip recent` / `snip stats`
+- `snip grab` — import snippets from URLs and `github:user/repo/path`
+- `snip widget` — Ctrl+G hotkey widget for zsh, bash, fish
+- `--json` output on `list`, `show`, `search`
+- `--limit` option on `list` and `search`
+- `--raw` flag on `show` for piping
+- Parameterized snippets with `{{var:default}}` syntax
+- Smart template auto-detection in `snip run`
+- Dangerous command detection with inline confirmation
+- Colorized output with `--no-color` global flag
+- Chalk-based colored terminal output (graceful fallback)
+- Language alias normalization (`js` ↔ `javascript`, `py` ↔ `python`)
+- Search index caching for performance
+- Import validation and content-length guard for `grab`
+- ESLint configuration and JSDoc comments
+- First-run onboarding message
+
+### Changed
+- `snip run` now auto-prompts for template variables inline
+- Shell completions updated to include all new commands
 
 ## [0.1.1] - 2026-02-16
 
 ### Added
 - Initial npm release
-- Basic snippet CRUD operations
-- Fuzzy search functionality
-- Configuration management
+- Basic snippet CRUD operations (add, list, show, edit, rm, update)
+- Fuzzy search with Fuse.js
+- Configuration management (`snip config`)
+- Shell completions for bash and fish
+- `snip fzf` integration
 
 ## [0.1.0] - 2026-02-15
 
 ### Added
-- Project initialization
-- Core CLI architecture
-- First working prototype
+- Interactive TUI with split-pane preview (`snip ui`)
+- JSON and SQLite dual storage backends
+- GitHub Gist sync (push / pull)
+- Safety preview for command execution
+- Multi-language snippet runner (sh, bash, node, python, ruby, php, perl, powershell)
+- Export / import (JSON)
+
+[Unreleased]: https://github.com/Bharath-code/snip/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Bharath-code/snip/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/Bharath-code/snip/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/Bharath-code/snip/releases/tag/v0.1.0

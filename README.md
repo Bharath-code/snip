@@ -1,428 +1,392 @@
-# snip — CLI Snippet Manager
-
-🌐 **[Website](https://bharath-code.github.io/snip/)** · 🚀 **[Product Demo](docs/demo.md)** · 📦 **[npm](https://www.npmjs.com/package/snip-manager)** · 📖 **[Docs](https://github.com/Bharath-code/snip#readme)**
+<h1 align="center">snip</h1>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/snip-manager">
-    <img src="https://img.shields.io/npm/v/snip-manager.svg" alt="npm version">
-  </a>
-  <a href="https://www.npmjs.com/package/snip-manager">
-    <img src="https://img.shields.io/npm/dt/snip-manager.svg" alt="npm downloads">
-  </a>
-  <a href="https://github.com/bharath/snip/blob/main/LICENSE">
-    <img src="https://img.shields.io/npm/l/snip-manager.svg" alt="MIT License">
-  </a>
-  <a href="https://github.com/bharath/snip/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/bharath/snip/node.js.yml" alt="Build Status">
-  </a>
+  <strong>Your terminal's memory.</strong><br>
+  Save, search, and execute code snippets in milliseconds.
 </p>
 
-> A lightweight, cross-platform CLI for saving, searching, sharing, and running reusable code and shell snippets. Built for developers who live in the terminal.
+<p align="center">
+  <a href="https://www.npmjs.com/package/snip-manager"><img src="https://img.shields.io/npm/v/snip-manager.svg?style=flat-square&color=cb3837" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/snip-manager"><img src="https://img.shields.io/npm/dm/snip-manager.svg?style=flat-square&color=blue" alt="monthly downloads"></a>
+  <a href="https://github.com/Bharath-code/snip/actions"><img src="https://img.shields.io/github/actions/workflow/status/Bharath-code/snip/ci.yml?style=flat-square&label=CI" alt="CI"></a>
+  <a href="https://github.com/Bharath-code/snip/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/snip-manager.svg?style=flat-square" alt="license"></a>
+  <a href="https://www.npmjs.com/package/snip-manager"><img src="https://img.shields.io/node/v/snip-manager?style=flat-square" alt="node version"></a>
+</p>
+
+<p align="center">
+  <a href="https://bharath-code.github.io/snip/">Website</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#commands">Commands</a> ·
+  <a href="docs/demo.md">Demo</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
+</p>
+
+---
+
+<!-- TODO: Replace with actual terminal recording (asciinema / vhs / terminalizer) -->
+<!-- <p align="center"><img src="docs/demo.gif" alt="snip demo" width="700"></p> -->
 
 ## Why snip?
 
-Stop hunting through your shell history for that one command. **snip** is your terminal's memory — save, search, and execute code snippets in milliseconds.
+Most snippet managers only handle shell commands. **snip** handles _code_ — deploy scripts, API calls, Docker commands, JS utilities — across any language, with safety rails, a real TUI, and unix pipeline integration.
 
-- ⚡ **Lightning Fast** — Add, search, and run snippets in milliseconds
-- 🔍 **Fuzzy Search** — Find anything instantly across names, tags, and content
-- 🛡️ **Safety First** — Preview commands before execution, auto-detect dangerous operations
-- 🎨 **Interactive TUI** — Keyboard-first terminal UI with syntax highlighting, line numbers, and split-pane
-- 💾 **Flexible Storage** — JSON for simplicity, SQLite for scale
-- 🔄 **Gist Sync** — Backup and share via GitHub Gists
-- 🔗 **fzf Integration** — Pipe snippets through fzf with live preview
-- 🚀 **Zero-friction exec** — `snip exec` runs immediately, no confirmation modal
-- 🩺 **Health check** — `snip doctor` validates your setup in one command
-- 🏷️ **Shell aliases** — `eval "$(snip alias)"` turns every snippet into a command
-
-### Why snip over X?
-
-| Feature | snip | [pet](https://github.com/knqyf263/pet) | [navi](https://github.com/denisidoro/navi) | [tldr](https://github.com/tldr-pages/tldr) | dotfiles / aliases |
-|---------|------|-----|------|------|-----|
-| **Run snippets directly** | ✅ Any language | ✅ Shell only | ✅ Shell only | ❌ Reference only | ✅ Shell only |
-| **Multi-language** (JS, Python, Ruby…) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Interactive TUI** | ✅ Split-pane | ❌ | ✅ Basic | ❌ | ❌ |
-| **Dangerous command detection** | ✅ Auto-detect | ❌ | ❌ | ❌ | ❌ |
-| **fzf integration** | ✅ Native | ✅ | ✅ Core | ❌ | Manual |
-| **SQLite backend** | ✅ Optional | ❌ | ❌ | ❌ | ❌ |
-| **Gist sync** | ✅ Push/pull | ✅ | ❌ | ❌ | Manual |
-| **Cross-platform** | ✅ Node.js | Go binary | Rust binary | Multi | Varies |
-| **Zero config** | ✅ Works out of box | ✅ | Needs cheats | ✅ | Heavy setup |
-
-**TL;DR:** Other tools are great for shell commands. snip is for developers who save **code** — deploy scripts, API calls, Docker commands, JS utilities — across any language, with safety rails and a real TUI.
+| Feature | snip | [pet](https://github.com/knqyf263/pet) | [navi](https://github.com/denisidoro/navi) | [tldr](https://github.com/tldr-pages/tldr) | dotfiles |
+|---------|------|-----|------|------|--------|
+| Run snippets directly | ✅ Any language | ✅ Shell only | ✅ Shell only | ❌ | ✅ Shell only |
+| Multi-language (JS, Python, Ruby…) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Interactive TUI | ✅ Split-pane | ❌ | ✅ Basic | ❌ | ❌ |
+| Dangerous command detection | ✅ | ❌ | ❌ | ❌ | ❌ |
+| fzf integration | ✅ Native | ✅ | ✅ | ❌ | Manual |
+| SQLite backend | ✅ Optional | ❌ | ❌ | ❌ | ❌ |
+| Gist sync | ✅ | ✅ | ❌ | ❌ | Manual |
+| Zero config | ✅ | ✅ | Needs cheats | ✅ | Heavy |
 
 ## Quick Start
 
 ```bash
-# Install globally
+# Install
 npm install -g snip-manager
 
-# Add a snippet from stdin
-echo 'docker run --rm -it -v "$PWD":/work -w /work ubuntu:24.04 bash' | snip add docker-run --lang sh --tags docker,run
+# Save a snippet
+echo 'docker compose up -d --build' | snip add dc-up --lang sh --tags docker
 
-# Or add from your editor (opens $EDITOR)
-snip add my-script --lang bash --tags deploy,production
-
-# Search snippets
+# Find it
 snip search docker
 
-# Run a snippet
-snip run docker-run
+# Run it
+snip exec dc-up
 
-# Launch interactive TUI
+# Launch TUI
 snip ui
 ```
 
 ## Installation
 
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Install via npm
+**Prerequisites:** Node.js ≥ 18
 
 ```bash
+# npm
 npm install -g snip-manager
-```
 
-### Install via yarn
-
-```bash
+# yarn
 yarn global add snip-manager
-```
 
-### Verify Installation
+# pnpm
+pnpm add -g snip-manager
 
-```bash
+# verify
 snip --version
+snip doctor          # validates storage, editor, fzf, shell, gist
 ```
 
 ## Commands
 
+### Core
+
 | Command | Description |
 |---------|-------------|
-| `snip add <name> --lang <lang> --tags <tag1,tag2>` | Save a new snippet from stdin or editor |
-| `snip ui` | Launch interactive TUI with fuzzy search |
-| `snip list [--json]` | List all saved snippets (JSON for scripting) |
-| `snip search <query> [--json]` | Fuzzy search across all snippets |
-| `snip run <id\|name>` | Execute a snippet safely (with template prompts) |
-| `snip exec <id\|name> [--dry-run] [--force]` | Run immediately — no preview modal |
-| `snip show <id\|name> [--json] [--raw]` | Show snippet content |
-| `snip edit <id\|name>` | Edit snippet content in $EDITOR |
-| `snip update <id\|name> --tags <t> --lang <l>` | Update snippet tags or language |
-| `snip cp <source> <dest>` | Duplicate a snippet |
-| `snip mv <source> <newName>` | Rename a snippet |
-| `snip cat <id\|name>` | Print raw content to stdout (for piping) |
-| `snip delete <id\|name>` | Remove a snippet (alias: `snip rm`) |
-| `snip recent [count]` | Show recently used snippets |
-| `snip fzf` | Search snippets via fzf with live preview |
-| `snip grab <url>` | Import a snippet from a URL or `github:user/repo/path` |
-| `snip alias [shell]` | Generate shell aliases for all snippets |
-| `snip doctor` | Health check — verify storage, editor, fzf, gist |
-| `snip stats` | Show snippet library statistics |
-| `snip widget [shell]` | Output Ctrl+G shell widget for zsh/bash/fish |
-| `snip sync push [query]` | Upload matching snippets to GitHub Gist |
-| `snip sync pull <gist-id>` | Download snippets from GitHub Gist |
-| `snip config` | View or modify configuration |
-| `snip --version` | Show version information |
-| `snip --help` | Display help information |
+| `snip add <name>` | Save a snippet from stdin or `$EDITOR` |
+| `snip list` | List all snippets (`--json`, `--tag`, `--lang`, `--sort`, `--limit`) |
+| `snip search <query>` | Fuzzy search (`--json`, `--limit`) |
+| `snip show <name>` | Display snippet (`--json`, `--raw`, `--edit`) |
+| `snip run <name>` | Preview + confirm + execute (with template prompts) |
+| `snip exec <name>` | Execute immediately, no modal (`--dry-run`, `--force`) |
+| `snip edit <name>` | Open in `$EDITOR` |
+| `snip rm <name>` | Delete (alias: `delete`) |
+| `snip update <name>` | Update metadata (`--tags`, `--lang`) |
 
-## Configuration
+### Utilities
 
-### Set Your Editor
+| Command | Description |
+|---------|-------------|
+| `snip cp <src> <dest>` | Duplicate a snippet |
+| `snip mv <old> <new>` | Rename a snippet |
+| `snip cat <name>` | Print raw content to stdout |
+| `snip recent [n]` | Show last _n_ used snippets (default: 5) |
+| `snip stats` | Library statistics |
+| `snip grab <url>` | Import from URL or `github:user/repo/path` |
+| `snip fzf` | fzf search with live preview |
 
-```bash
-snip config set editor "vim"
-```
+### Integration
 
-Supported editors: `vim`, `nvim`, `nano`, `code`, `subl`
-
-### Enable SQLite Backend
-
-For larger snippet libraries (100+ snippets):
-
-```bash
-snip config set useSqlite true
-```
-
-Requires `better-sqlite3` for native performance, or falls back to `sql.js` (WebAssembly).
-
-### Configuration Options
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `editor` | `$EDITOR` or `vi` | Default editor for snippet creation |
-| `useSqlite` | `false` | Use SQLite instead of JSON storage |
-| `snippetDir` | `~/.snip` | Custom snippets directory |
+| Command | Description |
+|---------|-------------|
+| `snip alias [shell]` | Generate shell aliases (`eval "$(snip alias)"`) |
+| `snip widget [shell]` | Ctrl+G hotkey widget for zsh/bash/fish |
+| `snip completion [shell]` | Tab-completion script |
+| `snip sync push [query]` | Push to GitHub Gist |
+| `snip sync pull <id>` | Pull from GitHub Gist |
+| `snip doctor` | Health check |
+| `snip config <action>` | Get / set configuration |
+| `snip ui` | Interactive TUI |
 
 ## Features
 
 ### Interactive TUI
 
-Launch `snip ui` for a rich, split-pane interface:
+```
+snip ui
+```
 
-- **Navigation**: `j`/`k` or arrow keys to move up/down
-- **Search**: `/` to search — list filters live as you type
-- **Preview**: Syntax highlighting and line numbers
-- **Add**: Press `a` to create a new snippet
-- **Edit**: Press `e` to edit selected snippet
-- **Run**: Press `r` to execute (shows preview first)
-- **Delete**: Press `d` — type snippet name to confirm, then `z` to undo within 5s
-- **Sort**: Press `s` to cycle sort mode (persists across sessions)
-- **Quit**: `q` or `Ctrl+C`
+Split-pane interface with fuzzy search. Keyboard shortcuts:
+
+| Key | Action |
+|-----|--------|
+| `j` / `k` | Navigate |
+| `/` | Live search |
+| `Enter` | Preview |
+| `r` | Run |
+| `e` | Edit |
+| `a` | Add new |
+| `d` | Delete (type name to confirm, `z` to undo within 5s) |
+| `s` | Cycle sort mode |
+| `q` | Quit |
 
 ### Zero-Friction Execution
 
-Skip the preview modal when you know what you're running:
-
 ```bash
-# Run immediately
-snip exec deploy-api
-
-# Dry run — just print the content
-snip exec deploy-api --dry-run
-
-# Skip dangerous-command warning
-snip exec deploy-api --force
+snip exec deploy-api            # run immediately
+snip exec deploy-api --dry-run  # print only
+snip exec deploy-api --force    # skip safety warning
 ```
-
-### Shell Aliases
-
-Turn every snippet into a native shell command:
-
-```bash
-# Generate aliases for bash/zsh
-eval "$(snip alias)"
-
-# Now every snippet is a command:
-deploy-api           # → snip exec deploy-api
-docker-cleanup       # → snip exec docker-cleanup
-```
-
-### Health Check
-
-```bash
-snip doctor
-  ✓ Storage: JSON (42 snippets)
-  ✓ Editor: code --wait
-  ✓ Shell: /bin/zsh
-  ✓ fzf: installed
-  ✗ Gist sync: not configured
-```
-
-### Pipe-Friendly Output
-
-```bash
-# Raw content for piping
-snip cat deploy | sh
-snip show deploy --raw | clipboard
-
-# JSON for scripting
-snip show deploy --json | jq .tags
-snip search docker --json | jq '.[].name'
-snip list --json | jq length
-```
-
-### Snippet Management
-
-```bash
-snip cp deploy deploy-staging   # Duplicate
-snip mv old-name new-name       # Rename
-snip recent                     # Last 5 used
-snip recent 10                  # Last 10 used
-```
-
-### Safety Features
-
-snip automatically detects potentially dangerous commands:
-
-- `rm -rf` and similar recursive deletions
-- `sudo` commands
-- Network-intensive operations
-- Commands that could modify system state
-
-Preview is shown before execution — you confirm before running.
 
 ### Parameterized Snippets
 
-Use `{{variable}}` and `{{variable:default}}` syntax for reusable templates:
+Use `{{variable}}` or `{{variable:default}}` syntax:
 
 ```bash
-# Save a parameterized snippet
-echo 'docker run --rm -it -v "{{dir:$PWD}}":/work {{image:ubuntu:24.04}} {{cmd:bash}}' \
+echo 'docker run --rm -it {{image:ubuntu:24.04}} {{cmd:bash}}' \
   | snip add docker-dev --lang sh --tags docker
 
-# Run it — snip prompts for each variable
 snip run docker-dev
-#   dir [/Users/me/project]: _
 #   image [ubuntu:24.04]: node:20
-#   cmd [bash]: sh
+#   cmd [bash]: ↵
 ```
 
-Variables support environment variable defaults with `{{name:$ENV_VAR}}`.
+Variables are auto-detected at runtime — no extra flags needed.
 
-### Grab from URL
+### Safety
 
-Import snippets directly from any URL:
+Dangerous commands (`rm -rf`, `sudo`, system-level ops) are detected automatically. `snip run` shows a preview and requires explicit confirmation. `snip exec` warns but lets you `--force` past.
+
+### Shell Aliases
 
 ```bash
-# Grab from a raw URL
-snip grab https://gist.githubusercontent.com/.../deploy.sh --tags deploy
-
-# Shorthand for GitHub files
-snip grab github:user/repo/scripts/backup.sh
+eval "$(snip alias)"        # every snippet becomes a command
+deploy-api                  # → snip exec deploy-api
 ```
 
-Language is auto-detected from file extension and shebang.
-
-### Shell Widget (Ctrl+G)
-
-Bind snip to a hotkey — search and paste snippets inline without leaving your prompt:
+### Ctrl+G Widget
 
 ```bash
-# Zsh — add to ~/.zshrc
+# add to ~/.zshrc
 eval "$(snip widget zsh)"
-
-# Bash — add to ~/.bashrc
-eval "$(snip widget bash)"
-
-# Fish — add to ~/.config/fish/config.fish
-snip widget fish | source
-
-# Now press Ctrl+G anywhere to search and insert a snippet
+# press Ctrl+G anywhere → search → paste snippet inline
 ```
 
-### GitHub Gist Sync
-
-Backup and share your snippet library:
+### Gist Sync
 
 ```bash
-# Push all snippets to a new Gist
-snip sync push
-
-# Push matching snippets
-snip sync push docker
-
-# Pull from existing Gist
-snip sync pull <gist-id>
-```
-
-### Shell Completions
-
-Tab completions ship with snip for bash, zsh, and fish:
-
-```bash
-# Bash — add to ~/.bashrc
-eval "$(snip completion bash)"
-
-# Zsh — add to ~/.zshrc
-eval "$(snip completion zsh)"
-
-# Fish — add to ~/.config/fish/config.fish
-snip completion fish | source
+snip sync push               # push all
+snip sync push docker        # push matching
+snip sync pull <gist-id>     # pull
 ```
 
 ### fzf Integration
 
-If you have [fzf](https://github.com/junegunn/fzf) installed, use `snip fzf` for a searchable list with a live preview pane:
+```bash
+snip fzf                     # search + preview
+snip fzf | pbcopy            # pipe to clipboard
+```
+
+### Pipe-Friendly
 
 ```bash
-# Search and preview snippets
-snip fzf
-
-# Pipe selected snippet to clipboard
-snip fzf | pbcopy
-
-# Bind to a shell shortcut (add to ~/.zshrc)
-bindkey -s '^S' 'snip fzf\n'
+snip cat deploy | sh
+snip show deploy --raw | xargs
+snip list --json | jq length
+snip search docker --json | jq '.[].name'
 ```
+
+### Grab from URL
+
+```bash
+snip grab https://example.com/script.sh --tags ops
+snip grab github:user/repo/scripts/backup.sh
+```
+
+Language auto-detected from extension and shebang.
+
+## Configuration
+
+```bash
+snip config set editor "code --wait"
+snip config set useSqlite true       # for 100+ snippets
+snip config list
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `editor` | `$EDITOR` / `vi` | Snippet editor |
+| `useSqlite` | `false` | SQLite instead of JSON |
+| `snippetDir` | `~/.snip` | Data directory |
+
+SQLite uses `better-sqlite3` (native) or falls back to `sql.js` (WASM).
+
+## Architecture
+
+```
+snip
+├── bin/snip              # Entry point
+├── lib/
+│   ├── cli.js            # Command definitions (Commander.js)
+│   ├── storage.js        # JSON + SQLite abstraction
+│   ├── search.js         # Fuse.js fuzzy search
+│   ├── exec.js           # Multi-language runner
+│   ├── template.js       # {{var:default}} engine
+│   ├── safety.js         # Dangerous command detection
+│   ├── config.js         # Config loader
+│   └── commands/         # One file per command
+├── completions/          # Shell completions
+├── __tests__/            # Jest test suite
+├── scripts/              # Seed / smoke scripts
+└── docs/                 # Website + demo
+```
+
+**Design decisions:**
+
+- **Commander.js** for CLI parsing — battle-tested, zero-config subcommands.
+- **Fuse.js** for fuzzy search — searches name, tags, and content simultaneously.
+- **Dual storage** — JSON for instant start, SQLite for scale. Same API, swap with one config.
+- **No daemon** — every invocation is stateless. Fast cold starts.
+- **Blessed** for TUI — raw terminal control, no React/Ink overhead.
+
+## Development
+
+```bash
+git clone https://github.com/Bharath-code/snip.git
+cd snip
+npm install
+
+# Run locally
+node bin/snip --help
+
+# Seed example snippets
+node bin/snip seed
+
+# Run tests
+npm test
+
+# Lint
+npm run lint
+```
+
+### Testing
+
+Tests use [Jest](https://jestjs.io/) and cover storage, search, template engine, exec, safety, and CLI integration.
+
+```bash
+npm test                   # run all tests
+npx jest --verbose         # verbose output
+npx jest __tests__/exec.test.js  # single file
+```
+
+### Project Structure for Contributors
+
+| Directory | Purpose |
+|-----------|---------|
+| `lib/commands/` | Add a new command = add one file here + register in `cli.js` |
+| `lib/storage.js` | Storage abstraction — both backends |
+| `__tests__/` | Mirror of `lib/` — one test file per module |
+| `completions/` | Shell completion scripts |
 
 ## Troubleshooting
 
-### "command not found: snip"
+<details>
+<summary><b>"command not found: snip"</b></summary>
 
-Ensure npm global bin directory is in your PATH:
+Ensure npm's global bin is in your PATH:
 
 ```bash
-# Add to ~/.zshrc or ~/.bashrc
-export PATH="$(npm global bin):$PATH"
+export PATH="$(npm prefix -g)/bin:$PATH"
 ```
 
-### Editor Not Opening
+</details>
 
-Set your preferred editor:
+<details>
+<summary><b>Editor not opening</b></summary>
 
 ```bash
-snip config set editor "vim"
+snip config set editor "vim"     # or code, nvim, nano, subl
 ```
 
-### Permission Errors
+</details>
 
-Fix npm permissions:
+<details>
+<summary><b>Permission errors on global install</b></summary>
+
+Use [nvm](https://github.com/nvm-sh/nvm) to avoid `sudo`:
 
 ```bash
-# Option 1: Use nvm
 nvm install --lts
 npm install -g snip-manager
-
-# Option 2: Use sudo (not recommended)
-sudo npm install -g snip-manager
 ```
 
-## Frequently Asked Questions
+</details>
 
-### What is snip?
+## Roadmap
 
-snip is a CLI tool that helps developers manage and reuse code snippets directly from the terminal. Think of it as a personal library for your most-used commands and code blocks.
+- [ ] `snip pipe` — stdin pipeline integration
+- [ ] Snippet groups / namespaces (`docker/cleanup`, `k8s/deploy`)
+- [ ] Snippet versioning & history
+- [ ] `snip share` — single-snippet gist sharing
+- [ ] `snip diff a b` — diff two snippets
+- [ ] AI snippet generation
+- [ ] Team shared snippets
 
-### How is snip different from dotfiles?
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
-dotfiles store configuration files, while snip focuses specifically on **executable snippets** — commands and code blocks you run repeatedly. snip provides instant search and one-command execution.
+## FAQ
 
-### Does snip support custom languages?
+<details>
+<summary><b>What is snip?</b></summary>
 
-Yes! Use `--lang` to specify the language:
+A CLI tool for saving and running code snippets from the terminal. Think of it as a personal, searchable library for commands and code blocks you run repeatedly.
+</details>
 
-```bash
-snip add deploy --lang python --tags deploy
-```
+<details>
+<summary><b>How is snip different from dotfiles?</b></summary>
 
-### Can I import/export snippets?
+Dotfiles store configuration. snip stores **executable snippets** — commands and code blocks you run. snip provides instant search, multi-language execution, and safety rails.
+</details>
 
-Yes, via GitHub Gist sync:
+<details>
+<summary><b>Does snip support custom languages?</b></summary>
 
-```bash
-# Export to Gist
-snip sync push
+Yes. Use `--lang` to specify any language. snip resolves the interpreter (node, python3, ruby, etc.) automatically.
+</details>
 
-# Import from Gist
-snip sync pull <gist-id>
-```
+<details>
+<summary><b>Is my data secure?</b></summary>
 
-### Is my data secure?
-
-Local snippets are stored in `~/.snip/` by default. Gist sync requires GitHub authentication. All data stays on your machine unless you explicitly choose to sync.
+Snippets are stored locally in `~/.snip/`. Nothing leaves your machine unless you explicitly `snip sync push` to GitHub Gist.
+</details>
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) first.
+Contributions welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+```bash
+# Good first issues
+# https://github.com/Bharath-code/snip/labels/good%20first%20issue
+```
 
-## Security
+## Community
 
-See [SECURITY.md](SECURITY.md) for our security policy and reporting guidelines.
+- [Issues](https://github.com/Bharath-code/snip/issues) — Bug reports & feature requests
+- [Discussions](https://github.com/Bharath-code/snip/discussions) — Questions & ideas
+- [Security Policy](SECURITY.md) — Vulnerability reporting
 
 ## License
 
-MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-<p align="center">
-  Built for developers who live in the terminal. ⚡
-</p>
+[MIT](LICENSE) © [Bharath](https://github.com/Bharath-code)
