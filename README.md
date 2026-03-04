@@ -34,6 +34,7 @@ Most snippet managers only handle shell commands. **snip** handles _code_ — de
 |---------|------|-----|------|------|--------|
 | Run snippets directly | ✅ Any language | ✅ Shell only | ✅ Shell only | ❌ | ✅ Shell only |
 | Multi-language (JS, Python, Ruby…) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Unix pipeline integration | ✅ `snip pipe` | ❌ | ❌ | ❌ | ❌ |
 | Interactive TUI | ✅ Split-pane | ❌ | ✅ Basic | ❌ | ❌ |
 | Dangerous command detection | ✅ | ❌ | ❌ | ❌ | ❌ |
 | fzf integration | ✅ Native | ✅ | ✅ | ❌ | Manual |
@@ -91,6 +92,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip show <name>` | Display snippet (`--json`, `--raw`, `--edit`) |
 | `snip run <name>` | Preview + confirm + execute (with template prompts) |
 | `snip exec <name>` | Execute immediately, no modal (`--dry-run`, `--force`) |
+| `snip pipe <name>` | Pipeline mode — stdin→template→stdout (`--json`, `--dry-run`) |
 | `snip edit <name>` | Open in `$EDITOR` |
 | `snip rm <name>` | Delete (alias: `delete`) |
 | `snip update <name>` | Update metadata (`--tags`, `--lang`) |
@@ -199,14 +201,23 @@ snip fzf                     # search + preview
 snip fzf | pbcopy            # pipe to clipboard
 ```
 
-### Pipe-Friendly
+### Pipeline Mode
 
 ```bash
-snip cat deploy | sh
-snip show deploy --raw | xargs
-snip list --json | jq length
-snip search docker --json | jq '.[].name'
+# Run a snippet, pipe output forward
+snip pipe deploy-api | tee /tmp/deploy.log
+
+# Pipe JSON as template values — no interactive prompts
+echo '{"host":"prod.api.com","branch":"main"}' | snip pipe deploy --json
+
+# Stdin passthrough to the snippet's process
+curl -s https://api.example.com/data | snip pipe parse-json
+
+# Dry-run: see resolved content without executing
+echo '{"image":"node:20"}' | snip pipe docker-dev --json --dry-run
 ```
+
+Also pipe-friendly: `snip cat`, `snip show --raw`, `snip list --json`, `snip search --json`.
 
 ### Grab from URL
 
@@ -336,7 +347,7 @@ npm install -g snip-manager
 
 ## Roadmap
 
-- [ ] `snip pipe` — stdin pipeline integration
+- [x] `snip pipe` — stdin pipeline integration
 - [ ] Snippet groups / namespaces (`docker/cleanup`, `k8s/deploy`)
 - [ ] Snippet versioning & history
 - [ ] `snip share` — single-snippet gist sharing

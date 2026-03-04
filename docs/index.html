@@ -1419,7 +1419,7 @@
       </div>
       <div class="proof-divider"></div>
       <div class="proof-stat">
-        <span class="num">15+</span>
+        <span class="num">20+</span>
         <span class="label">CLI commands</span>
       </div>
       <div class="proof-divider"></div>
@@ -1502,9 +1502,9 @@
       </div>
       <div class="feature-card reveal">
         <span class="feature-icon">🚀</span>
-        <h3>Pipe-Friendly Output</h3>
-        <p>--json, --raw, and cat for scripting. cp, mv, recent for daily management.</p>
-        <span class="feature-cmd">snip cat deploy | sh</span>
+        <h3>Unix Pipeline Mode</h3>
+        <p>Pipe JSON as template values, pass stdin through to snippets, compose with any unix tool. Zero chrome.</p>
+        <span class="feature-cmd">echo '{"host":"prod"}' | snip pipe deploy --json</span>
       </div>
     </div>
   </section>
@@ -1582,6 +1582,13 @@
             <td class="snip-col"><span class="check">✓</span></td>
             <td><span class="cross">—</span></td>
             <td><span class="check">✓</span></td>
+            <td><span class="cross">—</span></td>
+          </tr>
+          <tr>
+            <td>Unix pipeline integration</td>
+            <td class="snip-col"><span class="check">✓</span> stdin→tmpl</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
             <td><span class="cross">—</span></td>
           </tr>
           <tr>
