@@ -1,24 +1,31 @@
-# Color Scheme — CLI Snippet Manager (snip)
+# Color Scheme — snip CLI
 
-Goal: a modern, high-contrast palette that looks great in terminals and aligns with developer tooling aesthetics.
+Unified brand palette used across the CLI and docs site.
 
-Primary colors
-- Primary (purple): #6D28D9  (used for headings, snippet names)
-- Accent (cyan): #06B6D4    (used for tags and interactive hints)
-- Success (green): #10B981   (used for success messages and run outputs)
-- Warning (amber): #F59E0B   (used for confirmations and cautions)
-- Error (red): #EF4444       (used for errors)
+## Primary palette
 
-Background / text
-- Dark background: #0F172A
-- Light text: #F8FAFC
-- Muted text: #94A3B8
+| Role | Hex | Usage |
+|------|-----|-------|
+| **Brand accent** | `#ff4d00` | Snippet names, headings, prompts, primary highlights |
+| **Accent light** | `#ff7a33` | Index numbers, badges, secondary emphasis |
+| **Tags** | `#F5A623` | Tag labels in list/search output |
+| **Muted** | `#6C7086` | De-emphasized text, metadata |
+| **Success** | `#16a34a` | Run confirmations, positive status |
+| **Warning** | `#ca8a04` | Dangerous command warnings, caution prompts |
+| **Error** | `#ef4444` | Error messages, failed operations |
 
-Terminal considerations
-- Respect --no-color and TERM capability detection.
-- Provide a monochrome-friendly mode.
+## Docs site (index.html)
 
-Sample usage
-- snip list: names in Primary, tags in Accent, usage stats in Muted text.
-- snip run preview: snippet content in light text, warnings in Warning, success in Success.
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `--accent` | `#ff4d00` | CTAs, links, feature highlights |
+| `--accent-light` | `#ff7a33` | Hover states, terminal command highlights |
+| `--ink` | `#faf9f7` | Body text |
+| `--paper` | `#0c0c0c` | Background |
+| `--muted` | `#a3a3a3` | Subtitles, secondary text |
 
+## Rules
+
+- Respect `--no-color` flag and `NO_COLOR` env var.
+- All chalk calls use graceful fallback — plain text when chalk is unavailable.
+- `#ff4d00` is the brand identity color. Use it consistently as the primary accent.

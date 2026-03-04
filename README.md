@@ -9,6 +9,7 @@
   <a href="https://www.npmjs.com/package/snip-manager"><img src="https://img.shields.io/npm/v/snip-manager.svg?style=flat-square&color=cb3837" alt="npm version"></a>
   <a href="https://www.npmjs.com/package/snip-manager"><img src="https://img.shields.io/npm/dm/snip-manager.svg?style=flat-square&color=blue" alt="monthly downloads"></a>
   <a href="https://github.com/Bharath-code/snip/actions"><img src="https://img.shields.io/github/actions/workflow/status/Bharath-code/snip/ci.yml?style=flat-square&label=CI" alt="CI"></a>
+  <a href="https://codecov.io/gh/Bharath-code/snip"><img src="https://img.shields.io/codecov/c/github/Bharath-code/snip?style=flat-square&color=ff4d00&label=coverage" alt="coverage"></a>
   <a href="https://github.com/Bharath-code/snip/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/snip-manager.svg?style=flat-square" alt="license"></a>
   <a href="https://www.npmjs.com/package/snip-manager"><img src="https://img.shields.io/node/v/snip-manager?style=flat-square" alt="node version"></a>
 </p>
@@ -23,8 +24,12 @@
 
 ---
 
-<!-- TODO: Replace with actual terminal recording (asciinema / vhs / terminalizer) -->
-<!-- <p align="center"><img src="docs/demo.gif" alt="snip demo" width="700"></p> -->
+<p align="center">
+  <img src="docs/snip_sc_1.png" alt="snip CLI demo — list, search, exec" width="700">
+</p>
+<p align="center">
+  <img src="docs/snip_sc_2.png" alt="snip TUI and pipeline mode" width="700">
+</p>
 
 ## Why snip?
 
