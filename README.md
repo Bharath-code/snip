@@ -110,7 +110,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip mv <old> <new>` | Rename a snippet |
 | `snip cat <name>` | Print raw content to stdout |
 | `snip recent [n]` | Show last _n_ used snippets (default: 5) |
-| `snip stats` | Library statistics |
+| `snip stats` | Library statistics (`--json`, language chart, top tags) |
 | `snip grab <url>` | Import from URL or `github:user/repo/path` |
 | `snip fzf` | fzf search with live preview |
 

@@ -20,13 +20,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Pipe JSON as template values: `echo '{"host":"prod"}' | snip pipe deploy --json`
   - Stdin passthrough to snippet process
   - Zero-chrome output for composability
+- `snip stats --json` — machine-readable statistics output
 - `stdinData` support in exec engine for stdin passthrough to child processes
 - Pipeline integration row in comparison tables (README + docs site)
+- Codecov coverage badge in README
+- Demo screenshots in README (`snip_sc_1.png`, `snip_sc_2.png`)
 
 ### Changed
+- `snip stats` extracted to its own command file with brand-colored output, language bar chart, and top tags
+- Unified CLI color palette to brand orange `#ff4d00` across list, search, show, run, stats
 - README: added `snip pipe` to commands table, replaced "Pipe-Friendly" section with "Pipeline Mode", marked pipe as shipped in roadmap
 - docs/index.html: updated feature card to "Unix Pipeline Mode", added comparison row, bumped CLI commands count to 20+
-- CHANGELOG: restructured unreleased section
+- `jest.config.js`: added coverage config (collectCoverageFrom, thresholds, reporters)
+- `color_scheme.md`: rewritten to match actual unified brand palette
 
 ## [0.2.0] - 2026-02-27
 

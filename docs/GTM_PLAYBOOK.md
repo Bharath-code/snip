@@ -33,24 +33,42 @@ Every dev has commands they re-type. snip is the only CLI snippet manager with *
 #### Reddit Post Template (r/commandline)
 
 ```
-Title: I built "snip" — a terminal snippet manager that actually executes code across any language
+Title: I built "snip" — a CLI snippet manager that runs code in any language, not just shell
 
-I kept losing one-off deploy scripts, docker commands, and API calls in my shell
-history. So I built snip.
+I got tired of losing deploy scripts, docker commands, and one-off API calls
+in my shell history. So I built snip — it saves, searches, and executes
+code snippets directly from your terminal.
 
-What makes it different from pet/navi/aliases:
+What makes it different from pet/navi/shell aliases:
 
-- Runs snippets in any language (sh, python, js, ruby) — not just shell
-- Pipeline mode: `echo '{"host":"prod"}' | snip pipe deploy --json`
-- Dangerous command detection (warns on rm -rf, sudo)
-- Interactive TUI with syntax highlighting
-- Parameterized templates: `docker run {{image:ubuntu}} {{cmd:bash}}`
-- Zero config: `npm install -g snip-manager`
+• Runs any language — sh, python, js, ruby, php, perl (not just shell)
+• Pipeline mode: echo '{"host":"prod"}' | snip pipe deploy --json
+• Parameterized templates: docker run {{image:ubuntu}} {{cmd:bash}}
+• Dangerous command detection — warns on rm -rf, sudo, dd before running
+• Interactive TUI with syntax highlighting and split-pane preview
+• fzf integration with live preview pane
+• Shell aliases — eval "$(snip alias)" turns every snippet into a command
+• Ctrl+G shell widget — search and paste snippets inline without leaving your prompt
+• GitHub Gist sync — push/pull your library across machines
+• Health check — snip doctor verifies your entire setup
+• JSON + SQLite backends — start simple, scale when your library grows
+• 58 tests, 20+ commands, zero config
 
+Quick demo:
+
+  $ echo 'const os = require("os"); console.log(os.hostname())' | snip add sys-info --lang js
+  $ snip exec sys-info
+  → Bharaths-MacBook-Air.local
+
+  $ snip stats --json | jq .totalRuns
+  → 14
+
+Install: npm install -g snip-manager
 GitHub: https://github.com/Bharath-code/snip
-npm: https://npmjs.com/package/snip-manager
+Docs: https://bharath-code.github.io/snip/
 
-Would love feedback — especially on what commands you'd want.
+What workflow would you use this for? I'm curious what commands people
+lose the most.
 ```
 
 > [!IMPORTANT]
@@ -63,7 +81,7 @@ Would love feedback — especially on what commands you'd want.
 **Post on a Tuesday or Wednesday, 10 AM ET.** This is when Show HN gets the most traffic.
 
 ```
-Title: Show HN: Snip – Terminal snippet manager with multi-lang execution and unix pipelines
+Title: Show HN: Snip – CLI snippet manager with multi-lang execution and unix pipelines
 
 URL: https://github.com/Bharath-code/snip
 
@@ -71,14 +89,19 @@ First comment (post immediately):
 
 Hi HN, I built snip because I kept losing deploy scripts and docker
 commands in my shell history. The existing tools (pet, navi) only run
-shell commands — snip runs JS, Python, Ruby, anything.
+shell — snip runs JS, Python, Ruby, anything.
 
-The feature I'm most proud of: `snip pipe`. You can pipe JSON into a
-snippet to fill template variables — makes it composable with CI/CD
-and unix pipelines.
+Key differentiators:
+- Pipeline mode: pipe JSON into snippets as template values
+- Parameterized templates with {{var:default}} syntax
+- Dangerous command detection (rm -rf, sudo, dd, fork bombs)
+- Interactive TUI with syntax highlighting (blessed)
+- fzf integration, Ctrl+G shell widget, shell aliases
+- GitHub Gist sync for cross-machine portability
+- JSON or SQLite storage, zero external services
 
-Built with Node.js, Commander.js, blessed for TUI, Fuse.js for fuzzy
-search. Zero external services, fully local-first.
+Tech stack: Node.js, Commander.js, Fuse.js (fuzzy search), blessed (TUI).
+58 tests, 20+ commands. Fully local-first, MIT license.
 
 npm install -g snip-manager
 
@@ -101,20 +124,22 @@ I built a terminal tool that replaces my 47 shell aliases.
 It runs snippets in any language, detects dangerous commands,
 and pipes JSON into templates.
 
-Open source, zero config.
+Open source. Zero config. 20+ commands.
 
 🧵 Here's what makes snip different:
 
 Tweet 2:
 The problem:
 → Aliases break across machines
-→ Shell history disappears  
+→ Shell history disappears
 → You can't run a Python snippet from a shell alias
 
 snip stores code snippets and runs them in their native language.
+JS, Python, Ruby, PHP — not just shell.
 
-`snip exec deploy-api`    ← runs immediately
-`snip run deploy-api`     ← previews first
+$ echo 'console.log(os.hostname())' | snip add sys-info --lang js
+$ snip exec sys-info
+→ my-macbook.local
 
 Tweet 3:
 The killer feature: pipeline mode.
@@ -122,34 +147,40 @@ The killer feature: pipeline mode.
 echo '{"host":"prod"}' | snip pipe deploy --json
 
 Pipe JSON → template variables get filled → snippet runs.
-
 No other snippet manager does this.
 
 Tweet 4:
 Safety built in:
 
-snip detects `rm -rf`, `sudo`, and destructive commands.
-Shows a warning before execution.
+snip detects rm -rf, sudo, dd, fork bombs, curl|bash,
+and 12 other destructive patterns.
+
+Shows a warning box before execution.
+You type "yes" to confirm — not just Enter.
 
 Because running the wrong deploy script at 3am shouldn't be easy.
 
 Tweet 5:
-Template variables with defaults:
+More features that ship out of the box:
 
-docker run {{image:ubuntu:24.04}} {{cmd:bash}}
-
-When you run the snippet, snip prompts for each variable.
-Defaults are pre-filled. Press Enter to accept.
+→ fzf with live preview pane
+→ Interactive TUI with syntax highlighting
+→ Ctrl+G shell widget (search inline)
+→ Shell aliases: eval "$(snip alias)"
+→ GitHub Gist sync across machines
+→ snip doctor health check
+→ JSON + SQLite backends
+→ snip stats --json for metrics
 
 Tweet 6:
-It's open source. MIT license.
+It's open source. MIT license. 58 tests.
 
 npm install -g snip-manager
 
 GitHub: github.com/Bharath-code/snip
-Website: bharath-code.github.io/snip/
+Docs: bharath-code.github.io/snip/
 
-I'd love your feedback — what commands do you wish existed?
+What commands do you lose the most? I'm building what you need.
 ```
 
 **Hashtags for discoverability:** `#cli` `#devtools` `#opensource` `#webdev` `#terminal`
