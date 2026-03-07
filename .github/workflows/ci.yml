@@ -42,17 +42,20 @@ jobs:
       - name: Run tests
         run: npm test -- --coverage
         env:
-          SNIP_GIST_TOKEN: ${{ secrets.SNIP_GIST_TOKEN }}
+          SNIP_GIST_TOKEN: ${{ secrets.SNIP_GIST_TOKEN || '' }}
 
       - name: Run sql.js smoke
         run: npm run smoke-sqljs
 
       - name: Upload coverage
+        if: matrix.os == 'ubuntu-latest' && matrix.node == '20.x'
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN || '' }}
           files: ./coverage/coverage-final.json
           flags: unittests
+          fail_ci_if_error: false
+          verbose: true
 
   lint:
     name: Lint
