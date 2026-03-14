@@ -101,6 +101,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip edit <name>` | Open in `$EDITOR` |
 | `snip rm <name>` | Delete (alias: `delete`) |
 | `snip update <name>` | Update metadata (`--tags`, `--lang`) |
+| `snip last` | Re-run the last executed snippet |
 
 ### Utilities
 
@@ -110,7 +111,8 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip mv <old> <new>` | Rename a snippet |
 | `snip cat <name>` | Print raw content to stdout |
 | `snip recent [n]` | Show last _n_ used snippets (default: 5) |
-| `snip stats` | Library statistics (`--json`, language chart, top tags) |
+| `snip stats` | Library statistics (`--json`, language chart, top tags, `--streak`) |
+| `snip import-history` | Suggest commands from shell history (run 3+ times) |
 | `snip grab <url>` | Import from URL or `github:user/repo/path` |
 | `snip fzf` | fzf search with live preview |
 
@@ -126,6 +128,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip doctor` | Health check |
 | `snip config <action>` | Get / set configuration |
 | `snip ui` | Interactive TUI |
+| `snip init` | Guided setup (editor, widget, example snippets, optional TUI) |
 
 ## Features
 

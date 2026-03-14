@@ -25,8 +25,8 @@
 **Outcome:** ~900 kB lighter, 4 fewer deps.
 
 ### Medium
-- [ ] **1.5** Add Fuse index cache invalidation — only rebuild when snippet count or DB mtime changes (in `lib/search.js`).
-- [ ] **1.6** Lazy-load snippet content in `storage.js` — metadata-only for `list`/`search`; load content only for `show`/`run`/`exec`.
+- [x] **1.5** Add Fuse index cache invalidation — only rebuild when snippet count or DB mtime changes (in `lib/search.js`).
+- [x] **1.6** Lazy-load snippet content in `storage.js` — metadata-only for `list`/`search`; load content only for `show`/`run`/`exec`.
 
 ### Hard
 - [ ] **1.7** Add in-process cache for `listSnippets()` so repeated commands in same process don’t reload full data every time.
@@ -42,10 +42,10 @@
 - [ ] **2.4** Centralize `process.exit()` — move exit logic into `cli.js` where possible; commands should throw or return status.
 
 ### Medium
-- [ ] **2.5** 🔴 Add **file lock** (or single-writer) for JSON backend in `storage.js` so two concurrent `snip add` don’t corrupt the DB (e.g. lock file or mutex around read-modify-write).
+- [x] **2.5** 🔴 Add **file lock** (or single-writer) for JSON backend in `storage.js` so two concurrent `snip add` don’t corrupt the DB (e.g. lock file or mutex around read-modify-write).
 - [x] **2.6** 🔴 Add `better-sqlite3` as **optional dependency** in `package.json` and document; add `snip doctor` check that suggests `npm install -g better-sqlite3` when SQLite is enabled but module missing.
 - [ ] **2.7** Normalize error handling — all commands: errors to stderr, non-zero exit on failure, consistent behavior for scripting.
-- [ ] **2.8** Enforce `--no-color` / `NO_COLOR` everywhere — audit chalk usage and respect flag/env in all commands.
+- [x] **2.8** Enforce `--no-color` / `NO_COLOR` everywhere — audit chalk usage and respect flag/env in all commands.
 
 ### Hard
 - [ ] **2.9** Raise coverage — bring command-layer coverage up (add tests for add, run, grab, pipe, show, stats, alias, sync; aim 60%+ on critical paths).
@@ -63,9 +63,9 @@
 - [x] **3.4** **Gist errors** — On 401 from GitHub API, show: "Invalid GitHub token. Set SNIP_GIST_TOKEN with a valid PAT."
 
 ### Medium
-- [ ] **3.5** **`snip run` vs `snip exec`** — Clarify in docs and help text; consider merging or one-line explanation in `--help` and README.
-- [ ] **3.6** **Pager for long lists** — When `snip list` returns 50+ snippets, use a pager (e.g. `less`) or suggest TUI.
-- [ ] **3.7** TUI first-run — Show a tiny guide or overlay on first `snip ui` (e.g. keybindings, "? for help").
+- [x] **3.5** **`snip run` vs `snip exec`** — Clarify in docs and help text; consider merging or one-line explanation in `--help` and README.
+- [x] **3.6** **Pager for long lists** — When `snip list` returns 50+ snippets, use a pager (e.g. `less`) or suggest TUI.
+- [x] **3.7** TUI first-run — Show a tiny guide or overlay on first `snip ui` (e.g. keybindings, "? for help").
 
 ### Hard
 - [ ] **3.8** Add inline help overlay in TUI (e.g. `?` key) with keybindings and confirm behavior.
@@ -82,10 +82,10 @@
 - [ ] **4.5** **`snip config`** — Add basic validation (type checking / allowed keys) instead of accepting any value.
 
 ### Medium
-- [ ] **4.6** **`snip init`** — Single guided wizard: choose editor → set up shell widget → seed example snippets → optional "open TUI". Target: zero to aha in ~60 seconds.
-- [ ] **4.7** **`snip last`** — Re-run last executed snippet (store last snippet id/name; simple persistence).
-- [ ] **4.8** **`snip stats --streak`** — Days in a row using snip (needs lightweight usage tracking).
-- [ ] **4.9** **CLI help** — One-line example in `--help` for each core command; align README examples with behavior.
+- [x] **4.6** **`snip init`** — Single guided wizard: choose editor → set up shell widget → seed example snippets → optional "open TUI". Target: zero to aha in ~60 seconds.
+- [x] **4.7** **`snip last`** — Re-run last executed snippet (store last snippet id/name; simple persistence).
+- [x] **4.8** **`snip stats --streak`** — Days in a row using snip (needs lightweight usage tracking).
+- [x] **4.9** **CLI help** — One-line example in `--help` for each core command; align README examples with behavior.
 
 ### Hard
 - [ ] **4.10** **`snip watch <name>`** — Re-run snippet on file edit (watch snippet file or DB change).
@@ -102,8 +102,8 @@
 - [x] **5.4** **`snip config` validation** — Reject invalid values and list allowed keys/types in help.
 
 ### Medium
-- [ ] **5.5** **Shell history import** — `snip import-history --last 30`: analyze recent shell history, find commands run 3+ times, suggest saving as snippets.
-- [ ] **5.6** **Natural language search** — Make description first-class in search (e.g. higher weight in Fuse options) so "find my docker cleanup command" works well.
+- [x] **5.5** **Shell history import** — `snip import-history --last 30`: analyze recent shell history, find commands run 3+ times, suggest saving as snippets.
+- [x] **5.6** **Natural language search** — Make description first-class in search (e.g. higher weight in Fuse options) so "find my docker cleanup command" works well.
 
 ### Hard
 - [ ] **5.7** **Context-aware suggestions** — In dir with `package.json` → suggest npm snippets; with `Dockerfile` → suggest docker snippets (needs context detection + tagging or categories).
