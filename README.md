@@ -19,6 +19,7 @@
   <a href="#quick-start">Quick Start</a> ·
   <a href="#commands">Commands</a> ·
   <a href="docs/demo.md">Demo</a> ·
+  <a href="#configuration">Configuration</a> ·
   <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
@@ -46,6 +47,10 @@ Most snippet managers only handle shell commands. **snip** handles _code_ — de
 | SQLite backend | ✅ Optional | ❌ | ❌ | ❌ | ❌ |
 | Gist sync | ✅ | ✅ | ❌ | ❌ | Manual |
 | Zero config | ✅ | ✅ | Needs cheats | ✅ | Heavy |
+| Shell widget (Ctrl+G) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Template variables | ✅ `{{var:default}}` | ❌ | ✅ | ❌ | ❌ |
+| Statistics & streaks | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Import from URL | ✅ `snip grab` | ❌ | ❌ | ❌ | ❌ |
 
 ## Quick Start
 
@@ -85,6 +90,22 @@ snip --version
 snip doctor          # validates storage, editor, fzf, shell, gist
 ```
 
+### Quick Setup with `snip init`
+
+First time? Run the guided setup wizard:
+
+```bash
+snip init
+```
+
+This interactive wizard will:
+1. ✍️  Set your preferred editor (`vim`, `code`, `nano`, etc.)
+2. ⌨️  Install the Ctrl+G shell widget for your shell (zsh/bash/fish)
+3. 📦  Seed 10 example snippets to get you started
+4. 🎨  Optionally launch the TUI for a quick tour
+
+**Goal:** Zero to "aha moment" in under 60 seconds.
+
 ## Commands
 
 ### Core
@@ -102,6 +123,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip rm <name>` | Delete (alias: `delete`) |
 | `snip update <name>` | Update metadata (`--tags`, `--lang`) |
 | `snip last` | Re-run the last executed snippet |
+| `snip recent [n]` | Show last _n_ used snippets (default: 5) |
 
 ### Utilities
 
@@ -109,12 +131,12 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 |---------|-------------|
 | `snip cp <src> <dest>` | Duplicate a snippet |
 | `snip mv <old> <new>` | Rename a snippet |
-| `snip cat <name>` | Print raw content to stdout |
-| `snip recent [n]` | Show last _n_ used snippets (default: 5) |
+| `snip cat <name>` | Print raw content to stdout (for piping) |
 | `snip stats` | Library statistics (`--json`, language chart, top tags, `--streak`) |
-| `snip import-history` | Suggest commands from shell history (run 3+ times) |
+| `snip import-history` | Suggest commands from shell history run 3+ times (`--last`, `--min-count`) |
 | `snip grab <url>` | Import from URL or `github:user/repo/path` |
 | `snip fzf` | fzf search with live preview |
+| `snip seed` | Clear data and add 10 example snippets |
 
 ### Integration
 
@@ -122,7 +144,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 |---------|-------------|
 | `snip alias [shell]` | Generate shell aliases (`eval "$(snip alias)"`) |
 | `snip widget [shell]` | Ctrl+G hotkey widget for zsh/bash/fish |
-| `snip completion [shell]` | Tab-completion script |
+| `snip completion [shell]` | Tab-completion script (bash, zsh, fish) |
 | `snip sync push [query]` | Push to GitHub Gist |
 | `snip sync pull <id>` | Pull from GitHub Gist |
 | `snip doctor` | Health check |
@@ -130,27 +152,39 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip ui` | Interactive TUI |
 | `snip init` | Guided setup (editor, widget, example snippets, optional TUI) |
 
+### Import/Export
+
+| Command | Description |
+|---------|-------------|
+| `snip export [path]` | Export snippets to JSON file |
+| `snip import <file>` | Import snippets from JSON file |
+
 ## Features
 
 ### Interactive TUI
 
-```
+```bash
 snip ui
 ```
 
-Split-pane interface with fuzzy search. Keyboard shortcuts:
+Split-pane interface with fuzzy search with **Catppuccin Mocha** color palette. Keyboard shortcuts:
 
 | Key | Action |
 |-----|--------|
-| `j` / `k` | Navigate |
+| `j` / `k` or `↑` / `↓` | Navigate |
+| `Ctrl+u` / `Ctrl+d` | Page up/down |
 | `/` | Live search |
 | `Enter` | Preview |
+| `c` | Copy to clipboard |
 | `r` | Run |
 | `e` | Edit |
 | `a` | Add new |
 | `d` | Delete (type name to confirm, `z` to undo within 5s) |
+| `t` | Tag filter |
 | `s` | Cycle sort mode |
 | `q` | Quit |
+
+**First time?** The TUI shows helpful overlays and keybinding hints on first launch.
 
 ### Zero-Friction Execution
 
@@ -159,6 +193,10 @@ snip exec deploy-api            # run immediately
 snip exec deploy-api --dry-run  # print only
 snip exec deploy-api --force    # skip safety warning
 ```
+
+**Safety First:** Dangerous commands (`rm -rf`, `sudo`, system-level ops) are detected automatically. `snip run` shows a preview and requires explicit confirmation. `snip exec` warns but lets you `--force` past.
+
+> **Tip:** Use `snip run` for interactive use (preview + confirm), `snip exec` for scripts (no prompts).
 
 ### Parameterized Snippets
 
@@ -225,6 +263,12 @@ curl -s https://api.example.com/data | snip pipe parse-json
 echo '{"image":"node:20"}' | snip pipe docker-dev --json --dry-run
 ```
 
+Pipeline mode is perfect for:
+- **CI/CD workflows** — pipe deployment outputs to logs
+- **JSON processing** — chain snippets with `jq` or other tools
+- **Automation scripts** — resolve templates programmatically
+- **Zero-chrome output** — clean stdout for piping
+
 Also pipe-friendly: `snip cat`, `snip show --raw`, `snip list --json`, `snip search --json`.
 
 ### Grab from URL
@@ -235,6 +279,54 @@ snip grab github:user/repo/scripts/backup.sh
 ```
 
 Language auto-detected from extension and shebang.
+
+### Shell History Import
+
+Turn your repeated shell commands into snippets automatically:
+
+```bash
+snip import-history --last 500
+```
+
+Analyzes your last 500 shell commands, finds those run 3+ times, and suggests saving them as snippets. Perfect for discovering your own "muscle memory" commands.
+
+### Re-run Last Snippet
+
+```bash
+snip last
+```
+
+Instantly re-run the last executed snippet. Like `!!` but for your snippet library.
+
+## Pro Tips
+
+```bash
+# Create a snippet from a GitHub gist
+snip grab https://gist.github.com/user/123456 --tags utility
+
+# Copy snippet to clipboard
+snip fzf | pbcopy        # macOS
+snip fzf | xclip         # Linux
+
+# View snippet statistics
+snip stats --json | jq '.totalSnippets'
+
+# Check your usage streak
+snip stats --streak
+
+# Find recently used snippets
+snip recent 10
+
+# Export your entire library
+snip export ~/snippets-backup.json
+
+# Import from a backup
+snip import ~/snippets-backup.json
+
+# Duplicate and modify a snippet
+snip cp deploy-staging deploy-prod
+snip edit deploy-prod
+```
 
 ## Configuration
 
@@ -250,7 +342,9 @@ snip config list
 | `useSqlite` | `false` | SQLite instead of JSON |
 | `snippetDir` | `~/.snip` | Data directory |
 
-SQLite uses `better-sqlite3` (native) or falls back to `sql.js` (WASM).
+**Validation:** `snip config` validates allowed keys and types, rejecting invalid values with helpful error messages.
+
+SQLite uses `better-sqlite3` (native module) or falls back to `sql.js` (WASM). If `better-sqlite3` is missing, `snip doctor` will suggest installing it with `npm install -g better-sqlite3`.
 
 ## Architecture
 
@@ -265,8 +359,15 @@ snip
 │   ├── template.js       # {{var:default}} engine
 │   ├── safety.js         # Dangerous command detection
 │   ├── config.js         # Config loader
-│   └── commands/         # One file per command
-├── completions/          # Shell completions
+│   ├── colors.js         # Unified brand color palette
+│   ├── clipboard.js      # Cross-platform clipboard support
+│   ├── lock.js           # Concurrency lock for storage
+│   ├── migrate_to_sqlite.js  # JSON → SQLite migration
+│   ├── readline.js       # Interactive prompts
+│   ├── streak.js         # Usage streak tracking
+│   ├── sync/             # Gist sync module
+│   └── commands/         # One file per command (20+)
+├── completions/          # Shell completions (bash, zsh, fish)
 ├── __tests__/            # Jest test suite
 ├── scripts/              # Seed / smoke scripts
 └── docs/                 # Website + demo
@@ -279,6 +380,7 @@ snip
 - **Dual storage** — JSON for instant start, SQLite for scale. Same API, swap with one config.
 - **No daemon** — every invocation is stateless. Fast cold starts.
 - **Blessed** for TUI — raw terminal control, no React/Ink overhead.
+- **Unified brand colors** — `#ff4d00` orange across all CLI output.
 
 ## Development
 
@@ -296,7 +398,7 @@ node bin/snip seed
 # Run tests
 npm test
 
-# Lint
+# Lint code
 npm run lint
 ```
 
@@ -305,8 +407,8 @@ npm run lint
 Tests use [Jest](https://jestjs.io/) and cover storage, search, template engine, exec, safety, and CLI integration.
 
 ```bash
-npm test                   # run all tests
-npx jest --verbose         # verbose output
+npm test                     # run all tests
+npx jest --verbose           # verbose output
 npx jest __tests__/exec.test.js  # single file
 ```
 
@@ -342,6 +444,37 @@ snip config set editor "vim"     # or code, nvim, nano, subl
 </details>
 
 <details>
+<summary><b>GitHub token errors with Gist sync</b></summary>
+
+If you see 401 errors when pushing/pulling gists:
+
+```bash
+# Set a valid GitHub PAT (Personal Access Token)
+export SNIP_GIST_TOKEN=your_token_here
+```
+
+Generate a token at https://github.com/settings/tokens with `gist` scope.
+
+</details>
+
+<details>
+<summary><b>SQLite mode errors</b></summary>
+
+If `snip config set useSqlite true` causes errors:
+
+```bash
+# Install the native SQLite module
+npm install -g better-sqlite3
+
+# Or continue using JSON backend (default)
+snip config set useSqlite false
+```
+
+`snip doctor` will detect and suggest fixes for SQLite issues.
+
+</details>
+
+<details>
 <summary><b>Permission errors on global install</b></summary>
 
 Use [nvm](https://github.com/nvm-sh/nvm) to avoid `sudo`:
@@ -355,13 +488,32 @@ npm install -g snip-manager
 
 ## Roadmap
 
-- [x] `snip pipe` — stdin pipeline integration
+### Shipped in v0.4.0
+- [x] `snip pipe` — stdin pipeline integration (`--json`, `--dry-run`)
+- [x] `snip stats --json` — machine-readable statistics
+- [x] `snip stats --streak` — days-in-a-row usage tracking
+- [x] `snip recent` — recently used snippets
+- [x] `snip last` — re-run last executed snippet
+- [x] `snip cp` / `snip mv` / `snip cat` — snippet management utilities
+- [x] `snip seed` — example snippets for onboarding
+- [x] `snip completion` — shell completion scripts (bash, zsh, fish)
+- [x] `snip init` — guided setup wizard
+- [x] `snip import-history` — import repeated commands from shell history
+- [x] `snip doctor` — enhanced with widget check, SQLite detection, better error messages
+- [x] Unified brand colors (`#ff4d00`) across CLI output
+- [x] Catppuccin Mocha TUI theme with first-run overlays
+- [x] Config validation with type checking
+- [x] Improved error messages with next-step guidance
+
+### Planned
 - [ ] Snippet groups / namespaces (`docker/cleanup`, `k8s/deploy`)
 - [ ] Snippet versioning & history
 - [ ] `snip share` — single-snippet gist sharing
 - [ ] `snip diff a b` — diff two snippets
-- [ ] AI snippet generation
+- [ ] `snip watch <name>` — re-run snippet on file edit
+- [ ] AI snippet generation (`snip ai generate "..."`)
 - [ ] Team shared snippets
+- [ ] VS Code / Neovim extension
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
