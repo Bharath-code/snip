@@ -9,9 +9,103 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 - Snippet versioning / history
-- Snippet groups / namespaces
+- Snippet groups / namespaces (`docker/cleanup`, `k8s/deploy`)
 - `snip share` — single-snippet gist sharing
 - `snip diff a b` — diff two snippets
+- AI snippet generation (`snip ai generate`)
+- Team shared snippets
+- VS Code / Neovim extension
+
+## [0.4.0] - 2026-03-14
+
+### Added
+- **`snip init`** — guided setup wizard for zero-to-aha in 60 seconds
+  - Interactive editor selection (vim, code, nano, etc.)
+  - Automatic Ctrl+G widget installation for zsh/bash/fish
+  - Seeds 10 example snippets to get started
+  - Optional TUI tour on first launch
+- **`snip import-history`** — import repeated commands from shell history
+  - Analyzes last N commands (default: 500)
+  - Suggests commands run 3+ times as snippets
+  - Options: `--last <n>`, `--min-count <n>`, `--json`
+- **`snip last`** — re-run the last executed snippet
+  - Like `!!` but for your snippet library
+  - Stores last snippet id/name in config
+- **`snip stats --streak`** — days-in-a-row usage tracking
+  - Habit-forming streak counter
+  - Shows last used date
+  - JSON output support for scripting
+- **Catppuccin Mocha TUI theme** — beautiful, modern color palette
+  - First-run overlays with keybinding hints
+  - Improved visual consistency across all TUI screens
+- **Enhanced error messages** with next-step guidance
+  - "Snippet not found" → suggests `snip search` or similar names
+  - GitHub 401 errors → clear PAT token instructions
+  - SQLite errors → suggests installing `better-sqlite3`
+- **`snip doctor` enhancements**
+  - Checks for Ctrl+G widget installation
+  - Detects missing `better-sqlite3` when SQLite enabled
+  - Better actionable fix messages
+- **Config validation** — type checking for `snip config` values
+  - Rejects invalid keys and types with helpful errors
+  - Lists allowed options in help text
+- **Terminal width detection** — `snip list` now respects `process.stdout.columns`
+  - Dynamic column widths based on terminal size
+  - No more truncated output on wide terminals or sparse on narrow ones
+- **Natural language search** — improved Fuse.js weighting
+  - Description field now first-class in search
+  - Better results for queries like "find my docker cleanup command"
+
+### Changed
+- **Safety improvements** — `--confirm` flag now only skips prompt, never danger checks
+  - Dangerous commands always require explicit confirmation
+  - Security regression fixed from v0.3.0
+- **Performance optimizations**
+  - Removed `mkdirp`, `uuid`, `fs-extra`, `readline-sync` dependencies (~900 kB lighter)
+  - Using native Node.js 18+ APIs (`crypto.randomUUID()`, `fs.mkdirSync`)
+  - Fuse index cache invalidation — only rebuilds when snippet count or DB mtime changes
+  - Lazy-load snippet content — metadata-only for `list`/`search`, content on-demand
+- **Improved `snip run` vs `snip exec` documentation**
+  - Clearer help text explaining when to use each
+  - `snip run` = preview + confirm (interactive)
+  - `snip exec` = immediate execution (scripts)
+- **Better first-run experience**
+  - Prominent onboarding message when no snippets exist
+  - Hints to run `snip seed` or `snip doctor`
+  - TUI shows helpful overlays on first launch
+- **Gist sync error handling**
+  - 401 errors now show clear token setup instructions
+  - Gist conflict detection warns before overwriting local changes
+- **SQLite backend improvements**
+  - `better-sqlite3` now properly detected and suggested
+  - `snip edit` in SQLite mode properly persists edits
+  - Better error messages for SQLite-related issues
+- **`snip recent` command** — improved edge case handling
+  - Better empty history behavior
+  - Added test coverage
+- **Unified brand colors** — `#ff4d00` orange across all CLI output
+  - Consistent color palette in list, search, show, run, stats
+  - `--no-color` and `NO_COLOR` env respected everywhere
+
+### Fixed
+- **Security**: `--confirm` bypass vulnerability — danger checks now always run
+- **Storage**: Added file lock for JSON backend to prevent corruption on concurrent writes
+- **Template engine**: Replaced `process.exit(1)` with `throw new Error()` for programmatic use
+- **`snip edit` (SQLite)**: Edits now persist correctly when editor saves
+- **Gist conflicts**: Warns when pulling would overwrite local changes
+
+### Removed
+- **Dependencies**: Removed 4 packages to reduce bundle size by ~900 kB
+  - `mkdirp` → replaced with `fs.mkdirSync(path, { recursive: true })`
+  - `uuid` → replaced with `crypto.randomUUID()`
+  - `fs-extra` → replaced with native `fs`
+  - `readline-sync` → replaced with native `readline` (async)
+
+### Internal
+- Extracted `lib/colors.js` — single source of truth for chalk + fallback
+- Centralized `process.exit()` handling in `cli.js` where possible
+- Improved error handling consistency across all commands
+- Enhanced `lib/safety.js` test coverage for all 14 danger patterns
 
 ## [0.3.0] - 2026-03-04
 
@@ -81,7 +175,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-language snippet runner (sh, bash, node, python, ruby, php, perl, powershell)
 - Export / import (JSON)
 
-[Unreleased]: https://github.com/Bharath-code/snip/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/Bharath-code/snip/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/Bharath-code/snip/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Bharath-code/snip/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Bharath-code/snip/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/Bharath-code/snip/compare/v0.1.0...v0.1.1
