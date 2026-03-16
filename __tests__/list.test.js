@@ -22,7 +22,7 @@ function busyWait(ms) {
 // Extract snippet names from the table output (skip header + separator lines)
 function extractNames(lines) {
   return lines
-    .filter(l => l.trim() && !l.includes('NAME') && !l.includes('─') && !l.match(/^\s*\d+ snippet/))
+    .filter(l => l.trim() && !l.includes('NAME') && !l.includes('─') && !l.match(/^\s*\d+ snippet/) && !l.startsWith('  Tip:') && !l.startsWith('       '))
     .map(l => l.trim().split(/\s{2,}/)[0].trim());
 }
 

@@ -15,7 +15,7 @@ describe('export/import', () => {
     // remove snippet
     const id = s.id;
     const rm = require('../lib/commands/rm');
-    rm(id);
+    rm(id, { force: true });
     const after = storage.getSnippetByIdOrName(id);
     expect(after).toBeNull();
     // import

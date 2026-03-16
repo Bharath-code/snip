@@ -14,7 +14,7 @@ describe('edit and rm', () => {
     // Content unchanged → updatedAt should NOT change
     const unchanged = storage.getSnippetByIdOrName(s.id);
     expect(unchanged.updatedAt).toBe(s.updatedAt);
-    rmCmd(s.id);
+    rmCmd(s.id, { force: true });
     const after = storage.getSnippetByIdOrName(s.id);
     expect(after).toBeNull();
   });
@@ -26,6 +26,6 @@ describe('edit and rm', () => {
     storage.updateSnippetContent(s.id, 'modified');
     const updated = storage.getSnippetByIdOrName(s.id);
     expect(new Date(updated.updatedAt).getTime()).toBeGreaterThan(new Date(originalUpdatedAt).getTime());
-    rmCmd(s.id);
+    rmCmd(s.id, { force: true });
   });
 });
