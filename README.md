@@ -125,6 +125,27 @@ This interactive wizard will:
 | `snip last` | Re-run the last executed snippet |
 | `snip recent [n]` | Show last _n_ used snippets (default: 5) |
 
+### AI-Powered Generation
+
+| Command | Description |
+|---------|-------------|
+| `snip ai generate "<prompt>"` | Generate a snippet using AI (requires OpenAI API key) |
+| | Options: `--lang`, `--tags`, `--name`, `--model` |
+
+```bash
+# Set up OpenAI API key
+export SNIP_AI_API_KEY="your-openai-api-key"
+
+# Generate a Docker health check
+snip ai generate "docker container health check"
+
+# Generate a Python web server
+snip ai generate "simple flask server" --lang python --tags web,api
+
+# Generate with custom name and model
+snip ai generate "curl wrapper with retry" --name curl-retry --model gpt-4
+```
+
 ### Utilities
 
 | Command | Description |
@@ -333,6 +354,7 @@ snip edit deploy-prod
 ```bash
 snip config set editor "code --wait"
 snip config set useSqlite true       # for 100+ snippets
+snip config set ai_model gpt-4       # AI model for generation
 snip config list
 ```
 
@@ -341,6 +363,28 @@ snip config list
 | `editor` | `$EDITOR` / `vi` | Snippet editor |
 | `useSqlite` | `false` | SQLite instead of JSON |
 | `snippetDir` | `~/.snip` | Data directory |
+| `ai_provider` | `openai` | AI provider (currently only OpenAI) |
+| `ai_model` | `gpt-3.5-turbo` | AI model for generation |
+| `ai_max_tokens` | `1000` | Max tokens to generate |
+| `ai_api_key` | - | OpenAI API key (use `SNIP_AI_API_KEY` env var) |
+
+### AI Setup
+
+1. **Set API key (recommended):**
+   ```bash
+   export SNIP_AI_API_KEY="sk-..."
+   ```
+
+2. **Or store in config:**
+   ```bash
+   snip config set ai_api_key "sk-..."
+   # Warning: Key will be stored in plain text
+   ```
+
+3. **Generate your first snippet:**
+   ```bash
+   snip ai generate "curl with retry logic"
+   ```
 
 **Validation:** `snip config` validates allowed keys and types, rejecting invalid values with helpful error messages.
 
