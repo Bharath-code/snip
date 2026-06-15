@@ -2,53 +2,20 @@
 
 ## Supported Versions
 
+The table below lists the versions of `snip` that are currently supported with security updates.
+
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.x   | :white_check_mark: |
+| 0.3.x   | ✅ Yes             |
+| < 0.3.0 | ❌ No              |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within snip, please send an email to the maintainer. All security vulnerabilities will be promptly addressed.
+We take the security of `snip` seriously. If you find a security vulnerability, please do **not** open a public issue. Instead, follow these steps:
 
-Please include the following:
+1. Send an email to **kumarbharath63@gmail.com** detailing the vulnerability.
+2. Include steps to reproduce, potential impact, and any suggested fixes.
+3. We will acknowledge your report within 48 hours and work with you to coordinate a security release.
 
-- Type of vulnerability
-- Full paths of source file(s) related to the vulnerability
-- Location of the affected source code
-- Any special configuration required to reproduce the issue
-- Step-by-step instructions to reproduce the issue
-- Proof-of-concept or exploit code (if possible)
-- Impact of the issue
-
-## What to Expect
-
-- **Acknowledgment**: Within 48 hours, you'll receive acknowledgment of your report
-- **Timeline**: We aim to provide a timeline for when the vulnerability will be addressed
-- **Updates**: You'll be notified of the fix and when a new version is released
-
-## Security Best Practices
-
-When using snip:
-
-1. **Review before running** — Always preview snippets before execution
-2. **Trusted sources only** — Only run snippets from trusted sources
-3. **GitHub tokens** — Never commit GitHub tokens to your snippets
-4. **Local storage** — Snippets are stored locally in `~/.snip/` by default
-
-## Allowed Use Cases
-
-snip is designed to:
-- Save and execute your own code snippets
-- Search and organize reusable commands
-- Share snippets via GitHub Gists (with your consent)
-
-## Prohibited Use
-
-- Executing malicious code
-- Storing credentials or secrets
-- Automating unauthorized access
-- Any use that violates applicable laws
-
----
-
-Thank you for helping keep snip and its users safe!
+## Snippet Execution & Safety
+`snip` includes built-in warning checks for potentially destructive commands (e.g. `rm -rf /`, fork bombs, curl-pipe-bash). While these warnings help prevent accidents, always inspect third-party packs before installing them.
