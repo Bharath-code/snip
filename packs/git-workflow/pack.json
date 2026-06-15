@@ -1,0 +1,43 @@
+{
+  "name": "git-workflow",
+  "version": "1.0.0",
+  "description": "Common Git operations: commit, branch, merge, rebase, stash, log",
+  "snippets": [
+    {
+      "name": "git-amend",
+      "content": "git commit --amend --no-edit",
+      "language": "sh",
+      "tags": ["commit", "quick"]
+    },
+    {
+      "name": "git-undo-commit",
+      "content": "git reset --soft HEAD~1",
+      "language": "sh",
+      "tags": ["reset", "undo"]
+    },
+    {
+      "name": "git-clean-branches",
+      "content": "git branch --merged | grep -v \"\\*\" | grep -v \"master\" | grep -v \"main\" | xargs -n 1 git branch -d",
+      "language": "sh",
+      "tags": ["cleanup"]
+    },
+    {
+      "name": "git-pretty-log",
+      "content": "git log --graph --oneline --decorate --all",
+      "language": "sh",
+      "tags": ["log", "visual"]
+    },
+    {
+      "name": "git-force-pull",
+      "content": "git fetch origin && git reset --hard origin/$(git branch --show-current)",
+      "language": "sh",
+      "tags": ["sync", "danger"]
+    },
+    {
+      "name": "git-discard-changes",
+      "content": "git restore . && git clean -df",
+      "language": "sh",
+      "tags": ["reset", "cleanup"]
+    }
+  ]
+}

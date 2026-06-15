@@ -1,0 +1,37 @@
+{
+  "name": "k8s-quick",
+  "version": "1.0.0",
+  "description": "Kubernetes quick commands: pods, deployments, services, logs, port-forward",
+  "snippets": [
+    {
+      "name": "k8s-get-pods",
+      "content": "kubectl get pods -A --sort-by='.metadata.creationTimestamp'",
+      "language": "sh",
+      "tags": ["status", "pods"]
+    },
+    {
+      "name": "k8s-describe-pod",
+      "content": "kubectl describe pod ${1:pod_name} -n ${2:default}",
+      "language": "sh",
+      "tags": ["debug", "inspect"]
+    },
+    {
+      "name": "k8s-logs",
+      "content": "kubectl logs -f ${1:pod_name} -n ${2:default} --tail=100",
+      "language": "sh",
+      "tags": ["debug", "logs"]
+    },
+    {
+      "name": "k8s-port-forward",
+      "content": "kubectl port-forward ${1:pod_name} ${2:8080}:${3:80}",
+      "language": "sh",
+      "tags": ["proxy", "dev"]
+    },
+    {
+      "name": "k8s-nuke-namespace",
+      "content": "kubectl delete ns ${1:namespace} --grace-period=0 --force",
+      "language": "sh",
+      "tags": ["delete", "danger"]
+    }
+  ]
+}

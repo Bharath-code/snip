@@ -1,0 +1,37 @@
+{
+  "name": "linux-ops",
+  "version": "1.0.0",
+  "description": "Linux operations: disk, memory, process, network diagnostics",
+  "snippets": [
+    {
+      "name": "linux-disk-usage",
+      "content": "df -h | grep -v tmpfs",
+      "language": "sh",
+      "tags": ["disk", "sysadmin"]
+    },
+    {
+      "name": "linux-find-large-files",
+      "content": "find . -type f -size +100M -exec ls -lh {} \\;",
+      "language": "sh",
+      "tags": ["disk", "search"]
+    },
+    {
+      "name": "linux-port-check",
+      "content": "lsof -i :${1:port}",
+      "language": "sh",
+      "tags": ["network", "debug"]
+    },
+    {
+      "name": "linux-memory-free",
+      "content": "free -h",
+      "language": "sh",
+      "tags": ["memory", "sysadmin"]
+    },
+    {
+      "name": "linux-active-processes",
+      "content": "ps aux --sort=-%mem | head -n 10",
+      "language": "sh",
+      "tags": ["monitor", "cpu"]
+    }
+  ]
+}

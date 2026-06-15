@@ -1,0 +1,31 @@
+{
+  "name": "python-dev",
+  "version": "1.0.0",
+  "description": "Python dev essentials: venv, pip, pytest, lint, build",
+  "snippets": [
+    {
+      "name": "python-venv-create",
+      "content": "python3 -m venv venv && source venv/bin/activate",
+      "language": "sh",
+      "tags": ["venv", "setup"]
+    },
+    {
+      "name": "python-install-requirements",
+      "content": "pip install -r requirements.txt",
+      "language": "sh",
+      "tags": ["deps", "install"]
+    },
+    {
+      "name": "python-run-tests",
+      "content": "pytest -v --cov",
+      "language": "sh",
+      "tags": ["test"]
+    },
+    {
+      "name": "python-clean-pyc",
+      "content": "find . -type f -name '*.pyc' -delete -o -type d -name '__pycache__' -delete",
+      "language": "sh",
+      "tags": ["cleanup"]
+    }
+  ]
+}

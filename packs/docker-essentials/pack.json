@@ -1,0 +1,43 @@
+{
+  "name": "docker-essentials",
+  "version": "1.0.0",
+  "description": "Essential Docker commands: containers, images, volumes, networks, cleanup",
+  "snippets": [
+    {
+      "name": "docker-cleanup",
+      "content": "docker system prune -a --volumes -f",
+      "language": "sh",
+      "tags": ["cleanup", "sysadmin"]
+    },
+    {
+      "name": "docker-logs",
+      "content": "docker logs -f --tail 100 ${1:container_name}",
+      "language": "sh",
+      "tags": ["debug"]
+    },
+    {
+      "name": "docker-stats",
+      "content": "docker stats --format \"table {{.Name}}\\t{{.CPUPerc}}\\t{{.MemUsage}}\\t{{.NetIO}}\"",
+      "language": "sh",
+      "tags": ["monitor"]
+    },
+    {
+      "name": "docker-run-nginx",
+      "content": "docker run -d -p 8080:80 --name web nginx:alpine",
+      "language": "sh",
+      "tags": ["web", "test"]
+    },
+    {
+      "name": "docker-list-containers",
+      "content": "docker ps -a --format \"table {{.ID}}\\t{{.Names}}\\t{{.Status}}\\t{{.Ports}}\"",
+      "language": "sh",
+      "tags": ["status"]
+    },
+    {
+      "name": "docker-compose-up",
+      "content": "docker compose up -d --build",
+      "language": "sh",
+      "tags": ["compose", "dev"]
+    }
+  ]
+}

@@ -60,6 +60,15 @@ describe('packs module', () => {
       .toThrow(/missing "snippets" array/);
   });
 
+  test('fetchPack resolves local bundled pack without network fetch', async () => {
+    global.fetch.mockClear();
+    const manifest = await packs.fetchPack('docker-essentials');
+    expect(manifest.name).toBe('docker-essentials');
+    expect(Array.isArray(manifest.snippets)).toBe(true);
+    expect(manifest.snippets.length).toBeGreaterThan(0);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
   test('install adds snippets with pack name as tag', async () => {
     mockFetchResponse = {
       name: 'test-pack',

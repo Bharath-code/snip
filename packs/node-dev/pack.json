@@ -1,0 +1,37 @@
+{
+  "name": "node-dev",
+  "version": "1.0.0",
+  "description": "Node.js development helpers: npm, npx, debug, test, build",
+  "snippets": [
+    {
+      "name": "node-nuke-modules",
+      "content": "rm -rf node_modules package-lock.json && npm install",
+      "language": "sh",
+      "tags": ["cleanup", "reinstall"]
+    },
+    {
+      "name": "node-debug",
+      "content": "node --inspect-brk ${1:script.js}",
+      "language": "sh",
+      "tags": ["debug"]
+    },
+    {
+      "name": "node-run-script",
+      "content": "npm run ${1:dev}",
+      "language": "sh",
+      "tags": ["exec", "npm"]
+    },
+    {
+      "name": "node-outdated",
+      "content": "npm outdated",
+      "language": "sh",
+      "tags": ["deps", "update"]
+    },
+    {
+      "name": "node-audit-fix",
+      "content": "npm audit fix --force",
+      "language": "sh",
+      "tags": ["security", "danger"]
+    }
+  ]
+}
