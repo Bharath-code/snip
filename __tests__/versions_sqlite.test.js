@@ -273,7 +273,7 @@ describe('SQLite versions backend', () => {
       const result = versions.undo(id2);
       expect(result).not.toBeNull();
       expect(result.content).toBe('echo first');
-      expect(result.version).toBe(1);
+      expect(result.version).toBe(list[0].version);
     });
 
     test('creates a new version before undoing', () => {
