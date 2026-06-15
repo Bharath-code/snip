@@ -1,0 +1,36 @@
+{
+  "name": "snip-vscode",
+  "displayName": "snip",
+  "description": "Visual Studio Code integration for the snip CLI snippet manager.",
+  "version": "0.1.0",
+  "publisher": "snip",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "snip.addSelection",
+        "title": "Snip: Save Selection as Snippet"
+      },
+      {
+        "command": "snip.runSnippet",
+        "title": "Snip: Run Snippet in Terminal"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "snip.addSelection",
+          "group": "navigation",
+          "when": "editorHasSelection"
+        }
+      ]
+    }
+  }
+}
