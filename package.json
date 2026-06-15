@@ -39,11 +39,20 @@
     "node": ">=18"
   },
   "preferGlobal": true,
+  "files": [
+    "bin/",
+    "lib/",
+    "completions/",
+    "packs/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "jest",
     "lint": "eslint lib/",
     "smoke-sqljs": "node scripts/sqljs-smoke.js",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test && npm run lint",
+    "verify-pack": "node scripts/verify-publish.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
