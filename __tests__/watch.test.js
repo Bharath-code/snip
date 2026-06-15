@@ -100,9 +100,10 @@ describe('Watch Command', () => {
   }, 5000);
 
   test('watch updates storage when temp file changes', async () => {
+    const uniqueName = `watch-update-${Math.random().toString(36).substring(2, 9)}`;
     const storage = require('../lib/storage');
     storage.addSnippet({
-      name: 'watch-update',
+      name: uniqueName,
       content: 'echo "original"',
       language: 'bash',
       tags: ['test'],
@@ -112,7 +113,7 @@ describe('Watch Command', () => {
     const watchCmd = require('../lib/commands/watch');
 
     // Start watching in the background
-    const watchPromise = watchCmd('watch-update');
+    const watchPromise = watchCmd(uniqueName);
     let stopped = false;
 
     // Give it time to set up the watcher
@@ -121,24 +122,31 @@ describe('Watch Command', () => {
     // Find the temp file
     const tmpDir = os.tmpdir();
     const files = fs.readdirSync(tmpDir);
-    const watchFile = files.find(f => f.startsWith('snip-watch-watch-update'));
+    const watchFile = files.find(f => f.startsWith(`snip-watch-${uniqueName}`));
     expect(watchFile).toBeDefined();
     const tmpPath = path.join(tmpDir, watchFile);
 
     // Write new content to the temp file (simulating an edit)
     fs.writeFileSync(tmpPath, 'echo "edited content"', 'utf8');
 
-    // Wait for the watcher debounce (300ms) + execution
-    await new Promise(r => setTimeout(r, 800));
+    // Poll for the snippet to be updated in storage (up to 3 seconds)
+    let updatedContent = '';
+    for (let i = 0; i < 30; i++) {
+      const updated = storage.getSnippetByIdOrName(uniqueName);
+      if (updated) {
+        updatedContent = storage.readSnippetContent(updated);
+        if (updatedContent === 'echo "edited content"') {
+          break;
+        }
+      }
+      await new Promise(r => setTimeout(r, 100));
+    }
 
     // Verify the snippet was updated in storage
-    const updated = storage.getSnippetByIdOrName('watch-update');
-    expect(updated).toBeDefined();
-    const updatedContent = storage.readSnippetContent(updated);
     expect(updatedContent).toBe('echo "edited content"');
 
     // Cleanup temp file
     try { fs.unlinkSync(tmpPath); } catch (_) {}
     stopped = true;
-  }, 8000);
+  }, 10000);
 });
