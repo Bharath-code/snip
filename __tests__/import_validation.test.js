@@ -40,7 +40,7 @@ describe('import validation', () => {
     test('rejects non-JSON content', () => {
         const f = writeFile('bad.json', 'not json at all');
         const errs = captureErrors(() => importCmd(f));
-        expect(errs[0]).toContain('invalid JSON');
+        expect(errs[0]).toContain('Invalid JSON');
         expect(process.exitCode).toBe(1);
     });
 
@@ -61,7 +61,7 @@ describe('import validation', () => {
     test('rejects empty array', () => {
         const f = writeFile('empty.json', '[]');
         const errs = captureErrors(() => importCmd(f));
-        expect(errs[0]).toContain('no snippets found');
+        expect(errs[0]).toContain('No snippets found');
         expect(process.exitCode).toBe(1);
     });
 

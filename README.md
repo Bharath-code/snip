@@ -26,10 +26,7 @@
 ---
 
 <p align="center">
-  <img src="docs/snip_sc_1.png" alt="snip CLI demo — list, search, exec" width="700">
-</p>
-<p align="center">
-  <img src="docs/snip_sc_2.png" alt="snip TUI and pipeline mode" width="700">
+  <img src="https://vhs.charm.sh/vhs-68GMwpm0mG45CKI5fXvqYv.gif" alt="snip CLI demo — list, search, show, exec, add, stats, run" width="100%">
 </p>
 
 ## Why snip?
@@ -113,14 +110,15 @@ This interactive wizard will:
 | Command | Description |
 |---------|-------------|
 | `snip add <name>` | Save a snippet from stdin or `$EDITOR` |
+| `snip add:js <name>` | Add with language shortcut (sh, py, js, ts, rb, go, rs) |
 | `snip list` | List all snippets (`--json`, `--tag`, `--lang`, `--sort`, `--limit`) |
 | `snip search <query>` | Fuzzy search (`--json`, `--limit`) |
 | `snip show <name>` | Display snippet (`--json`, `--raw`, `--edit`) |
-| `snip run <name>` | Preview + confirm + execute (with template prompts) |
+| `snip run <name>` | Preview + confirm + execute (with template prompts, `--confirm`) |
 | `snip exec <name>` | Execute immediately, no modal (`--dry-run`, `--force`) |
 | `snip pipe <name>` | Pipeline mode — stdin→template→stdout (`--json`, `--dry-run`) |
 | `snip edit <name>` | Open in `$EDITOR` |
-| `snip rm <name>` | Delete (alias: `delete`) |
+| `snip rm <name>` | Delete (alias: `delete`, `--force` to skip confirm) |
 | `snip update <name>` | Update metadata (`--tags`, `--lang`) |
 | `snip last` | Re-run the last executed snippet |
 | `snip recent [n]` | Show last _n_ used snippets (default: 5) |
@@ -168,9 +166,13 @@ snip ai generate "curl wrapper with retry" --name curl-retry --model gpt-4
 | `snip completion [shell]` | Tab-completion script (bash, zsh, fish) |
 | `snip sync push [query]` | Push to GitHub Gist |
 | `snip sync pull <id>` | Pull from GitHub Gist |
+| `snip share <name...>` | Publish snippet(s) as a public Gist |
+| `snip unshare <name>` | Delete a shared Gist (keeps local snippet) |
+| `snip discover [query]` | Search public gists shared by the community |
 | `snip doctor` | Health check |
 | `snip config <action>` | Get / set configuration |
 | `snip ui` | Interactive TUI |
+| `snip mcp` | Start MCP server for AI agent integration (stdin/stdout) |
 | `snip init` | Guided setup (editor, widget, example snippets, optional TUI) |
 
 ### Import/Export
@@ -318,6 +320,96 @@ snip last
 ```
 
 Instantly re-run the last executed snippet. Like `!!` but for your snippet library.
+
+### AI Agent Integration (MCP)
+
+snip now speaks the **Model Context Protocol (MCP)**, the open standard that AI coding tools like Claude Code, Cline, and Goose use to interact with external tools. Start an MCP server and your AI agent can search, read, save, and execute snippets directly.
+
+```bash
+# Start the MCP server (stdio transport)
+snip mcp
+```
+
+#### Available Tools
+
+The MCP server exposes **16 tools** — search, read, write, and share capabilities:
+
+| Tool | Description | Safety |
+|------|-------------|--------|
+| `snip_search` | Fuzzy-search by name, tags, or content | Read-only |
+| `snip_searchRelevance` | Search with Fuse.js relevance scores (0 = perfect, 1 = no match). Includes `min_score` filter and snippet content in results. | Read-only |
+| `snip_list` | List with optional tag/language/sort/limit filters | Read-only |
+| `snip_read` | Read snippet content + metadata by name | Read-only |
+| `snip_suggest` | Context-aware suggestions based on current directory | Read-only |
+| `snip_history` | View version history for a snippet | Read-only |
+| `snip_diff` | Diff two versions of a snippet | Read-only |
+| `snip_save` | Save a new snippet (auto-detects language) | Write |
+| `snip_edit` | Update content, language, or tags of an existing snippet | Write |
+| `snip_delete` | Permanently delete a snippet by name | Write |
+| `snip_rename` | Rename a snippet (checks for name conflicts) | Write |
+| `snip_undo` | Rollback a snippet to its previous version | Write |
+| `snip_share` | Publish snippet(s) as a public Gist | Write (API) |
+| `snip_unshare` | Delete a shared Gist (remotely, keeps local) | Write (API) |
+| `snip_discover` | Search public gists / browse recent community snippets | Read (API) |
+| `snip_exec` | Execute a snippet (dry-run by default) | Execute |
+
+#### Connecting Claude Code
+
+Add snip as an MCP server in your [`claude.json`](https://docs.anthropic.com/en/docs/claude-code/mcp) config:
+
+```json
+{
+  "mcpServers": {
+    "snip": {
+      "command": "snip",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+#### Connecting Other MCP Clients
+
+Any MCP-compatible AI client uses the same pattern. The server communicates over standard input/output:
+
+| Client | Config File | Reference |
+|--------|-------------|-----------|
+| **Claude Code** | `~/.claude/settings.json` or project `CLAUDE.md` | [MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) |
+| **Cline** | `~/.config/cline/settings.json` | [Cline MCP](https://github.com/cline/cline/wiki/MCP-Setup) |
+| **Goose** | `~/.config/goose/config.yaml` | [Goose MCP](https://block.github.io/goose/docs/configuration/mcp) |
+| **Continue** | `~/.continue/config.json` | [Continue MCP](https://docs.continue.dev/customize/tools#mcp) |
+
+All use the same `command`/`args` pattern with `"snip"` as the command and `["mcp"]` as the args.
+
+#### Available Resources
+
+The MCP server also exposes snippet resources via the `snip://snippets/` URI scheme for AI agents that support resource reading:
+
+| Resource | Description |
+|----------|-------------|
+| `snip://snippets` | List all snippets (returns resource metadata) |
+| `snip://snippets/{name}` | Read a specific snippet's content + metadata |
+
+#### Examples
+
+Once connected, AI agents can:
+```
+> Search your snippet library for deployment commands
+> Read the content of a specific snippet
+> Save useful commands as new snippets during conversations
+> Compare versions of a snippet with snip_diff
+> Publish a snippet to share with teammates via snip_share
+> Search public gists for community-shared code with snip_discover
+> Search with relevance scores and min_score threshold to find the best match
+> Preview a snippet before executing it
+```
+
+#### Safety
+
+- `snip_exec` defaults to **dry-run mode** (`dry_run: true`) — set `dry_run: false` to actually execute
+- Dangerous commands (e.g., `rm -rf`, `docker rm -f`) are **blocked** and return an error
+- `snip_share` / `snip_unshare` / `snip_discover` require a GitHub token (`SNIP_GIST_TOKEN`) — they only make API calls after validating inputs
+- The agent sees the full command content and exit code, enabling self-correction
 
 ## Pro Tips
 
@@ -548,14 +640,17 @@ npm install -g snip-manager
 - [x] Catppuccin Mocha TUI theme with first-run overlays
 - [x] Config validation with type checking
 - [x] Improved error messages with next-step guidance
+- [x] `snip ai generate "..."` — AI snippet generation (OpenAI)
 
 ### Planned
 - [ ] Snippet groups / namespaces (`docker/cleanup`, `k8s/deploy`)
 - [ ] Snippet versioning & history
-- [ ] `snip share` — single-snippet gist sharing
-- [ ] `snip diff a b` — diff two snippets
+- [x] `snip share` — single-snippet and pack gist sharing
+- [x] `snip unshare` — delete a shared Gist (keeps local snippet)
+- [x] `snip discover` — search community-shared public gists
+- [x] MCP server with 16 tools (share, unshare, discover, search, searchRelevance, list, read, save, edit, delete, rename, suggest, history, diff, undo, exec)
+- [ ] Snippet versioning & history
 - [ ] `snip watch <name>` — re-run snippet on file edit
-- [ ] AI snippet generation (`snip ai generate "..."`)
 - [ ] Team shared snippets
 - [ ] VS Code / Neovim extension
 

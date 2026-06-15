@@ -77,6 +77,36 @@ If you have `fzf` installed, use the interactive fuzzy finder with a live previe
 snip fzf
 ```
 
+### 🤖 AI Agent Integration (MCP)
+
+snip speaks the **Model Context Protocol (MCP)**, enabling AI coding tools (Claude Code, Cline, Goose) to search, read, save, and execute snippets directly.
+
+```bash
+# Start the MCP server
+snip mcp
+```
+
+**Search with relevance scores** — find the best-matching snippet for a task:
+```json
+// AI agent calls: snip_searchRelevance
+{
+  "query": "docker cleanup volumes",
+  "limit": 5,
+  "min_score": 0.4
+}
+// Response: results ranked by Fuse.js score (lower = better match)
+// {
+//   "query": "docker cleanup volumes",
+//   "total": 2,
+//   "results": [
+//     { "name": "docker-cleanup", "score": 0.18, "language": "sh", ... },
+//     { "name": "docker-prune-all", "score": 0.32, "language": "sh", ... }
+//   ]
+// }
+```
+
+The server exposes **16 tools** covering search (with relevance scoring), list, read, save, edit, delete, rename, execute, version history, diffing, and Gist sharing.
+
 ---
 
 ## 4. UI/UX & Safety Features

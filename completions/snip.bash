@@ -8,14 +8,14 @@ _snip_completions() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  commands="add list search show run edit update rm delete export import sync ui config seed exec alias doctor init last import-history cp mv cat recent fzf grab widget completion stats"
+  commands="add list search show run edit update rm delete export import sync ui config seed exec alias doctor init last import-history cp mv cat recent fzf grab widget completion stats suggest history diff undo team help mcp share unshare unpublish discover watch watch-history"
 
   case "${prev}" in
     snip)
       COMPREPLY=($(compgen -W "${commands}" -- "${cur}"))
       return 0
       ;;
-    run|show|edit|update|rm|delete)
+    show|run|edit|update|rm|delete|history|diff|undo|share|unshare|unpublish|discover|watch)
       # Complete with snippet names
       local names
       names=$(snip list --format names 2>/dev/null || snip list 2>/dev/null | awk '{print $1}')
@@ -32,6 +32,10 @@ _snip_completions() {
       ;;
     sync)
       COMPREPLY=($(compgen -W "push pull" -- "${cur}"))
+      return 0
+      ;;
+    team)
+      COMPREPLY=($(compgen -W "init add list sync push status" -- "${cur}"))
       return 0
       ;;
     config)
@@ -61,7 +65,28 @@ _snip_completions() {
       COMPREPLY=($(compgen -W "--tags --lang" -- "${cur}"))
       ;;
     show)
-      COMPREPLY=($(compgen -W "--edit" -- "${cur}"))
+      COMPREPLY=($(compgen -W "--edit --json --raw --rev" -- "${cur}"))
+      ;;
+    watch)
+      COMPREPLY=($(compgen -W "--editor" -- "${cur}"))
+      ;;
+    watch-history)
+      COMPREPLY=($(compgen -W "--interval --last --min-count --auto --once" -- "${cur}"))
+      ;;
+    history)
+      COMPREPLY=($(compgen -W "--json --limit" -- "${cur}"))
+      ;;
+    diff)
+      COMPREPLY=($(compgen -W "--json" -- "${cur}"))
+      ;;
+    undo)
+      COMPREPLY=($(compgen -W "--rev --json" -- "${cur}"))
+      ;;
+    team)
+      COMPREPLY=($(compgen -W "--lang --tags --json" -- "${cur}"))
+      ;;
+    discover)
+      COMPREPLY=($(compgen -W "--lang --limit --recent --snip-only --json" -- "${cur}"))
       ;;
   esac
 }

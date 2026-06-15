@@ -261,14 +261,28 @@ npm install -g snip-manager
 # Set up the shell widget (for Ctrl+G magic)
 eval "$(snip widget)"</pre>
 
-        <h2>2. Core Workflow: Capture, Find, Run</h2>
+        <h2>2. Quick Setup with <code>snip init</code></h2>
+        <p>First time? Run the guided setup wizard to get started in under 60 seconds:</p>
+        <pre>snip init</pre>
+        <p>The wizard will:</p>
+        <pre>  1. Set your preferred editor (vim, code, nano, etc.)
+  2. Install the Ctrl+G shell widget for your shell
+  3. Seed 10 example snippets to get you started
+  4. Optionally launch the TUI for a quick tour</pre>
+
+        <h2>3. Core Workflow: Capture, Find, Run</h2>
 
         <h3>📥 Capture: Saving snippets</h3>
         <pre># Interactive add (opens $EDITOR)
 snip add my_script --lang js --tags node,util
 
 # Pipe directly
-echo "curl -X POST http://api.local/dev" | snip add quick_post</pre>
+echo "curl -X POST http://api.local/dev" | snip add quick_post
+
+# Language shortcuts — add:js, add:py, add:sh
+snip add:js myscript        # same as: snip add myscript --lang js
+snip add:py myfunc          # same as: snip add myfunc --lang python
+snip add:sh mycmd           # same as: snip add mycmd --lang bash</pre>
 
         <h3>🔍 Find: Listing your collection</h3>
         <pre># List all snippets
@@ -280,7 +294,7 @@ snip list --tag node --sort usage</pre>
         <h3>🏃 Run: Instant execution</h3>
         <pre>snip run quick_post</pre>
 
-        <h2>3. Advanced Features</h2>
+        <h2>4. Advanced Features</h2>
 
         <h3>🎚️ Parameters (Templates)</h3>
         <p>Use <code>{{name}}</code> or <code>{{name:default}}</code> in your snippets. <code>snip</code> will
@@ -289,6 +303,20 @@ snip list --tag node --sort usage</pre>
 
         <h3>🔗 Grab: Import from the Web</h3>
         <pre>snip grab github:user/repo/scripts/backup.sh --name backup</pre>
+
+        <h3>🤖 AI: Generate Snippets</h3>
+        <p>Generate snippets using AI (requires an OpenAI API key):</p>
+        <pre># Set your API key
+export SNIP_AI_API_KEY="your-openai-api-key"
+
+# Generate a Docker health check
+snip ai generate "docker container health check"
+
+# Generate a Python web server
+snip ai generate "simple flask server" --lang python --tags web,api
+
+# Generate with custom name and model
+snip ai generate "curl wrapper with retry" --name curl-retry --model gpt-4</pre>
 
         <h3>⚡ Smart Search (fzf)</h3>
         <pre>snip fzf</pre>
@@ -322,7 +350,7 @@ docker-cleanup       # → snip exec docker-cleanup</pre>
   ✓ fzf: installed
   ✗ Gist sync: not configured</pre>
 
-        <h2>4. UI/UX &amp; Safety</h2>
+        <h2>5. UI/UX &amp; Safety</h2>
 
         <div class="tip">
             <div class="tip-title">⚠ Safety First</div>
@@ -338,7 +366,7 @@ docker-cleanup       # → snip exec docker-cleanup</pre>
         <p>Press <code>Ctrl+G</code> anytime in your terminal to fuzzy-search and insert snippets directly into your
             prompt.</p>
 
-        <h2>5. Snippet Management</h2>
+        <h2>6. Snippet Management</h2>
         <pre># Duplicate a snippet
 snip cp deploy deploy-staging
 
@@ -352,7 +380,7 @@ snip cat deploy | sh
 snip recent
 snip recent 10</pre>
 
-        <h2>6. Pipe-Friendly Output</h2>
+        <h2>7. Pipe-Friendly Output</h2>
         <pre># JSON output for scripting
 snip show deploy --json | jq .tags
 snip search docker --json | jq '.[].name'
@@ -361,7 +389,7 @@ snip list --json | jq length
 # Raw output (no headers)
 snip show deploy --raw | pbcopy</pre>
 
-        <h2>7. Maintenance</h2>
+        <h2>8. Maintenance</h2>
         <table>
             <thead>
                 <tr>

@@ -55,7 +55,7 @@ describe('config command', () => {
         process.exitCode = 0;
         const errs = captureErrors(() => cfgCmd('set'));
         expect(errs[0]).toContain('Key required');
-        expect(process.exitCode).toBe(1);
+        expect(process.exitCode).toBe(2);
         process.exitCode = 0;
     });
 
@@ -63,7 +63,7 @@ describe('config command', () => {
         process.exitCode = 0;
         const errs = captureErrors(() => cfgCmd('delete'));
         expect(errs[0]).toContain('Unknown action');
-        expect(process.exitCode).toBe(1);
+        expect(process.exitCode).toBe(2);
         process.exitCode = 0;
     });
 

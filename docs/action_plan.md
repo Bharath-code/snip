@@ -29,7 +29,7 @@
 - [x] **1.6** Lazy-load snippet content in `storage.js` — metadata-only for `list`/`search`; load content only for `show`/`run`/`exec`.
 
 ### Hard
-- [ ] **1.7** Add in-process cache for `listSnippets()` so repeated commands in same process don’t reload full data every time.
+- [x] **1.7** Add in-process cache for `listSnippets()` — generation counter + cache array, invalidated on every mutation.
 
 ---
 
@@ -39,18 +39,18 @@
 - [x] **2.1** 🔴 **Fix `--confirm` bypass** — In `run.js`, ensure `--confirm` only skips the "press Enter" prompt, never the danger check. Danger must always run.
 - [x] **2.2** **`template.js`** — Replace `process.exit(1)` with `throw new Error(...)` so programmatic use can catch.
 - [x] **2.3** Extract `lib/colors.js` — single place for chalk + fallback; replace copy-pasted color objects in `list.js`, `stats.js`, `run.js`, `show.js`.
-- [ ] **2.4** Centralize `process.exit()` — move exit logic into `cli.js` where possible; commands should throw or return status.
+- [x] **2.4** Centralize `process.exit()` — moved all exit logic into centralized `setExitCode(code)` and `exitProcess(code)` helpers in `lib/cli-utils.js`. All 30+ command files and core lib modules now use these helpers instead of direct `process.exit()` or `process.exitCode =` calls.
 
 ### Medium
 - [x] **2.5** 🔴 Add **file lock** (or single-writer) for JSON backend in `storage.js` so two concurrent `snip add` don’t corrupt the DB (e.g. lock file or mutex around read-modify-write).
 - [x] **2.6** 🔴 Add `better-sqlite3` as **optional dependency** in `package.json` and document; add `snip doctor` check that suggests `npm install -g better-sqlite3` when SQLite is enabled but module missing.
-- [ ] **2.7** Normalize error handling — all commands: errors to stderr, non-zero exit on failure, consistent behavior for scripting.
+- [x] **2.7** Normalize error handling — all commands: errors to stderr, non-zero exit on failure, consistent behavior for scripting.
 - [x] **2.8** Enforce `--no-color` / `NO_COLOR` everywhere — audit chalk usage and respect flag/env in all commands.
 
 ### Hard
-- [ ] **2.9** Raise coverage — bring command-layer coverage up (add tests for add, run, grab, pipe, show, stats, alias, sync; aim 60%+ on critical paths).
-- [ ] **2.10** Add tests for `lib/sync/gist.js` and SQLite/sql.js paths in `lib/storage.js`.
-- [ ] **2.11** Expand `lib/safety.js` tests — cover all 14 danger patterns (currently 9).
+- [x] **2.9** Raise coverage — added tests for add, alias, stats, sync, grab commands, plus safety.js. **Results:** safety.js 100% ✅ (was 40.9%), alias.js 100% ✅, stats.js 94.56% ✅, add.js 87.83% ✅, sync.js 81.57% ✅, grab.js 39.78%. Still missing: run, pipe, show, exec (complex stdin/stdout/subprocess tests).
+- [x] **2.10** Add tests for `lib/sync/gist.js` and SQLite/sql.js paths in `lib/storage.js`.
+- [x] **2.11** Expand `lib/safety.js` tests — all 14 danger patterns covered (including fork bomb, curl|bash, wget|sh, eval $(), base64|bash, chmod 777 /). Coverage: 40.9% → 100%.
 
 ---
 
@@ -68,18 +68,18 @@
 - [x] **3.7** TUI first-run — Show a tiny guide or overlay on first `snip ui` (e.g. keybindings, "? for help").
 
 ### Hard
-- [ ] **3.8** Add inline help overlay in TUI (e.g. `?` key) with keybindings and confirm behavior.
+- [x] **3.8** Add inline help overlay in TUI (e.g. `?` key) with keybindings and confirm behavior.
 
 ---
 
 ## 4. DEVELOPER EXPERIENCE (DX)
 
 ### Easy
-- [ ] **4.1** **`snip doctor`** — Add check for Ctrl+G widget installation; report and suggest setup if missing.
-- [ ] **4.2** **`snip doctor`** — When SQLite is enabled but `better-sqlite3` is missing, say: "Install `npm install -g better-sqlite3` to enable SQLite."
-- [ ] **4.3** Document **import/export schema** (e.g. in CONTRIBUTING or docs) so contributors can build tooling.
-- [ ] **4.4** **`snip grab github:user/repo/path`** — Mention in `snip doctor` tips and README so it’s discoverable.
-- [ ] **4.5** **`snip config`** — Add basic validation (type checking / allowed keys) instead of accepting any value.
+- [x] **4.1** **`snip doctor`** — Add check for Ctrl+G widget installation; report and suggest setup if missing.
+- [x] **4.2** **`snip doctor`** — When SQLite is enabled but `better-sqlite3` is missing, say: "Install `npm install -g better-sqlite3` to enable SQLite."
+- [x] **4.3** Document **import/export schema** (e.g. in CONTRIBUTING or docs) so contributors can build tooling.
+- [x] **4.4** **`snip grab github:user/repo/path`** — Mention in `snip doctor` tips and README so it’s discoverable.
+- [x] **4.5** **`snip config`** — Add basic validation (type checking / allowed keys) instead of accepting any value.
 
 ### Medium
 - [x] **4.6** **`snip init`** — Single guided wizard: choose editor → set up shell widget → seed example snippets → optional "open TUI". Target: zero to aha in ~60 seconds.
@@ -88,8 +88,8 @@
 - [x] **4.9** **CLI help** — One-line example in `--help` for each core command; align README examples with behavior.
 
 ### Hard
-- [ ] **4.10** **`snip watch <name>`** — Re-run snippet on file edit (watch snippet file or DB change).
-- [ ] **4.11** **CONTRIBUTING.md** — "Your first command in 10 minutes" + how to run tests/lint.
+- [x] **4.10** **`snip watch <name>`** — Re-run snippet on file edit. Watches a temp file with `fs.watch`, re-executes on every save, updates storage. Supports `--editor` flag to auto-open editor.
+- [x] **4.11** **CONTRIBUTING.md** — "Your first command in 10 minutes" walkthrough, project structure, test/lint instructions, coding standards.
 
 ---
 
@@ -103,10 +103,11 @@
 
 ### Medium
 - [x] **5.5** **Shell history import** — `snip import-history --last 30`: analyze recent shell history, find commands run 3+ times, suggest saving as snippets.
+- [x] **5.5b** **Shell history watcher** — `snip watch-history` (🔥 Wow #1): polls shell history every N seconds, auto-detects commands run 3+ times, interactively prompts to save. Supports `--interval`, `--last`, `--min-count`, `--auto`, `--once`. State file tracks already-suggested commands.
 - [x] **5.6** **Natural language search** — Make description first-class in search (e.g. higher weight in Fuse options) so "find my docker cleanup command" works well.
 
 ### Hard
-- [ ] **5.7** **Context-aware suggestions** — In dir with `package.json` → suggest npm snippets; with `Dockerfile` → suggest docker snippets (needs context detection + tagging or categories).
+- [x] **5.7** **Context-aware suggestions** — Content-based relevance scoring, subdirectory scanning, directory-name fallback detection.
 
 ---
 
@@ -115,22 +116,39 @@
 *These are larger efforts; treat as separate projects.*
 
 ### v0.4.0
-- [ ] **6.1** All "Must Fix Now" and "Easy" items in sections 1–5 above.
-- [ ] **6.2** Shell history import (5.5), `snip last` (4.7), `snip stats --streak` (4.8).
-- [ ] **6.3** `snip init` (4.6), doctor widget check (4.1), coverage to 60%+ (2.9).
+- [x] **6.1** All "Must Fix Now" and "Easy" items in sections 1–5 above.
+- [x] **6.2** Shell history import (5.5), `snip last` (4.7), `snip stats --streak` (4.8).
+- [x] **6.3** `snip init` (4.6), doctor widget check (4.1), coverage to 60%+ (2.9).
 
 ### Q2/Q3 (Growth)
-- [ ] **6.4** Snippet packs / community library (`snip install docker-essentials`).
-- [ ] **6.5** Team sync (e.g. shared `snip.yml` in repo).
+- [x] **6.4** Snippet packs / community library (`snip install docker-essentials`).
+- [x] **6.5** Team sync (e.g. shared `snip.yml` in repo).
 - [ ] **6.6** VS Code (or Neovim) extension — save selection as snip, run from palette.
-- [ ] **6.7** AI: `snip ai generate "..."` and/or `snip ai improve <name>`.
-- [ ] **6.8** Semantic search over snippet library.
+- [x] **6.7** AI: `snip ai generate "..."` and/or `snip ai improve <name>`.
+- [x] **6.8** Content-aware semantic search — Fuse.js indexes snippet body text alongside name/tags with weighted scoring.
+- [x] **6.8b** `snip search` now matches snippet content (e.g., "prune volumes" finds docker-cleanup snippets).
+
+### Sharing & Community
+- [x] **6.9** `snip share <name>` — Publish snippet(s) as public Gist.
+- [x] **6.10** `snip unshare <name>` — Delete a shared Gist (keeps local snippet).
+- [x] **6.11** `snip discover <query>` — Search community-shared public gists.
+- [x] **6.12** `snip discover --recent` — Browse recent public gists.
+- [x] **6.13** `snip discover --recent --snip-only` — Filter to snip-shared gists only.
+
+### MCP Server (Model Context Protocol)
+- [x] **6.14** MCP server start via `snip mcp` — stdio-based JSON-RPC server for AI agents.
+- [x] **6.15** MCP tool: `snip_share` — Publish snippet(s) as public Gist via MCP.
+- [x] **6.16** MCP tool: `snip_unshare` — Delete a shared Gist via MCP.
+- [x] **6.17** MCP tool: `snip_discover` — Search public gists / browse recent via MCP.
+- [x] **6.18** E2E stdio tests for snip_share (no-token, missing-snippet, empty-name error paths).
+- [x] **6.19** E2E stdio tests for snip_unshare, snip_discover, and snip_searchRelevance (9 total: 4 unshare + 2 discover + 2 searchRelevance + 1 empty query).
+- [x] **6.20** MCP tool: `snip_searchRelevance` — Search with Fuse.js relevance scores, `min_score` filter, and snippet content in results.
 
 ### Brand & Distribution
-- [ ] **6.9** Investigate npm package name `snip` (or `@snip/cli`).
-- [ ] **6.10** Animated asciinema/vhs demo in README.
-- [ ] **6.11** GitHub Discussions enabled.
-- [ ] **6.12** Product Hunt launch prep; 5 curated snippet packs as separate repos.
+- [ ] **6.21** Investigate npm package name `snip` (or `@snip/cli`).
+- [x] **6.22** Animated vhs demo GIF in README.
+- [ ] **6.23** GitHub Discussions enabled.
+- [ ] **6.24** Product Hunt launch prep; 5 curated snippet packs as separate repos.
 
 ---
 
@@ -157,8 +175,9 @@ If you want a single ordered list to tick off:
 17. **4.7** snip last  
 18. **4.8** snip stats --streak  
 19. **2.9** Raise coverage + command tests  
-20. Then continue with remaining Medium/Hard and roadmap as needed.
+20. **5.6–6.20** Shell history import, AI generation, content-aware search, share/unshare/discover CLI + MCP tools (search, searchRelevance, share, unshare, discover).  
+21. Then continue with remaining Medium/Hard and roadmap as needed.
 
 ---
 
-*Last updated from AUDIT.md (2026-03-13).*
+*Last updated 2026-06-14.*

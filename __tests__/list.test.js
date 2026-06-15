@@ -19,11 +19,19 @@ function busyWait(ms) {
   while (Date.now() < end) { }
 }
 
-// Extract snippet names from the table output (skip header + separator lines)
+// Extract snippet names from the box-drawn table output
 function extractNames(lines) {
-  return lines
-    .filter(l => l.trim() && !l.includes('NAME') && !l.includes('─') && !l.match(/^\s*\d+ snippet/) && !l.startsWith('  Tip:') && !l.startsWith('       '))
-    .map(l => l.trim().split(/\s{2,}/)[0].trim());
+  const snippetNames = [];
+  for (const line of lines) {
+    // Look for lines containing ▶ (the run icon) followed by a snippet name
+    // Column header has "▶  Name ..." — skip that
+    // Snippet rows have "│ ▶ aaa-item ..."
+    const match = line.match(/▶\s+([\w-]+)/);
+    if (match && match[1] !== 'Name') {
+      snippetNames.push(match[1]);
+    }
+  }
+  return snippetNames;
 }
 
 describe('list sorting', () => {
