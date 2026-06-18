@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>snip — Web Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Root Dashboard Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">snip</span>
+        </div>
+        <button class="btn btn-primary btn-create" id="btn-new-snippet">+ New Snippet</button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Fuzzy search snippets..." autocomplete="off">
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <!-- Snippets Scroll List -->
+      <div class="snippets-list-container">
+        <div class="list-section-title">ALL SNIPPETS</div>
+        <ul class="snippets-list" id="snippets-list">
+          <!-- Dynamically populated -->
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Empty State -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-state-card">
+          <div class="empty-state-icon">🏔️</div>
+          <h2>Welcome to snip</h2>
+          <p>Select a snippet from the sidebar to view, edit, or execute it locally, or create a brand new one to add to your terminal library.</p>
+          <button class="btn btn-secondary" id="btn-empty-create">Create Snippet</button>
+        </div>
+      </div>
+
+      <!-- Snippet Details Viewer / Editor -->
+      <div class="snippet-viewer" id="snippet-viewer" style="display: none;">
+        <header class="viewer-header">
+          <div class="header-meta">
+            <h1 class="snippet-title" id="view-title" contenteditable="true" title="Click to rename">snippet-name</h1>
+            <div class="meta-row">
+              <span class="badge badge-lang" id="view-lang">javascript</span>
+              <div class="tags-container" id="view-tags-container">
+                <!-- Tags populated dynamically -->
+              </div>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-success btn-run" id="btn-run-snippet">
+              <span class="run-icon">▶</span> Run Snippet
+            </button>
+            <button class="btn btn-danger-outline btn-delete" id="btn-delete-snippet">Delete</button>
+          </div>
+        </header>
+
+        <!-- Editor Block -->
+        <section class="editor-section">
+          <div class="section-label">CODE CONTENT</div>
+          <div class="code-editor-container">
+            <textarea id="code-textarea" spellcheck="false" autocomplete="off"></textarea>
+          </div>
+          <div class="editor-actions">
+            <button class="btn btn-primary" id="btn-save-content">Save Changes</button>
+            <span class="save-status" id="save-status">Saved</span>
+          </div>
+        </section>
+
+        <!-- Stats Block -->
+        <section class="stats-section">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-runs">0</div>
+            <div class="stat-label">Executions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-last-used">Never</div>
+            <div class="stat-label">Last Used</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-origin">Local</div>
+            <div class="stat-label">Snippet Origin</div>
+          </div>
+        </section>
+
+        <!-- Terminal Console Console Logs -->
+        <section class="terminal-section">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="terminal-title">Execution Console Output</div>
+            <button class="btn btn-clear-terminal" id="btn-clear-term">Clear Logs</button>
+          </div>
+          <div class="terminal-body" id="terminal-body">
+            <div class="terminal-placeholder">Click "Run Snippet" above to run this command locally and capture outputs...</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Create/Edit Modal Dialog -->
+  <div class="modal-overlay" id="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Create New Snippet</h2>
+        <button class="btn-close-modal" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="create-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="form-name">Snippet Name</label>
+            <input type="text" id="form-name" placeholder="e.g. docker-cleanup" required autocomplete="off">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="form-lang">Language</label>
+              <select id="form-lang">
+                <option value="sh">Shell / Bash</option>
+                <option value="js">JavaScript / Node.js</option>
+                <option value="py">Python</option>
+                <option value="ts">TypeScript</option>
+                <option value="rb">Ruby</option>
+                <option value="txt">Plain Text</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="form-tags">Tags (comma-separated)</label>
+              <input type="text" id="form-tags" placeholder="e.g. docker, devops, utility" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="form-content">Code Content</label>
+            <textarea id="form-content" placeholder="Write your script or command here..." required spellcheck="false" autocomplete="off"></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary-outline" type="button" id="btn-cancel-modal">Cancel</button>
+            <button class="btn btn-primary" type="submit" id="btn-submit-modal">Create Snippet</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vanilla JS Frontend Controller -->
+  <script>
+    let activeSnippetId = null;
+    let snippets = [];
+
+    // Selectors
+    const snippetsList = document.getElementById('snippets-list');
+    const searchInput = document.getElementById('search-input');
+    const emptyState = document.getElementById('empty-state');
+    const snippetViewer = document.getElementById('snippet-viewer');
+    const modalOverlay = document.getElementById('modal-overlay');
+
+    // Button Selectors
+    const btnNewSnippet = document.getElementById('btn-new-snippet');
+    const btnEmptyCreate = document.getElementById('btn-empty-create');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const btnCancelModal = document.getElementById('btn-cancel-modal');
+    const btnSubmitModal = document.getElementById('btn-submit-modal');
+    const btnSaveContent = document.getElementById('btn-save-content');
+    const btnRunSnippet = document.getElementById('btn-run-snippet');
+    const btnDeleteSnippet = document.getElementById('btn-delete-snippet');
+    const btnClearTerm = document.getElementById('btn-clear-term');
+
+    // Viewer Element Selectors
+    const viewTitle = document.getElementById('view-title');
+    const viewLang = document.getElementById('view-lang');
+    const viewTagsContainer = document.getElementById('view-tags-container');
+    const codeTextarea = document.getElementById('code-textarea');
+    const saveStatus = document.getElementById('save-status');
+    const statRuns = document.getElementById('stat-runs');
+    const statLastUsed = document.getElementById('stat-last-used');
+    const statOrigin = document.getElementById('stat-origin');
+    const terminalBody = document.getElementById('terminal-body');
+
+    // Form Selectors
+    const createForm = document.getElementById('create-form');
+    const formName = document.getElementById('form-name');
+    const formLang = document.getElementById('form-lang');
+    const formTags = document.getElementById('form-tags');
+    const formContent = document.getElementById('form-content');
+
+    // ── Fetch all snippets ──
+    async function loadSnippets() {
+      try {
+        const res = await fetch('/api/snippets');
+        snippets = await res.json();
+        renderSnippetsList(snippets);
+      } catch (err) {
+        console.error('Failed to load snippets:', err);
+      }
+    }
+
+    // ── Render snippets list ──
+    function renderSnippetsList(items) {
+      snippetsList.innerHTML = '';
+      if (items.length === 0) {
+        snippetsList.innerHTML = '<li class="list-empty">No snippets found</li>';
+        return;
+      }
+
+      items.forEach(snip => {
+        const li = document.createElement('li');
+        li.className = `snippet-item ${snip.id === activeSnippetId ? 'active' : ''}`;
+        li.dataset.id = snip.id;
+
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'snippet-item-name';
+        nameDiv.textContent = snip.name;
+
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'snippet-item-meta';
+        
+        const langSpan = document.createElement('span');
+        langSpan.className = 'snippet-item-lang';
+        langSpan.textContent = snip.language || 'txt';
+
+        const runsSpan = document.createElement('span');
+        runsSpan.className = 'snippet-item-runs';
+        runsSpan.textContent = `${snip.usageCount || 0} run${snip.usageCount !== 1 ? 's' : ''}`;
+
+        metaDiv.appendChild(langSpan);
+        metaDiv.appendChild(runsSpan);
+
+        li.appendChild(nameDiv);
+        li.appendChild(metaDiv);
+
+        li.addEventListener('click', () => selectSnippet(snip.id));
+        snippetsList.appendChild(li);
+      });
+    }
+
+    // ── Select a snippet ──
+    async function selectSnippet(id) {
+      activeSnippetId = id;
+      
+      // Update active selection class in list
+      document.querySelectorAll('.snippet-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+      });
+
+      try {
+        const res = await fetch(`/api/snippets/${id}`);
+        const snip = await res.json();
+        if (snip.error) return;
+
+        // Show viewer, hide empty state
+        emptyState.style.display = 'none';
+        snippetViewer.style.display = 'flex';
+
+        // Load details
+        viewTitle.textContent = snip.name;
+        viewLang.textContent = snip.language || 'txt';
+        codeTextarea.value = snip.content || '';
+        statRuns.textContent = snip.usageCount || 0;
+        statLastUsed.textContent = snip.lastUsedAt ? new Date(snip.lastUsedAt).toLocaleString() : 'Never';
+        statOrigin.textContent = snip.origin ? `${snip.origin.source} sync` : 'Local';
+
+        // Render tags
+        viewTagsContainer.innerHTML = '';
+        if (snip.tags && snip.tags.length > 0) {
+          snip.tags.forEach(t => {
+            const span = document.createElement('span');
+            span.className = 'badge badge-tag';
+            span.textContent = t;
+            viewTagsContainer.appendChild(span);
+          });
+        }
+
+        saveStatus.style.display = 'none';
+        
+      } catch (err) {
+        console.error('Error fetching snippet details:', err);
+      }
+    }
+
+    // ── Live Search Filter ──
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        renderSnippetsList(snippets);
+        return;
+      }
+      const filtered = snippets.filter(s => 
+        s.name.toLowerCase().includes(q) || 
+        (s.language && s.language.toLowerCase().includes(q)) ||
+        (s.tags && s.tags.some(t => t.toLowerCase().includes(q)))
+      );
+      renderSnippetsList(filtered);
+    });
+
+    // ── Save snippet content changes ──
+    btnSaveContent.addEventListener('click', async () => {
+      if (!activeSnippetId) return;
+      const content = codeTextarea.value;
+      const name = viewTitle.textContent.trim();
+
+      saveStatus.textContent = 'Saving...';
+      saveStatus.style.display = 'inline';
+
+      try {
+        const res = await fetch(`/api/snippets/${activeSnippetId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, name })
+        });
+        const updated = await res.json();
+        if (updated.error) {
+          saveStatus.textContent = 'Error saving';
+          return;
+        }
+
+        saveStatus.textContent = 'Changes saved';
+        
+        // Refresh local memory and lists
+        const idx = snippets.findIndex(s => s.id === activeSnippetId);
+        if (idx !== -1) {
+          snippets[idx] = updated;
+          renderSnippetsList(snippets);
+        }
+      } catch (err) {
+        saveStatus.textContent = 'Error saving';
+        console.error('Failed to save content:', err);
+      }
+    });
+
+    // ── Content Editable Title Save ──
+    viewTitle.addEventListener('blur', async () => {
+      if (!activeSnippetId) return;
+      const name = viewTitle.textContent.trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+      viewTitle.textContent = name; // Force sanitized name
+      
+      try {
+        const res = await fetch(`/api/snippets/${activeSnippetId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+        const updated = await res.json();
+        if (updated.error) return;
+
+        const idx = snippets.findIndex(s => s.id === activeSnippetId);
+        if (idx !== -1) {
+          snippets[idx] = updated;
+          renderSnippetsList(snippets);
+        }
+      } catch (err) {
+        console.error('Failed to rename snippet:', err);
+      }
+    });
+
+    // ── Run Snippet locally ──
+    btnRunSnippet.addEventListener('click', async () => {
+      if (!activeSnippetId) return;
+      
+      btnRunSnippet.disabled = true;
+      btnRunSnippet.innerHTML = '<span class="run-icon spinner">⏳</span> Running...';
+      
+      terminalBody.innerHTML = '<div class="terminal-running">⚡ Executing command inside container environment...</div>';
+
+      try {
+        const res = await fetch(`/api/snippets/${activeSnippetId}/run`, { method: 'POST' });
+        const result = await res.json();
+
+        terminalBody.innerHTML = '';
+        
+        if (result.error) {
+          const errDiv = document.createElement('div');
+          errDiv.className = 'terminal-log-error';
+          errDiv.textContent = result.error;
+          terminalBody.appendChild(errDiv);
+        } else {
+          // Print logs
+          const logPre = document.createElement('pre');
+          logPre.className = 'terminal-log';
+          logPre.textContent = result.output || '(Command returned no console outputs)';
+          terminalBody.appendChild(logPre);
+
+          // Print exit info
+          const statusDiv = document.createElement('div');
+          statusDiv.className = result.status === 0 ? 'terminal-status-success' : 'terminal-status-failed';
+          statusDiv.textContent = `Process exited with status code: ${result.status}`;
+          terminalBody.appendChild(statusDiv);
+
+          // Update executions count locally
+          statRuns.textContent = parseInt(statRuns.textContent) + 1;
+          const idx = snippets.findIndex(s => s.id === activeSnippetId);
+          if (idx !== -1) {
+            snippets[idx].usageCount = (snippets[idx].usageCount || 0) + 1;
+            renderSnippetsList(snippets);
+          }
+        }
+      } catch (err) {
+        terminalBody.innerHTML = `<div class="terminal-log-error">API execution error: ${err.message}</div>`;
+      } finally {
+        btnRunSnippet.disabled = false;
+        btnRunSnippet.innerHTML = '<span class="run-icon">▶</span> Run Snippet';
+      }
+    });
+
+    // ── Delete Snippet ──
+    btnDeleteSnippet.addEventListener('click', async () => {
+      if (!activeSnippetId) return;
+      const snip = snippets.find(s => s.id === activeSnippetId);
+      if (!confirm(`Are you sure you want to delete the snippet "${snip.name}"?`)) return;
+
+      try {
+        const res = await fetch(`/api/snippets/${activeSnippetId}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+          snippets = snippets.filter(s => s.id !== activeSnippetId);
+          activeSnippetId = null;
+          snippetViewer.style.display = 'none';
+          emptyState.style.display = 'flex';
+          renderSnippetsList(snippets);
+        }
+      } catch (err) {
+        console.error('Failed to delete snippet:', err);
+      }
+    });
+
+    // ── Modal Actions ──
+    function openModal() {
+      createForm.reset();
+      modalOverlay.style.display = 'flex';
+      formName.focus();
+    }
+
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+    }
+
+    btnNewSnippet.addEventListener('click', openModal);
+    btnEmptyCreate.addEventListener('click', openModal);
+    btnCloseModal.addEventListener('click', closeModal);
+    btnCancelModal.addEventListener('click', closeModal);
+
+    // Close modal on background click
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+
+    // Create snippet submission
+    createForm.addEventListener('submit', async () => {
+      const name = formName.value.trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+      const language = formLang.value;
+      const content = formContent.value;
+      const tags = formTags.value.split(',')
+        .map(t => t.trim().toLowerCase())
+        .filter(t => t.length > 0);
+
+      try {
+        const res = await fetch('/api/snippets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, language, content, tags })
+        });
+        const newSnip = await res.json();
+        
+        if (newSnip.error) {
+          alert(`Failed to create snippet: ${newSnip.error}`);
+          return;
+        }
+
+        // Close modal and reload
+        closeModal();
+        snippets.push(newSnip);
+        renderSnippetsList(snippets);
+        selectSnippet(newSnip.id);
+
+      } catch (err) {
+        console.error('Error creating snippet:', err);
+      }
+    });
+
+    // ── Clear Console logs ──
+    btnClearTerm.addEventListener('click', () => {
+      terminalBody.innerHTML = '<div class="terminal-placeholder">Logs cleared. Click "Run Snippet" above to re-run...</div>';
+    });
+
+    // Load initial data
+    loadSnippets();
+  </script>
+</body>
+</html>

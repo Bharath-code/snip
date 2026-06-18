@@ -27,3 +27,6 @@ temp-sqljs.db
 coverage/
 # NPM pack
 *.tgz
+
+# Antigravity CLI workspace artifacts
+.antigravitycli/

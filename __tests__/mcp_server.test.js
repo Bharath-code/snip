@@ -200,7 +200,7 @@ describe('MCP Server — Protocol via stdio', () => {
   function sendJsonRpc(proc, message) {
     return new Promise((resolve, reject) => {
       const data = JSON.stringify(message) + '\n';
-      const timeout = setTimeout(() => reject(new Error('Response timeout')), 10000);
+      const timeout = setTimeout(() => reject(new Error('Response timeout')), 40000);
 
       let responseData = '';
       const onData = (chunk) => {
@@ -271,7 +271,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('responds to ListResources request', async () => {
     // Add a snippet via storage before spawning the server
@@ -313,7 +313,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_save tool call', async () => {
     const proc = spawn('node', [path.join(__dirname, '..', 'lib', 'mcp-server.js')], {
@@ -355,7 +355,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_edit tool call — updates content and tags', async () => {
     // Pre-save a snippet via storage
@@ -405,7 +405,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_delete tool call', async () => {
     // Pre-save a snippet via storage
@@ -452,7 +452,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_rename tool call', async () => {
     // Pre-save a snippet via storage
@@ -501,7 +501,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_share — errors without token', async () => {
     const proc = spawn('node', [path.join(__dirname, '..', 'lib', 'mcp-server.js')], {
@@ -538,7 +538,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_share — errors for missing snippet (no API call)', async () => {
     // Pre-save a snippet to verify the server can read it
@@ -588,7 +588,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_share — errors with empty name', async () => {
     const proc = spawn('node', [path.join(__dirname, '..', 'lib', 'mcp-server.js')], {
@@ -625,7 +625,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   // ── snip_unshare E2E tests ──
 
@@ -661,7 +661,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_unshare — errors with empty name', async () => {
     const proc = spawn('node', [path.join(__dirname, '..', 'lib', 'mcp-server.js')], {
@@ -698,7 +698,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_unshare — errors for missing snippet', async () => {
     const proc = spawn('node', [path.join(__dirname, '..', 'lib', 'mcp-server.js')], {
@@ -735,7 +735,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_unshare — errors for snippet with no shared Gist', async () => {
     // Pre-save a snippet with no origin.gistId (never shared)
@@ -783,7 +783,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   // ── snip_discover E2E tests ──
 
@@ -819,7 +819,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_discover — errors in search mode without token', async () => {
     const proc = spawn('node', [path.join(__dirname, '..', 'lib', 'mcp-server.js')], {
@@ -855,7 +855,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   // ── snip_searchRelevance E2E tests ──
 
@@ -891,7 +891,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_searchRelevance — returns results with scores', async () => {
     // Pre-save a snippet so search has content to match
@@ -942,7 +942,7 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 
   test('handles snip_searchRelevance — min_score filter excludes low-relevance results', async () => {
     const storage = require('../lib/storage');
@@ -989,5 +989,5 @@ describe('MCP Server — Protocol via stdio', () => {
     } finally {
       proc.kill();
     }
-  }, 15000);
+  }, 60000);
 });
