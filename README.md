@@ -1,8 +1,9 @@
 <h1 align="center">snip</h1>
 
 <p align="center">
-  <strong>Your terminal's memory.</strong><br>
-  Save, search, and execute code snippets in milliseconds.
+  <strong>The snippet manager for AI agents.</strong><br>
+  Your AI agent shouldn't guess your production commands.<br>
+  snip gives Claude Code, Cursor, and any MCP client a verified, safety-checked command library.
 </p>
 
 <p align="center">
@@ -16,45 +17,135 @@
 
 <p align="center">
   <a href="https://bharath-code.github.io/snip/">Website</a> ·
-  <a href="#quick-start">Quick Start</a> ·
+  <a href="#quick-start-for-ai-agents">Agent Quick Start</a> ·
+  <a href="#the-safety-model">Safety Model</a> ·
+  <a href="#the-human-cli">Human CLI</a> ·
   <a href="#commands">Commands</a> ·
-  <a href="docs/demo.md">Demo</a> ·
-  <a href="#configuration">Configuration</a> ·
   <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
 ---
 
-<p align="center">
-  <img src="https://vhs.charm.sh/vhs-68GMwpm0mG45CKI5fXvqYv.gif" alt="snip CLI demo — list, search, show, exec, add, stats, run" width="100%">
-</p>
-
 ## Why snip?
 
-Most snippet managers only handle shell commands. **snip** handles _code_ — deploy scripts, API calls, Docker commands, JS utilities — across any language, with safety rails, a real TUI, and unix pipeline integration.
+AI coding agents are great at writing code and terrible at knowing *your* commands — the exact deploy script, the migration incantation, the `kubectl` flags your team actually uses. Left alone, they guess. Guessing at production commands is how incidents happen.
 
-| Feature | snip | [pet](https://github.com/knqyf263/pet) | [navi](https://github.com/denisidoro/navi) | [tldr](https://github.com/tldr-pages/tldr) | dotfiles |
-|---------|------|-----|------|------|--------|
-| Run snippets directly | ✅ Any language | ✅ Shell only | ✅ Shell only | ❌ | ✅ Shell only |
-| Multi-language (JS, Python, Ruby…) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Unix pipeline integration | ✅ `snip pipe` | ❌ | ❌ | ❌ | ❌ |
-| Interactive TUI | ✅ Split-pane | ❌ | ✅ Basic | ❌ | ❌ |
-| Dangerous command detection | ✅ | ❌ | ❌ | ❌ | ❌ |
-| fzf integration | ✅ Native | ✅ | ✅ | ❌ | Manual |
-| SQLite backend | ✅ Optional | ❌ | ❌ | ❌ | ❌ |
-| Gist sync | ✅ | ✅ | ❌ | ❌ | Manual |
-| Zero config | ✅ | ✅ | Needs cheats | ✅ | Heavy |
-| Shell widget (Ctrl+G) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Template variables | ✅ `{{var:default}}` | ❌ | ✅ | ❌ | ❌ |
-| Statistics & streaks | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Import from URL | ✅ `snip grab` | ❌ | ❌ | ❌ | ❌ |
+snip is the layer between your agent and your shell:
 
-## Quick Start
+- **Verified** — agents pull from a curated library you (or your team) wrote, not from a hallucination.
+- **Safety-checked** — execution is dry-run by default; destructive patterns (`rm -rf`, `curl | bash`, fork bombs…) are hard-blocked.
+- **Team-shareable** — commit `.snip/snippets.json` to your repo and every teammate's agent uses the same code-reviewed commands.
+- **Still a great human CLI** — fuzzy search, TUI, templates, multi-language execution. See [The human CLI](#the-human-cli).
+
+## Quick Start for AI Agents
 
 ```bash
 # Install
 npm install -g snip-manager
 
+# Wire it into your AI client (claude, cursor, goose, continue)
+snip mcp install claude
+
+# Give it something verified to work with
+snip seed        # or: snip import-history, snip add …
+```
+
+Then, in your agent:
+
+```
+You:    deploy the api to staging
+
+Agent:  → snip_search("deploy staging")
+        → found "deploy-api-staging" (author: jane, used 47 times)
+        → snip_exec("deploy-api-staging")           # dry-run by default
+        Here's exactly what will run: … Confirm?
+
+You:    yes
+
+Agent:  → snip_exec("deploy-api-staging", dry_run: false)
+        Deployed. Exit code 0.
+```
+
+And when an agent tries something it shouldn't:
+
+```
+Agent:  → snip_exec("cleanup-old-data", dry_run: false)
+        ✗ Blocked: this snippet contains potentially destructive operations.
+          Use the CLI directly to confirm execution.
+```
+
+### MCP Tools
+
+The MCP server exposes 16 tools:
+
+| Tool | Description | Safety |
+|------|-------------|--------|
+| `snip_search` | Fuzzy-search by name, tags, or content | Read-only |
+| `snip_searchRelevance` | Search with relevance scores + `min_score` filter | Read-only |
+| `snip_list` | List with tag/language/sort/limit filters | Read-only |
+| `snip_read` | Read snippet content + metadata by name | Read-only |
+| `snip_suggest` | Context-aware suggestions from current directory | Read-only |
+| `snip_history` / `snip_diff` | Version history & diffs | Read-only |
+| `snip_save` / `snip_edit` / `snip_rename` / `snip_delete` / `snip_undo` | Library management | Write |
+| `snip_share` / `snip_unshare` / `snip_discover` | Public Gist sharing & discovery | Write (API) |
+| `snip_exec` | Execute a snippet — **dry-run by default** | Execute |
+
+Resources: `snip://snippets` (list) and `snip://snippets/{name}` (read) for clients that support resource reading.
+
+### Connecting Clients
+
+`snip mcp install <client>` handles this for you. Manual config, for any MCP client:
+
+```json
+{
+  "mcpServers": {
+    "snip": { "command": "snip", "args": ["mcp"] }
+  }
+}
+```
+
+| Client | Setup |
+|--------|-------|
+| **Claude Code** | `snip mcp install claude` (uses `claude mcp add`) |
+| **Cursor** | `snip mcp install cursor` (writes `~/.cursor/mcp.json`) |
+| **Goose** | `snip mcp install goose` (prints YAML for `~/.config/goose/config.yaml`) |
+| **Continue** | `snip mcp install continue` (prints JSON for `~/.continue/config.json`) |
+| **Anything else** | Use the generic `command`/`args` config above |
+
+## The Safety Model
+
+Three layers between an agent and a destructive command:
+
+1. **Dry-run by default.** `snip_exec` returns what *would* run unless the agent explicitly passes `dry_run: false`. The agent (and you) see the full command content first.
+2. **Built-in deny rules.** Destructive patterns — `rm -rf`, `dd of=/`, `mkfs`, fork bombs, `curl | bash`, `chmod 777 /`, and more — are detected per-line and **blocked over MCP entirely**. They can only be confirmed by a human, in the CLI, typing `yes`.
+3. **Full visibility.** Every execution returns the exact content and exit code, so agents self-correct instead of retrying blind.
+
+The same detection guards human usage: `snip run` previews and requires confirmation; `snip exec` warns and requires `--force`.
+
+## Team Snippets
+
+Commit your command library to the repo and every teammate — and every teammate's agent — uses the same verified commands:
+
+```bash
+snip team init            # creates .snip/snippets.json
+snip team add deploy-api  # share a snippet (records author from git config)
+snip team sync            # import the team library locally
+snip team status          # compare team vs local
+```
+
+New snippets arrive via pull request, which means your agent's command vocabulary is **code-reviewed**. No sync server, no accounts — git is the backend and your data never leaves your repo.
+
+---
+
+## The Human CLI
+
+snip started life as a terminal-native snippet manager, and it's still one — fuzzy search, split-pane TUI, `{{var:default}}` templates, and direct execution across any language (shell, JS/TS, Python, Ruby, PHP, Perl, PowerShell…).
+
+<p align="center">
+  <img src="https://vhs.charm.sh/vhs-68GMwpm0mG45CKI5fXvqYv.gif" alt="snip CLI demo — list, search, show, exec, add, stats, run" width="100%">
+</p>
+
+```bash
 # Save a snippet
 echo 'docker compose up -d --build' | snip add dc-up --lang sh --tags docker
 
@@ -64,44 +155,22 @@ snip search docker
 # Run it
 snip exec dc-up
 
-# Launch TUI
+# Launch the TUI
 snip ui
 ```
+
+First time? `snip init` runs a guided setup (editor, Ctrl+G shell widget, example snippets).
 
 ## Installation
 
 **Prerequisites:** Node.js ≥ 18
 
 ```bash
-# npm
-npm install -g snip-manager
+npm install -g snip-manager    # or: yarn global add / pnpm add -g
 
-# yarn
-yarn global add snip-manager
-
-# pnpm
-pnpm add -g snip-manager
-
-# verify
 snip --version
 snip doctor          # validates storage, editor, fzf, shell, gist
 ```
-
-### Quick Setup with `snip init`
-
-First time? Run the guided setup wizard:
-
-```bash
-snip init
-```
-
-This interactive wizard will:
-1. ✍️  Set your preferred editor (`vim`, `code`, `nano`, etc.)
-2. ⌨️  Install the Ctrl+G shell widget for your shell (zsh/bash/fish)
-3. 📦  Seed 10 example snippets to get you started
-4. 🎨  Optionally launch the TUI for a quick tour
-
-**Goal:** Zero to "aha moment" in under 60 seconds.
 
 ## Commands
 
@@ -109,121 +178,53 @@ This interactive wizard will:
 
 | Command | Description |
 |---------|-------------|
-| `snip add <name>` | Save a snippet from stdin or `$EDITOR` |
-| `snip add:js <name>` | Add with language shortcut (sh, py, js, ts, rb, go, rs) |
+| `snip add <name>` | Save a snippet from stdin or `$EDITOR` (`snip add:js` etc. for language shortcuts) |
 | `snip list` | List all snippets (`--json`, `--tag`, `--lang`, `--sort`, `--limit`) |
 | `snip search <query>` | Fuzzy search (`--json`, `--limit`) |
 | `snip show <name>` | Display snippet (`--json`, `--raw`, `--edit`) |
-| `snip run <name>` | Preview + confirm + execute (with template prompts, `--confirm`) |
-| `snip exec <name>` | Execute immediately, no modal (`--dry-run`, `--force`) |
+| `snip run <name>` | Preview + confirm + execute (with template prompts) |
+| `snip exec <name>` | Execute immediately (`--dry-run`, `--force`) |
 | `snip pipe <name>` | Pipeline mode — stdin→template→stdout (`--json`, `--dry-run`) |
 | `snip edit <name>` | Open in `$EDITOR` |
-| `snip rm <name>` | Delete (alias: `delete`, `--force` to skip confirm) |
+| `snip rm <name>` | Delete (`--force` to skip confirm) |
 | `snip update <name>` | Update metadata (`--tags`, `--lang`) |
-| `snip last` | Re-run the last executed snippet |
-| `snip recent [n]` | Show last _n_ used snippets (default: 5) |
+| `snip last` / `snip recent [n]` | Re-run last / show recently used |
 
-### AI-Powered Generation
-
-| Command | Description |
-|---------|-------------|
-| `snip ai generate "<prompt>"` | Generate a snippet using AI (requires OpenAI API key) |
-| | Options: `--lang`, `--tags`, `--name`, `--model` |
-
-```bash
-# Set up OpenAI API key
-export SNIP_AI_API_KEY="your-openai-api-key"
-
-# Generate a Docker health check
-snip ai generate "docker container health check"
-
-# Generate a Python web server
-snip ai generate "simple flask server" --lang python --tags web,api
-
-# Generate with custom name and model
-snip ai generate "curl wrapper with retry" --name curl-retry --model gpt-4
-```
-
-### Utilities
+### Agents & Team
 
 | Command | Description |
 |---------|-------------|
-| `snip cp <src> <dest>` | Duplicate a snippet |
-| `snip mv <old> <new>` | Rename a snippet |
-| `snip cat <name>` | Print raw content to stdout (for piping) |
-| `snip stats` | Library statistics (`--json`, language chart, top tags, `--streak`) |
-| `snip import-history` | Suggest commands from shell history run 3+ times (`--last`, `--min-count`) |
+| `snip mcp` | Start the MCP server (stdio) |
+| `snip mcp install <client>` | Configure snip for claude / cursor / goose / continue |
+| `snip team init` | Create `.snip/` team library in the repo |
+| `snip team push` / `sync` / `status` | Share, import, and compare team snippets |
+
+### Utilities & Integration
+
+| Command | Description |
+|---------|-------------|
+| `snip cp` / `snip mv` / `snip cat` | Duplicate / rename / print raw |
+| `snip stats` | Library statistics (`--json`, `--streak`) |
+| `snip import-history` | Turn repeated shell-history commands into snippets |
 | `snip grab <url>` | Import from URL or `github:user/repo/path` |
 | `snip fzf` | fzf search with live preview |
-| `snip seed` | Clear data and add 10 example snippets |
-
-### Integration
-
-| Command | Description |
-|---------|-------------|
-| `snip alias [shell]` | Generate shell aliases (`eval "$(snip alias)"`) |
+| `snip alias [shell]` | Every snippet becomes a shell command (`eval "$(snip alias)"`) |
 | `snip widget [shell]` | Ctrl+G hotkey widget for zsh/bash/fish |
-| `snip completion [shell]` | Tab-completion script (bash, zsh, fish) |
-| `snip sync push [query]` | Push to GitHub Gist |
-| `snip sync pull <id>` | Pull from GitHub Gist |
-| `snip share <name...>` | Publish snippet(s) as a public Gist |
-| `snip unshare <name>` | Delete a shared Gist (keeps local snippet) |
-| `snip discover [query]` | Search public gists shared by the community |
-| `snip doctor` | Health check |
-| `snip config <action>` | Get / set configuration |
-| `snip ui` | Interactive TUI |
-| `snip mcp` | Start MCP server for AI agent integration (stdin/stdout) |
-| `snip init` | Guided setup (editor, widget, example snippets, optional TUI) |
-
-### Import/Export
-
-| Command | Description |
-|---------|-------------|
-| `snip export [path]` | Export snippets to JSON file |
-| `snip import <file>` | Import snippets from JSON file |
+| `snip completion [shell]` | Tab-completion (bash, zsh, fish) |
+| `snip sync push/pull` | GitHub Gist sync |
+| `snip share` / `unshare` / `discover` | Publish & find community snippets via Gists |
+| `snip export` / `snip import` | JSON backup / restore |
+| `snip doctor` / `snip config` / `snip init` / `snip ui` | Health check, config, setup wizard, TUI |
 
 ## Features
 
 ### Interactive TUI
 
-```bash
-snip ui
-```
-
-Split-pane interface with fuzzy search with **Catppuccin Mocha** color palette. Keyboard shortcuts:
-
-| Key | Action |
-|-----|--------|
-| `j` / `k` or `↑` / `↓` | Navigate |
-| `Ctrl+u` / `Ctrl+d` | Page up/down |
-| `/` | Live search |
-| `Enter` | Preview |
-| `c` | Copy to clipboard |
-| `r` | Run |
-| `e` | Edit |
-| `a` | Add new |
-| `d` | Delete (type name to confirm, `z` to undo within 5s) |
-| `t` | Tag filter |
-| `s` | Cycle sort mode |
-| `q` | Quit |
-
-**First time?** The TUI shows helpful overlays and keybinding hints on first launch.
-
-### Zero-Friction Execution
-
-```bash
-snip exec deploy-api            # run immediately
-snip exec deploy-api --dry-run  # print only
-snip exec deploy-api --force    # skip safety warning
-```
-
-**Safety First:** Dangerous commands (`rm -rf`, `sudo`, system-level ops) are detected automatically. `snip run` shows a preview and requires explicit confirmation. `snip exec` warns but lets you `--force` past.
-
-> **Tip:** Use `snip run` for interactive use (preview + confirm), `snip exec` for scripts (no prompts).
+`snip ui` — split-pane fuzzy-search interface (Catppuccin Mocha). `j/k` navigate, `/` search, `Enter` preview, `c` copy, `r` run, `e` edit, `a` add, `d` delete (with 5s undo), `t` tag filter, `s` sort, `q` quit. First launch shows keybinding hints.
 
 ### Parameterized Snippets
 
-Use `{{variable}}` or `{{variable:default}}` syntax:
+Use `{{variable}}` or `{{variable:default}}` — auto-detected at runtime, prompted interactively (or resolved from JSON in pipeline mode):
 
 ```bash
 echo 'docker run --rm -it {{image:ubuntu:24.04}} {{cmd:bash}}' \
@@ -234,219 +235,40 @@ snip run docker-dev
 #   cmd [bash]: ↵
 ```
 
-Variables are auto-detected at runtime — no extra flags needed.
-
-### Safety
-
-Dangerous commands (`rm -rf`, `sudo`, system-level ops) are detected automatically. `snip run` shows a preview and requires explicit confirmation. `snip exec` warns but lets you `--force` past.
-
-### Shell Aliases
-
-```bash
-eval "$(snip alias)"        # every snippet becomes a command
-deploy-api                  # → snip exec deploy-api
-```
-
-### Ctrl+G Widget
-
-```bash
-# add to ~/.zshrc
-eval "$(snip widget zsh)"
-# press Ctrl+G anywhere → search → paste snippet inline
-```
-
-### Gist Sync
-
-```bash
-snip sync push               # push all
-snip sync push docker        # push matching
-snip sync pull <gist-id>     # pull
-```
-
-### fzf Integration
-
-```bash
-snip fzf                     # search + preview
-snip fzf | pbcopy            # pipe to clipboard
-```
-
 ### Pipeline Mode
 
 ```bash
-# Run a snippet, pipe output forward
-snip pipe deploy-api | tee /tmp/deploy.log
-
-# Pipe JSON as template values — no interactive prompts
-echo '{"host":"prod.api.com","branch":"main"}' | snip pipe deploy --json
-
-# Stdin passthrough to the snippet's process
-curl -s https://api.example.com/data | snip pipe parse-json
-
-# Dry-run: see resolved content without executing
-echo '{"image":"node:20"}' | snip pipe docker-dev --json --dry-run
+snip pipe deploy-api | tee /tmp/deploy.log                         # pipe output
+echo '{"host":"prod.api.com"}' | snip pipe deploy --json           # JSON template values
+curl -s https://api.example.com/data | snip pipe parse-json        # stdin passthrough
 ```
-
-Pipeline mode is perfect for:
-- **CI/CD workflows** — pipe deployment outputs to logs
-- **JSON processing** — chain snippets with `jq` or other tools
-- **Automation scripts** — resolve templates programmatically
-- **Zero-chrome output** — clean stdout for piping
 
 Also pipe-friendly: `snip cat`, `snip show --raw`, `snip list --json`, `snip search --json`.
 
-### Grab from URL
+### Shell Integration
 
 ```bash
-snip grab https://example.com/script.sh --tags ops
-snip grab github:user/repo/scripts/backup.sh
+eval "$(snip alias)"          # every snippet becomes a command
+eval "$(snip widget zsh)"     # Ctrl+G → search → paste inline
+snip import-history --last 500  # mine your shell history for repeated commands
 ```
 
-Language auto-detected from extension and shebang.
-
-### Shell History Import
-
-Turn your repeated shell commands into snippets automatically:
+### Gist Sync & Sharing
 
 ```bash
-snip import-history --last 500
+snip sync push               # push your library to a Gist
+snip sync pull <gist-id>     # pull
+snip share deploy-api        # publish one snippet publicly
+snip discover docker         # search community-shared snippets
 ```
 
-Analyzes your last 500 shell commands, finds those run 3+ times, and suggests saving them as snippets. Perfect for discovering your own "muscle memory" commands.
-
-### Re-run Last Snippet
-
-```bash
-snip last
-```
-
-Instantly re-run the last executed snippet. Like `!!` but for your snippet library.
-
-### AI Agent Integration (MCP)
-
-snip now speaks the **Model Context Protocol (MCP)**, the open standard that AI coding tools like Claude Code, Cline, and Goose use to interact with external tools. Start an MCP server and your AI agent can search, read, save, and execute snippets directly.
-
-```bash
-# Start the MCP server (stdio transport)
-snip mcp
-```
-
-#### Available Tools
-
-The MCP server exposes **16 tools** — search, read, write, and share capabilities:
-
-| Tool | Description | Safety |
-|------|-------------|--------|
-| `snip_search` | Fuzzy-search by name, tags, or content | Read-only |
-| `snip_searchRelevance` | Search with Fuse.js relevance scores (0 = perfect, 1 = no match). Includes `min_score` filter and snippet content in results. | Read-only |
-| `snip_list` | List with optional tag/language/sort/limit filters | Read-only |
-| `snip_read` | Read snippet content + metadata by name | Read-only |
-| `snip_suggest` | Context-aware suggestions based on current directory | Read-only |
-| `snip_history` | View version history for a snippet | Read-only |
-| `snip_diff` | Diff two versions of a snippet | Read-only |
-| `snip_save` | Save a new snippet (auto-detects language) | Write |
-| `snip_edit` | Update content, language, or tags of an existing snippet | Write |
-| `snip_delete` | Permanently delete a snippet by name | Write |
-| `snip_rename` | Rename a snippet (checks for name conflicts) | Write |
-| `snip_undo` | Rollback a snippet to its previous version | Write |
-| `snip_share` | Publish snippet(s) as a public Gist | Write (API) |
-| `snip_unshare` | Delete a shared Gist (remotely, keeps local) | Write (API) |
-| `snip_discover` | Search public gists / browse recent community snippets | Read (API) |
-| `snip_exec` | Execute a snippet (dry-run by default) | Execute |
-
-#### Connecting Claude Code
-
-Add snip as an MCP server in your [`claude.json`](https://docs.anthropic.com/en/docs/claude-code/mcp) config:
-
-```json
-{
-  "mcpServers": {
-    "snip": {
-      "command": "snip",
-      "args": ["mcp"]
-    }
-  }
-}
-```
-
-#### Connecting Other MCP Clients
-
-Any MCP-compatible AI client uses the same pattern. The server communicates over standard input/output:
-
-| Client | Config File | Reference |
-|--------|-------------|-----------|
-| **Claude Code** | `~/.claude/settings.json` or project `CLAUDE.md` | [MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) |
-| **Cline** | `~/.config/cline/settings.json` | [Cline MCP](https://github.com/cline/cline/wiki/MCP-Setup) |
-| **Goose** | `~/.config/goose/config.yaml` | [Goose MCP](https://block.github.io/goose/docs/configuration/mcp) |
-| **Continue** | `~/.continue/config.json` | [Continue MCP](https://docs.continue.dev/customize/tools#mcp) |
-
-All use the same `command`/`args` pattern with `"snip"` as the command and `["mcp"]` as the args.
-
-#### Available Resources
-
-The MCP server also exposes snippet resources via the `snip://snippets/` URI scheme for AI agents that support resource reading:
-
-| Resource | Description |
-|----------|-------------|
-| `snip://snippets` | List all snippets (returns resource metadata) |
-| `snip://snippets/{name}` | Read a specific snippet's content + metadata |
-
-#### Examples
-
-Once connected, AI agents can:
-```
-> Search your snippet library for deployment commands
-> Read the content of a specific snippet
-> Save useful commands as new snippets during conversations
-> Compare versions of a snippet with snip_diff
-> Publish a snippet to share with teammates via snip_share
-> Search public gists for community-shared code with snip_discover
-> Search with relevance scores and min_score threshold to find the best match
-> Preview a snippet before executing it
-```
-
-#### Safety
-
-- `snip_exec` defaults to **dry-run mode** (`dry_run: true`) — set `dry_run: false` to actually execute
-- Dangerous commands (e.g., `rm -rf`, `docker rm -f`) are **blocked** and return an error
-- `snip_share` / `snip_unshare` / `snip_discover` require a GitHub token (`SNIP_GIST_TOKEN`) — they only make API calls after validating inputs
-- The agent sees the full command content and exit code, enabling self-correction
-
-## Pro Tips
-
-```bash
-# Create a snippet from a GitHub gist
-snip grab https://gist.github.com/user/123456 --tags utility
-
-# Copy snippet to clipboard
-snip fzf | pbcopy        # macOS
-snip fzf | xclip         # Linux
-
-# View snippet statistics
-snip stats --json | jq '.totalSnippets'
-
-# Check your usage streak
-snip stats --streak
-
-# Find recently used snippets
-snip recent 10
-
-# Export your entire library
-snip export ~/snippets-backup.json
-
-# Import from a backup
-snip import ~/snippets-backup.json
-
-# Duplicate and modify a snippet
-snip cp deploy-staging deploy-prod
-snip edit deploy-prod
-```
+Requires a GitHub token with `gist` scope in `SNIP_GIST_TOKEN`.
 
 ## Configuration
 
 ```bash
 snip config set editor "code --wait"
 snip config set useSqlite true       # for 100+ snippets
-snip config set ai_model gpt-4       # AI model for generation
 snip config list
 ```
 
@@ -455,32 +277,21 @@ snip config list
 | `editor` | `$EDITOR` / `vi` | Snippet editor |
 | `useSqlite` | `false` | SQLite instead of JSON |
 | `snippetDir` | `~/.snip` | Data directory |
-| `ai_provider` | `openai` | AI provider (currently only OpenAI) |
-| `ai_model` | `gpt-3.5-turbo` | AI model for generation |
-| `ai_max_tokens` | `1000` | Max tokens to generate |
-| `ai_api_key` | - | OpenAI API key (use `SNIP_AI_API_KEY` env var) |
 
-### AI Setup
+SQLite uses `better-sqlite3` (native) or falls back to `sql.js` (WASM). `snip doctor` diagnoses storage issues.
 
-1. **Set API key (recommended):**
-   ```bash
-   export SNIP_AI_API_KEY="sk-..."
-   ```
+<details>
+<summary><b>Optional: AI snippet generation</b></summary>
 
-2. **Or store in config:**
-   ```bash
-   snip config set ai_api_key "sk-..."
-   # Warning: Key will be stored in plain text
-   ```
+`snip ai generate "<prompt>"` generates snippets via the OpenAI API (`--lang`, `--tags`, `--name`, `--model`).
 
-3. **Generate your first snippet:**
-   ```bash
-   snip ai generate "curl with retry logic"
-   ```
+```bash
+export SNIP_AI_API_KEY="sk-..."
+snip ai generate "curl wrapper with retry" --name curl-retry
+```
 
-**Validation:** `snip config` validates allowed keys and types, rejecting invalid values with helpful error messages.
-
-SQLite uses `better-sqlite3` (native module) or falls back to `sql.js` (WASM). If `better-sqlite3` is missing, `snip doctor` will suggest installing it with `npm install -g better-sqlite3`.
+Config keys: `ai_provider`, `ai_model` (default `gpt-3.5-turbo`), `ai_max_tokens`, `ai_api_key`.
+</details>
 
 ## Architecture
 
@@ -489,73 +300,40 @@ snip
 ├── bin/snip              # Entry point
 ├── lib/
 │   ├── cli.js            # Command definitions (Commander.js)
+│   ├── mcp-server.js     # MCP server — 16 tools + resources
 │   ├── storage.js        # JSON + SQLite abstraction
 │   ├── search.js         # Fuse.js fuzzy search
 │   ├── exec.js           # Multi-language runner
 │   ├── template.js       # {{var:default}} engine
 │   ├── safety.js         # Dangerous command detection
-│   ├── config.js         # Config loader
-│   ├── colors.js         # Unified brand color palette
-│   ├── clipboard.js      # Cross-platform clipboard support
-│   ├── lock.js           # Concurrency lock for storage
-│   ├── migrate_to_sqlite.js  # JSON → SQLite migration
-│   ├── readline.js       # Interactive prompts
-│   ├── streak.js         # Usage streak tracking
+│   ├── team.js           # Repo-local .snip/ team library
 │   ├── sync/             # Gist sync module
-│   └── commands/         # One file per command (20+)
+│   └── commands/         # One file per command
 ├── completions/          # Shell completions (bash, zsh, fish)
 ├── __tests__/            # Jest test suite
-├── scripts/              # Seed / smoke scripts
-└── docs/                 # Website + demo
+└── docs/                 # Website + demo + pivot plan
 ```
 
 **Design decisions:**
 
-- **Commander.js** for CLI parsing — battle-tested, zero-config subcommands.
-- **Fuse.js** for fuzzy search — searches name, tags, and content simultaneously.
-- **Dual storage** — JSON for instant start, SQLite for scale. Same API, swap with one config.
-- **No daemon** — every invocation is stateless. Fast cold starts.
+- **No daemon** — every invocation is stateless; sub-150ms cold starts (heavy modules lazy-load).
+- **Dual storage** — JSON for instant start, SQLite for scale; same API.
+- **Git as team backend** — `.snip/` lives in your repo; no server, no accounts.
 - **Blessed** for TUI — raw terminal control, no React/Ink overhead.
-- **Unified brand colors** — `#ff4d00` orange across all CLI output.
 
 ## Development
 
 ```bash
 git clone https://github.com/Bharath-code/snip.git
-cd snip
-npm install
+cd snip && npm install
 
-# Run locally
-node bin/snip --help
-
-# Seed example snippets
-node bin/snip seed
-
-# Run tests
-npm test
-
-# Lint code
-npm run lint
+node bin/snip --help     # run locally
+node bin/snip seed       # example snippets
+npm test                 # Jest suite
+npm run lint             # ESLint
 ```
 
-### Testing
-
-Tests use [Jest](https://jestjs.io/) and cover storage, search, template engine, exec, safety, and CLI integration.
-
-```bash
-npm test                     # run all tests
-npx jest --verbose           # verbose output
-npx jest __tests__/exec.test.js  # single file
-```
-
-### Project Structure for Contributors
-
-| Directory | Purpose |
-|-----------|---------|
-| `lib/commands/` | Add a new command = add one file here + register in `cli.js` |
-| `lib/storage.js` | Storage abstraction — both backends |
-| `__tests__/` | Mirror of `lib/` — one test file per module |
-| `completions/` | Shell completion scripts |
+Adding a command = one file in `lib/commands/` + registration in `lib/cli.js`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Troubleshooting
 
@@ -571,6 +349,15 @@ export PATH="$(npm prefix -g)/bin:$PATH"
 </details>
 
 <details>
+<summary><b>Agent can't see snip tools</b></summary>
+
+1. Verify the server starts: `snip mcp` (should wait silently on stdio; Ctrl+C to exit).
+2. Re-run `snip mcp install <client>` and restart the client.
+3. Check the client's MCP logs — the server name is `snip`.
+
+</details>
+
+<details>
 <summary><b>Editor not opening</b></summary>
 
 ```bash
@@ -582,10 +369,7 @@ snip config set editor "vim"     # or code, nvim, nano, subl
 <details>
 <summary><b>GitHub token errors with Gist sync</b></summary>
 
-If you see 401 errors when pushing/pulling gists:
-
 ```bash
-# Set a valid GitHub PAT (Personal Access Token)
 export SNIP_GIST_TOKEN=your_token_here
 ```
 
@@ -596,106 +380,43 @@ Generate a token at https://github.com/settings/tokens with `gist` scope.
 <details>
 <summary><b>SQLite mode errors</b></summary>
 
-If `snip config set useSqlite true` causes errors:
-
 ```bash
-# Install the native SQLite module
-npm install -g better-sqlite3
-
-# Or continue using JSON backend (default)
+npm install -g better-sqlite3    # native module
+# or stay on the JSON backend (default)
 snip config set useSqlite false
-```
-
-`snip doctor` will detect and suggest fixes for SQLite issues.
-
-</details>
-
-<details>
-<summary><b>Permission errors on global install</b></summary>
-
-Use [nvm](https://github.com/nvm-sh/nvm) to avoid `sudo`:
-
-```bash
-nvm install --lts
-npm install -g snip-manager
 ```
 
 </details>
 
 ## Roadmap
 
-### Shipped in v0.4.0
-- [x] `snip pipe` — stdin pipeline integration (`--json`, `--dry-run`)
-- [x] `snip stats --json` — machine-readable statistics
-- [x] `snip stats --streak` — days-in-a-row usage tracking
-- [x] `snip recent` — recently used snippets
-- [x] `snip last` — re-run last executed snippet
-- [x] `snip cp` / `snip mv` / `snip cat` — snippet management utilities
-- [x] `snip seed` — example snippets for onboarding
-- [x] `snip completion` — shell completion scripts (bash, zsh, fish)
-- [x] `snip init` — guided setup wizard
-- [x] `snip import-history` — import repeated commands from shell history
-- [x] `snip doctor` — enhanced with widget check, SQLite detection, better error messages
-- [x] Unified brand colors (`#ff4d00`) across CLI output
-- [x] Catppuccin Mocha TUI theme with first-run overlays
-- [x] Config validation with type checking
-- [x] Improved error messages with next-step guidance
-- [x] `snip ai generate "..."` — AI snippet generation (OpenAI)
-
-### Planned
-- [ ] Snippet groups / namespaces (`docker/cleanup`, `k8s/deploy`)
-- [ ] Snippet versioning & history
-- [x] `snip share` — single-snippet and pack gist sharing
-- [x] `snip unshare` — delete a shared Gist (keeps local snippet)
-- [x] `snip discover` — search community-shared public gists
-- [x] MCP server with 16 tools (share, unshare, discover, search, searchRelevance, list, read, save, edit, delete, rename, suggest, history, diff, undo, exec)
-- [ ] Snippet versioning & history
-- [ ] `snip watch <name>` — re-run snippet on file edit
-- [ ] Team shared snippets
-- [ ] VS Code / Neovim extension
-
-See [CHANGELOG.md](CHANGELOG.md) for release history.
+The current direction — policy files, audit logging, and approval flows for agent execution — is laid out in [docs/pivot-plan.md](docs/pivot-plan.md). Release history in [CHANGELOG.md](CHANGELOG.md).
 
 ## FAQ
 
 <details>
-<summary><b>What is snip?</b></summary>
+<summary><b>Why not just let the agent run commands directly?</b></summary>
 
-A CLI tool for saving and running code snippets from the terminal. Think of it as a personal, searchable library for commands and code blocks you run repeatedly.
-</details>
-
-<details>
-<summary><b>How is snip different from dotfiles?</b></summary>
-
-Dotfiles store configuration. snip stores **executable snippets** — commands and code blocks you run. snip provides instant search, multi-language execution, and safety rails.
-</details>
-
-<details>
-<summary><b>Does snip support custom languages?</b></summary>
-
-Yes. Use `--lang` to specify any language. snip resolves the interpreter (node, python3, ruby, etc.) automatically.
+Agents already can — that's the problem. snip narrows what they run to a library you curated, makes execution dry-run by default, and hard-blocks destructive patterns. It's the difference between "the agent can run anything" and "the agent runs what your team verified."
 </details>
 
 <details>
 <summary><b>Is my data secure?</b></summary>
 
-Snippets are stored locally in `~/.snip/`. Nothing leaves your machine unless you explicitly `snip sync push` to GitHub Gist.
+Snippets are stored locally in `~/.snip/` (or your repo's `.snip/`). Nothing leaves your machine unless you explicitly `snip sync push` or `snip share`.
 </details>
 
-## Contributing
+<details>
+<summary><b>Does snip support custom languages?</b></summary>
 
-Contributions welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
-
-```bash
-# Good first issues
-# https://github.com/Bharath-code/snip/labels/good%20first%20issue
-```
+Yes. Use `--lang` — snip resolves the interpreter (node, python3, ruby, etc.) automatically, falling back to your shell.
+</details>
 
 ## Community
 
-- [Issues](https://github.com/Bharath-code/snip/issues) — Bug reports & feature requests
-- [Discussions](https://github.com/Bharath-code/snip/discussions) — Questions & ideas
-- [Security Policy](SECURITY.md) — Vulnerability reporting
+- [Issues](https://github.com/Bharath-code/snip/issues) — bug reports & feature requests
+- [Discussions](https://github.com/Bharath-code/snip/discussions) — questions & ideas
+- [Security Policy](SECURITY.md) — vulnerability reporting
 
 ## License
 
