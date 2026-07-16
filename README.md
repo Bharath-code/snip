@@ -124,18 +124,17 @@ Five layers between an agent and a destructive command:
 
 The same detection guards human usage: `snip run` previews and requires confirmation; `snip exec` warns and requires `--force`.
 
-## Team Snippets
+## Team Runbook
 
-Commit your command library to the repo and every teammate — and every teammate's agent — uses the same verified commands:
+`.snip/` in a repo is a **runbook**: verified commands plus the policy that governs how agents may run them, versioned alongside the code they operate on.
 
 ```bash
-snip team init            # creates .snip/snippets.json
-snip team add deploy-api  # share a snippet (records author from git config)
-snip team sync            # import the team library locally
-snip team status          # compare team vs local
+snip init                 # scaffolds .snip/ — snippets.json + policy.json + README
+snip team add deploy-api  # add a verified command (records author from git config)
+git add .snip && git commit -m "runbook: deploy-api"
 ```
 
-New snippets arrive via pull request, which means your agent's command vocabulary is **code-reviewed**. No sync server, no accounts — git is the backend and your data never leaves your repo.
+MCP reads the runbook first: team snippets rank above personal ones and every result carries `source: team|personal` plus provenance (author, updatedAt). An agent PRs a snippet, a human approves it, and every teammate's agent can use it — your agent's command vocabulary is **code-reviewed**. No sync server, no accounts — git is the backend and your data never leaves your repo.
 
 ---
 
@@ -161,7 +160,7 @@ snip exec dc-up
 snip ui
 ```
 
-First time? `snip init` runs a guided setup (editor, Ctrl+G shell widget, example snippets).
+In a repo? `snip init` scaffolds the `.snip/` runbook (snippets + policy + README).
 
 ## Installation
 
@@ -198,7 +197,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 |---------|-------------|
 | `snip mcp` | Start the MCP server (stdio) |
 | `snip mcp install <client>` | Configure snip for claude / cursor / goose / continue |
-| `snip team init` | Create `.snip/` team library in the repo |
+| `snip init` / `snip team init` | Scaffold the `.snip/` runbook in the repo |
 | `snip team push` / `sync` / `status` | Share, import, and compare team snippets |
 
 ### Utilities & Integration
@@ -216,7 +215,7 @@ snip doctor          # validates storage, editor, fzf, shell, gist
 | `snip sync push/pull` | GitHub Gist sync |
 | `snip share` / `unshare` / `discover` | Publish & find community snippets via Gists |
 | `snip export` / `snip import` | JSON backup / restore |
-| `snip doctor` / `snip config` / `snip init` / `snip ui` | Health check, config, setup wizard, TUI |
+| `snip doctor` / `snip config` / `snip ui` | Health check, config, TUI |
 
 ## Features
 

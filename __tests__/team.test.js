@@ -48,6 +48,30 @@ describe('team module', () => {
     expect(data.snippets).toEqual([]);
   });
 
+  test('initTeamDir scaffolds policy.json and README.md stubs', () => {
+    const team = freshTeam();
+    team.initTeamDir(testDir, 'my-project');
+
+    const policyPath = path.join(testDir, '.snip', 'policy.json');
+    expect(fs.existsSync(policyPath)).toBe(true);
+    const pol = JSON.parse(fs.readFileSync(policyPath, 'utf8'));
+    expect(pol.execRequiresApproval).toBe(false);
+    expect(pol.deny).toEqual([]);
+
+    const readmePath = path.join(testDir, '.snip', 'README.md');
+    expect(fs.readFileSync(readmePath, 'utf8')).toContain('my-project runbook');
+  });
+
+  test('initTeamDir does not overwrite existing policy.json', () => {
+    const team = freshTeam();
+    const snipDir = path.join(testDir, '.snip');
+    fs.mkdirSync(snipDir, { recursive: true });
+    fs.writeFileSync(path.join(snipDir, 'policy.json'), '{"deny":["custom"]}');
+    team.initTeamDir(testDir, 'my-project');
+    const pol = JSON.parse(fs.readFileSync(path.join(snipDir, 'policy.json'), 'utf8'));
+    expect(pol.deny).toEqual(['custom']);
+  });
+
   test('detectTeamDir finds .snip/ after init', () => {
     const team = freshTeam();
     team.initTeamDir(testDir, 'test-ws');

@@ -991,3 +991,97 @@ describe('MCP Server — Protocol via stdio', () => {
     }
   }, 60000);
 });
+
+describe('MCP Server — Team runbook source', () => {
+  const originalEnv = process.env;
+  const originalCwd = process.cwd();
+  let testDir;
+
+  beforeEach(() => {
+    testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'snip-mcp-team-'));
+    const configDir = path.join(testDir, 'config');
+    const dataDir = path.join(testDir, 'data');
+    fs.mkdirSync(configDir, { recursive: true });
+    fs.mkdirSync(dataDir, { recursive: true });
+
+    const snipDir = path.join(testDir, '.snip');
+    fs.mkdirSync(snipDir, { recursive: true });
+    fs.writeFileSync(path.join(snipDir, 'snippets.json'), JSON.stringify({
+      workspace: 'test-ws',
+      version: 1,
+      snippets: [{
+        name: 'deploy-api',
+        content: 'echo deploying',
+        language: 'sh',
+        tags: ['deploy'],
+        author: 'jane',
+        updatedAt: '2026-07-01T00:00:00.000Z',
+      }],
+    }));
+
+    process.env = { ...originalEnv, XDG_CONFIG_HOME: configDir, XDG_DATA_HOME: dataDir };
+    process.chdir(testDir);
+    jest.resetModules();
+  });
+
+  afterEach(() => {
+    process.chdir(originalCwd);
+    fs.rmSync(testDir, { recursive: true, force: true });
+    process.env = originalEnv;
+    jest.resetModules();
+  });
+
+  function parse(result) {
+    return JSON.parse(result.content[0].text);
+  }
+
+  test('snip_read resolves team snippet first with provenance', () => {
+    const { _handlers } = require('../lib/mcp-server');
+    const out = parse(_handlers.handleRead({ name: 'deploy-api' }));
+    expect(out.source).toBe('team');
+    expect(out.author).toBe('jane');
+    expect(out.updatedAt).toBe('2026-07-01T00:00:00.000Z');
+    expect(out.content).toBe('echo deploying');
+    expect(out.workspace).toBe('test-ws');
+  });
+
+  test('snip_list puts team snippets first and tags source', () => {
+    const storage = require('../lib/storage');
+    storage.addSnippet({ name: 'personal-one', content: 'echo hi', language: 'sh', tags: [] });
+    const { _handlers } = require('../lib/mcp-server');
+    const out = parse(_handlers.handleList({}));
+    expect(out[0].name).toBe('deploy-api');
+    expect(out[0].source).toBe('team');
+    const personal = out.find(s => s.name === 'personal-one');
+    expect(personal.source).toBe('personal');
+  });
+
+  test('snip_list dedupes by name with team winning', () => {
+    const storage = require('../lib/storage');
+    storage.addSnippet({ name: 'deploy-api', content: 'echo stale', language: 'sh', tags: [] });
+    const { _handlers } = require('../lib/mcp-server');
+    const out = parse(_handlers.handleList({}));
+    const matches = out.filter(s => s.name === 'deploy-api');
+    expect(matches.length).toBe(1);
+    expect(matches[0].source).toBe('team');
+  });
+
+  test('snip_search returns team matches first with source tag', () => {
+    const storage = require('../lib/storage');
+    storage.addSnippet({ name: 'deploy-local', content: 'echo local deploy', language: 'sh', tags: ['deploy'] });
+    const { _handlers } = require('../lib/mcp-server');
+    const out = parse(_handlers.handleSearch({ query: 'deploy' }));
+    expect(out.length).toBeGreaterThanOrEqual(2);
+    expect(out[0].name).toBe('deploy-api');
+    expect(out[0].source).toBe('team');
+    expect(out.find(s => s.name === 'deploy-local').source).toBe('personal');
+  });
+
+  test('snip_exec dry-run resolves team snippet and reports source', () => {
+    const { _handlers } = require('../lib/mcp-server');
+    const out = parse(_handlers.handleExec({ name: 'deploy-api' }));
+    expect(out.source).toBe('team');
+    expect(out.dryRun).toBe(true);
+    expect(out.content).toBe('echo deploying');
+  });
+});

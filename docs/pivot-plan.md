@@ -51,15 +51,18 @@ AI agent" in 10 seconds and is running it in 2 minutes.
 
 ## Phase 3 — Team = the moat (weeks 3–5)
 
-- [ ] Mental model: `.snip/` in a repo = "runbook". `snip init` scaffolds
-      `snippets.json` + `policy.json` + README stub. Pitch: code-reviewed
-      commands — agent PRs a snippet, human approves, every teammate's agent
-      can use it.
-- [ ] MCP reads team snippets first when cwd is in a repo; tag results
-      `source: team|personal`.
-- [ ] Snippet provenance in MCP responses: author, updatedAt, usage count.
-- [ ] Defer hosted sync — git IS the sync backend; "no server, data stays in
-      your repo" is a selling point.
+- [x] Mental model: `.snip/` in a repo = "runbook". `snip init` scaffolds
+      `snippets.json` + `policy.json` + README stub (old onboarding wizard
+      replaced — its widget/seed steps were on the cut list). Pitch: code-
+      reviewed commands — agent PRs a snippet, human approves, every
+      teammate's agent can use it (README "Team Runbook" section).
+- [x] MCP reads team snippets first when cwd is in a repo; tag results
+      `source: team|personal`. Team shadows personal on name clashes in
+      search/list/read/exec; also fixed `snip team <cmd> <name>` arg-passing
+      bug in cli.js.
+- [x] Snippet provenance in MCP responses: author, updatedAt, usage count.
+- [x] Defer hosted sync — git IS the sync backend; "no server, data stays in
+      your repo" is a selling point (in README; nothing to build).
 
 ## Phase 4 — Launch (week 6)
 
