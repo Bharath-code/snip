@@ -36,16 +36,18 @@ AI agent" in 10 seconds and is running it in 2 minutes.
 
 ## Phase 2 — Sharpen the safety story (weeks 2–3)
 
-- [ ] `.snip/policy.json` (checked into repo): allow/deny patterns,
+- [x] `.snip/policy.json` (checked into repo): allow/deny patterns,
       `execRequiresApproval`, max runtime, allowed languages. Enforced by MCP
-      `snip_exec`. Turns safety from a hardcoded list into team-governed
-      guardrails.
-- [ ] Audit log: every MCP tool call appends to
-      `~/.local/share/snip/audit.jsonl` (who/what/when/dry-run/blocked).
-- [ ] Approval flow: policy-gated `snip_exec` returns pending-approval;
-      human confirms via `snip approve <id>`.
-- [ ] Document `safety.js` regexes as "built-in deny rules" under the policy
-      umbrella.
+      `snip_exec` (`lib/policy.js`). Turns safety from a hardcoded list into
+      team-governed guardrails.
+- [x] Audit log: every MCP tool call appends to
+      `~/.local/share/snip/audit.jsonl` (who/what/when/dry-run/blocked) —
+      `lib/audit.js`, logged centrally in the MCP CallTool handler.
+- [x] Approval flow: policy-gated `snip_exec` returns pending-approval;
+      human confirms via `snip approve <id>` (or `--reject`). `lib/approvals.js`
+      + `lib/commands/approve.js`.
+- [x] Document `safety.js` regexes as "built-in deny rules" under the policy
+      umbrella — `docs/policy.md`, linked from README Safety Model.
 
 ## Phase 3 — Team = the moat (weeks 3–5)
 

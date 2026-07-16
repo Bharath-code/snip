@@ -114,11 +114,13 @@ Resources: `snip://snippets` (list) and `snip://snippets/{name}` (read) for clie
 
 ## The Safety Model
 
-Three layers between an agent and a destructive command:
+Five layers between an agent and a destructive command:
 
 1. **Dry-run by default.** `snip_exec` returns what *would* run unless the agent explicitly passes `dry_run: false`. The agent (and you) see the full command content first.
 2. **Built-in deny rules.** Destructive patterns — `rm -rf`, `dd of=/`, `mkfs`, fork bombs, `curl | bash`, `chmod 777 /`, and more — are detected per-line and **blocked over MCP entirely**. They can only be confirmed by a human, in the CLI, typing `yes`.
-3. **Full visibility.** Every execution returns the exact content and exit code, so agents self-correct instead of retrying blind.
+3. **Team policy.** A `.snip/policy.json` checked into your repo adds deny/allow patterns, a language allowlist, a max runtime, and can gate all agent execution behind human approval (`snip approve <id>`). See [docs/policy.md](docs/policy.md).
+4. **Audit log.** Every MCP tool call and approval decision is appended to `~/.local/share/snip/audit.jsonl` — who, what, when, dry-run, blocked, exit code.
+5. **Full visibility.** Every execution returns the exact content and exit code, so agents self-correct instead of retrying blind.
 
 The same detection guards human usage: `snip run` previews and requires confirmation; `snip exec` warns and requires `--force`.
 
