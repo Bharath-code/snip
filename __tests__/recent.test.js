@@ -32,10 +32,13 @@ describe('recent', () => {
     expect(sorted.length).toBeGreaterThanOrEqual(0);
   });
 
-  test('recent sorts by lastUsedAt when present', () => {
+  test('recent sorts by lastUsedAt when present', async () => {
     const lang = `recent-sort-${Date.now()}`;
     storage.addSnippet({ name: 'a', content: 'a', language: lang, tags: [] });
     const b = storage.addSnippet({ name: 'b', content: 'b', language: lang, tags: [] });
+    // timestamps have ms precision — without a delay, a fast machine creates
+    // and touches both snippets in the same ms and the sort order ties
+    await new Promise(r => setTimeout(r, 10));
     storage.touchUsage(b);
     const all = storage.listSnippets().filter(s => s.language === lang);
     const sorted = all

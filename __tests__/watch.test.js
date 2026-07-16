@@ -39,12 +39,14 @@ describe('Watch Command', () => {
 
   test('watch errors for missing snippet', async () => {
     const watchCmd = require('../lib/commands/watch');
-    const exitSpy = jest.spyOn(process, 'exitCode', 'set').mockImplementation(() => {});
+    // spyOn(process, 'exitCode', 'set') breaks on Node 18 (plain data property);
+    // save/restore the value and assert directly instead
+    const prevExitCode = process.exitCode;
 
     await watchCmd('non-existent-snippet');
 
-    exitSpy.mockRestore();
-    // process.exitCode should have been set to 1
+    expect(process.exitCode).toBe(1);
+    process.exitCode = prevExitCode;
   });
 
   test('watch errors for empty snippet', async () => {
@@ -58,11 +60,12 @@ describe('Watch Command', () => {
     storage.flush();
 
     const watchCmd = require('../lib/commands/watch');
-    const exitSpy = jest.spyOn(process, 'exitCode', 'set').mockImplementation(() => {});
+    const prevExitCode = process.exitCode;
 
     await watchCmd('watch-empty');
 
-    exitSpy.mockRestore();
+    expect(process.exitCode).toBe(1);
+    process.exitCode = prevExitCode;
   });
 
   test('watch creates a temp file with snippet content', async () => {
