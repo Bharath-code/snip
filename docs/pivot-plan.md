@@ -66,14 +66,18 @@ AI agent" in 10 seconds and is running it in 2 minutes.
 
 ## Phase 4 — Launch (week 6)
 
-- [ ] 60-second VHS demo: agent asks for deploy command → gets team's verified
-      one → `rm -rf` variant blocked by policy → audit log shown.
+- [x] 60-second VHS demo script rewritten (`docs/snip-demo.tape`): staged
+      agent conversation → deploy snippet search/dry-run → policy-blocked
+      command → audit log tail. Needs `vhs docs/snip-demo.tape` run locally
+      to regenerate `docs/snip-demo.gif` (vhs isn't installed in this env).
 - [ ] Submit to: Anthropic MCP registry, mcp.so, PulseMCP, Cursor directory,
-      Smithery.
-- [ ] Show HN: "snip – a verified command library for AI agents (MCP)".
-- [ ] Blog post: "Your AI agent shouldn't guess your production commands";
-      cross-post r/ClaudeAI, X, dev.to.
-- [ ] Per-client setup recipes (Claude Code, Cursor, Goose, Continue).
+      Smithery. (external accounts — do manually)
+- [x] Show HN draft: `docs/launch-show-hn.md`. Submitting needs an HN
+      account/timing call — do manually.
+- [x] Blog post draft: `docs/launch-blog-post.md`. Cross-posting to
+      r/ClaudeAI, X, dev.to needs manual accounts.
+- [x] Per-client setup recipes — already covered by README's table +
+      `snip mcp install <client>`; nothing further to write.
 
 ## Cut list (Phase 1)
 
